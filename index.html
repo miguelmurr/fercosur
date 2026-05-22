@@ -417,14 +417,30 @@
         </section>
 
         <!-- NUEVA VISTA: MENÚ DE PLANILLAS / LOTES DE DESPACHOS -->
-      <section id="view-menu-despachos" class="hidden space-y-6">
-            <div class="flex items-center space-x-3 mb-2 cursor-pointer group" onclick="goToPortal()">
-                <div class="p-2 rounded-lg text-slate-400 group-hover:text-slate-600 group-hover:bg-slate-100 transition">
+        <section id="view-menu-despachos" class="hidden fade-in w-full max-w-5xl mx-auto py-8 space-y-8 px-4">
+            <div class="flex items-center space-x-3 mb-2">
+                <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
+                </button>
+                <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">Volver al Portal Inicial</span>
+            </div>
+
+            <!-- Encabezado de Despachos -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Planillas de Despachos</h2>
+                    <p class="text-slate-500 mt-1">Configure lotes de despacho unificados para control logístico de remisiones.</p>
                 </div>
-                <span class="text-sm font-bold text-slate-500 uppercase tracking-wider group-hover:text-slate-700 transition">Volver al Portal Inicial</span>
+                <div>
+                    <button onclick="openLoteModal()" class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 text-base font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-2xl shadow-lg shadow-amber-100 hover:shadow-xl hover:shadow-amber-200 transition-all">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Nuevo Lote de Despacho
+                    </button>
+                </div>
             </div>
 
             <!-- Grid de Lotes Existentes (Limitado a 5) -->
