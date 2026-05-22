@@ -81,9 +81,9 @@
             <div class="flex justify-between h-16 items-center">
                 <!-- Logo & Nombre (Ajustado para evitar redundancia de texto) -->
                 <div class="flex items-center space-x-4 cursor-pointer" onclick="goToPortal()">
-                    <div class="bg-white p-1 rounded-xl shadow-sm border border-slate-150 flex items-center justify-center">
-                        <!-- Logo de Fercosur Oficial -->
-                        <img id="header-logo" src="logo fercosur.jpeg" alt="Fercosur" class="h-10 w-auto object-contain rounded-lg" onerror="this.style.display='none'; document.getElementById('header-fallback-text').classList.remove('hidden');">
+                    <div class="flex items-center justify-center">
+                        <!-- Logo de Fercosur Oficial sin contenedor rígido -->
+                        <img id="header-logo" src="logo fercosur.jpeg" alt="Fercosur" class="h-12 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('header-fallback-text').classList.remove('hidden');">
                         <span id="header-fallback-text" class="hidden text-brand-700 font-extrabold text-lg tracking-wider">FERCOSUR</span>
                     </div>
                     <div class="border-l border-slate-200 pl-4">
@@ -155,15 +155,15 @@
             <div class="max-w-4xl w-full text-center relative z-10">
                 <!-- Logotipo de Fercosur Oficial Centrado -->
                 <div class="flex flex-col items-center justify-center mb-10">
-                    <div class="bg-white p-6 rounded-[2.5rem] shadow-2xl border border-slate-100 mb-6 max-w-sm sm:max-w-md transition-all duration-300 hover:scale-105">
-                        <!-- Logo fercosur.jpeg real con fallback de texto elegante -->
-                        <img src="logo fercosur.jpeg" alt="Fercosur SAS" class="h-16 sm:h-20 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('portal-fallback-text-block').classList.remove('hidden');">
-                        <!-- Bloque de texto elegante en caso de que no encuentre el archivo de imagen en GitHub -->
-                        <div id="portal-fallback-text-block" class="hidden text-center py-2 px-6">
-                            <span class="text-3xl font-black text-brand-900 tracking-tight block">FERCOSUR S.A.S.</span>
-                            <span class="text-sm font-bold text-red-600 uppercase tracking-widest mt-1 block">COMERCIALIZADORA DEL SUR</span>
-                        </div>
+                    <!-- Logo fercosur.jpeg real ampliado, sin cajón contenedor y con animación fluida directa -->
+                    <img src="logo fercosur.jpeg" alt="Fercosur SAS" class="h-28 sm:h-40 w-auto object-contain transition-all duration-300 hover:scale-105 mb-6" onerror="this.style.display='none'; document.getElementById('portal-fallback-text-block').classList.remove('hidden');">
+                    
+                    <!-- Bloque de texto elegante que actúa como fallback independiente sin recuadros rígidos -->
+                    <div id="portal-fallback-text-block" class="hidden text-center py-2 px-6 mb-6 transition-all duration-300 hover:scale-105">
+                        <span class="text-4xl font-black text-brand-900 tracking-tight block">FERCOSUR S.A.S.</span>
+                        <span class="text-base font-bold text-red-600 uppercase tracking-widest mt-1 block">COMERCIALIZADORA DEL SUR</span>
                     </div>
+                    
                     <span class="px-4 py-1.5 text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200 rounded-full uppercase tracking-widest backdrop-blur-md">
                         Portal Oficial de Trabajo
                     </span>
