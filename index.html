@@ -1,0 +1,2404 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Colaboradores - Fercosur</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- SheetJS (XLSX) CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#b9ddfd',
+                            300: '#7cc2fc',
+                            400: '#36a3fa',
+                            500: '#0c87eb',
+                            600: '#0069c4',
+                            700: '#0054a0',
+                            800: '#054884',
+                            900: '#0a3c6d',
+                            950: '#062648',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Animaciones personalizadas */
+        .fade-in {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 flex flex-col antialiased">
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Logo & Nombre -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="goToPortal()">
+                    <div class="bg-brand-600 p-2.5 rounded-xl text-white shadow-md shadow-brand-200">
+                        <!-- Icono de Caja/Logística -->
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xl font-extrabold tracking-tight text-slate-900">FERCOSUR</span>
+                        <span class="block text-xs font-semibold text-brand-600 uppercase tracking-widest -mt-1">Portal Operativo</span>
+                    </div>
+                </div>
+
+                <!-- Acciones Navegación -->
+                <div class="flex items-center space-x-3">
+                    <button id="btn-admin-access" onclick="openPinModal()" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        Acceso Admin
+                    </button>
+                    <button id="btn-admin-logout" onclick="logoutAdmin()" class="hidden inline-flex items-center px-4 py-2 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- TOAST (MENSAJES FLOTANTES) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
+        
+        <!-- PANTALLA INICIAL: PORTAL DE BIENVENIDA -->
+        <section id="view-portal" class="fade-in max-w-4xl mx-auto w-full py-8">
+            <div class="text-center mb-12">
+                <span class="px-3 py-1 text-xs font-bold bg-brand-50 text-brand-700 rounded-full uppercase tracking-wider">Módulos de Trabajo</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mt-3">Portal Oficial de Colaboradores</h1>
+                <p class="mt-3 text-lg text-slate-500 max-w-xl mx-auto">Seleccione la herramienta de Fercosur que desea operar para iniciar su turno.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Tarjeta Módulo Registros (General e IDEACE) -->
+                <div onclick="showView('menu')" class="group relative bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-brand-300 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
+                    <div>
+                        <div class="inline-flex p-4 rounded-2xl bg-brand-50 text-brand-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">Módulo de Registros</h3>
+                        <p class="mt-3 text-slate-500 leading-relaxed">Registro y homologación de planillas de Pedidos Generales y Competencia IDEACE.</p>
+                    </div>
+                    <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm">
+                        Ingresar a Registros 
+                        <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Módulo Despachos -->
+                <div onclick="showView('menu-despachos')" class="group relative bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-amber-300 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -z-10 group-hover:bg-amber-100/50 transition-colors duration-300"></div>
+                    <div>
+                        <div class="inline-flex p-4 rounded-2xl bg-amber-50 text-amber-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <!-- Icono de Camión/Despacho -->
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10M13 16h6l3-3V9a1 1 0 00-1-1h-3M13 8h7"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">Módulo de Despachos</h3>
+                        <p class="mt-3 text-slate-500 leading-relaxed">Gestión de remisiones, asignación automática de poblaciones y cuantificación de empaques.</p>
+                    </div>
+                    <div class="mt-8 flex items-center text-amber-600 font-semibold text-sm">
+                        Ingresar a Despachos
+                        <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SUB-VISTA: SELECCIÓN DE PLANILLAS DE REGISTRO (ORIGINAL MENU) -->
+        <section id="view-menu" class="hidden fade-in max-w-4xl mx-auto w-full py-8">
+            <div class="flex items-center space-x-3 mb-6">
+                <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">Volver al Portal Inicial</span>
+            </div>
+
+            <div class="text-center mb-12">
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Registro de Ingresos y Competencia</h1>
+                <p class="mt-3 text-slate-500 max-w-xl mx-auto">Seleccione el tipo de planilla para iniciar el registro de actividad comercial.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Tarjeta Registro Pedidos General -->
+                <div onclick="showView('form-general')" class="group relative bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-brand-300 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
+                    <div>
+                        <div class="inline-flex p-4 rounded-2xl bg-brand-50 text-brand-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">Registro Pedidos General</h3>
+                        <p class="mt-3 text-slate-500 leading-relaxed">Formulario estándar para la radicación y control de pedidos normales del flujo diario de Fercosur.</p>
+                    </div>
+                    <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm">
+                        Comenzar registro 
+                        <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Registro Competencia IDEACE -->
+                <div onclick="showView('form-ideace')" class="group relative bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-emerald-300 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-10 group-hover:bg-emerald-100/50 transition-colors duration-300"></div>
+                    <div>
+                        <div class="inline-flex p-4 rounded-2xl bg-emerald-50 text-emerald-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">Registro Competencia IDEACE</h3>
+                        <p class="mt-3 text-slate-500 leading-relaxed">Formulario especial con conteo de accesorios específicos de la competencia, como chalecos y tokens de control.</p>
+                    </div>
+                    <div class="mt-8 flex items-center text-emerald-600 font-semibold text-sm">
+                        Iniciar competencia
+                        <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA 2: FORMULARIO REGISTRO GENERAL -->
+        <section id="view-form-general" class="hidden fade-in max-w-xl mx-auto w-full py-8">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg">
+                <div class="flex items-center space-x-3 mb-6">
+                    <button onclick="showView('menu')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-900">Registro de Pedido General</h2>
+                        <p class="text-sm text-slate-500 mt-1">Ingrese los datos para procesar el pedido.</p>
+                    </div>
+                </div>
+
+                <form id="form-pedidos-general" onsubmit="submitGeneralForm(event)" class="space-y-6">
+                    <!-- Autocompletado Nombre Asesor -->
+                    <div class="relative">
+                        <label for="gen-nombre" class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
+                        <input type="text" id="gen-nombre" required autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un vendedor...">
+                        <!-- Dropdown flotante asesores -->
+                        <div id="gen-nombre-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
+                    </div>
+
+                    <!-- Número de pedido con prefijo dinámico -->
+                    <div>
+                        <label for="gen-pedido" class="block text-sm font-semibold text-slate-700">Número de Pedido</label>
+                        <div class="mt-1.5 flex rounded-xl border border-slate-300 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 overflow-hidden bg-white">
+                            <span id="gen-pedido-prefix" class="inline-flex items-center px-4 bg-slate-50 border-r border-slate-200 text-slate-500 font-mono font-bold select-none text-sm">PED-</span>
+                            <input type="text" id="gen-pedido" required class="block w-full px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none sm:text-sm" placeholder="Ej. 10523">
+                        </div>
+                    </div>
+
+                    <!-- Autocompletado de Población / Ciudad -->
+                    <div class="relative">
+                        <label for="gen-poblacion" class="block text-sm font-semibold text-slate-700">Población / Ciudad</label>
+                        <input type="text" id="gen-poblacion" required autocomplete="off" oninput="filterTowns('gen')" onfocus="showTownsDropdown('gen')" onblur="hideTownsDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione una población...">
+                        <!-- Dropdown flotante poblaciones -->
+                        <div id="gen-poblacion-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
+                    </div>
+
+                    <div class="pt-4 flex space-x-3">
+                        <button type="button" onclick="showView('menu')" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">Cancelar</button>
+                        <button type="submit" class="w-2/3 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md shadow-brand-200 transition">Registrar Pedido</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- VISTA 3: FORMULARIO REGISTRO IDEACE (CONDICIONAL) -->
+        <section id="view-form-ideace" class="hidden fade-in max-w-xl mx-auto w-full py-8">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg">
+                <div class="flex items-center space-x-3 mb-6">
+                    <button onclick="showView('menu')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-slate-900">Registro Competencia IDEACE</h2>
+                        <p class="text-sm text-slate-500 mt-1">Formulario de control con lógica condicional de accesorios.</p>
+                    </div>
+                </div>
+
+                <form id="form-pedidos-ideace" onsubmit="submitIdeaceForm(event)" class="space-y-6">
+                    <!-- Autocompletado Nombre Asesor IDEACE -->
+                    <div class="relative">
+                        <label for="ideace-nombre" class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
+                        <input type="text" id="ideace-nombre" required autocomplete="off" oninput="filterSellers('ideace')" onfocus="showSellersDropdown('ideace')" onblur="hideSellersDropdown('ideace')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un vendedor...">
+                        <!-- Dropdown flotante asesores -->
+                        <div id="ideace-nombre-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
+                    </div>
+
+                    <!-- Número de pedido con prefijo dinámico -->
+                    <div>
+                        <label for="ideace-pedido" class="block text-sm font-semibold text-slate-700">Número de Pedido</label>
+                        <div class="mt-1.5 flex rounded-xl border border-slate-300 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 overflow-hidden bg-white">
+                            <span id="ideace-pedido-prefix" class="inline-flex items-center px-4 bg-slate-50 border-r border-slate-200 text-slate-500 font-mono font-bold select-none text-sm">PED-</span>
+                            <input type="text" id="ideace-pedido" required class="block w-full px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none sm:text-sm" placeholder="Ej. 20599">
+                        </div>
+                    </div>
+
+                    <!-- Autocompletado de Población / Ciudad (IDEACE) -->
+                    <div class="relative">
+                        <label for="ideace-poblacion" class="block text-sm font-semibold text-slate-700">Población / Ciudad</label>
+                        <input type="text" id="ideace-poblacion" required autocomplete="off" oninput="filterTowns('ideace')" onfocus="showTownsDropdown('ideace')" onblur="hideTownsDropdown('ideace')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione una población...">
+                        <!-- Dropdown flotante poblaciones -->
+                        <div id="ideace-poblacion-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
+                    </div>
+
+                    <!-- Condicional 1: Chalecos -->
+                    <div>
+                        <label for="ideace-incluye-chalecos" class="block text-sm font-semibold text-slate-700">¿Incluye Chalecos?</label>
+                        <select id="ideace-incluye-chalecos" onchange="toggleChalecosInput()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm">
+                            <option value="NO">NO</option>
+                            <option value="SI">SÍ</option>
+                        </select>
+                    </div>
+
+                    <div id="container-chalecos-cantidad" class="hidden fade-in">
+                        <label for="ideace-chalecos-cantidad" class="block text-sm font-semibold text-slate-700">¿Cuántos chalecos?</label>
+                        <input type="number" id="ideace-chalecos-cantidad" min="1" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Ej. 15">
+                    </div>
+
+                    <!-- Condicional 2: Tokens -->
+                    <div>
+                        <label for="ideace-incluye-tokens" class="block text-sm font-semibold text-slate-700">¿Incluye Tokens?</label>
+                        <select id="ideace-incluye-tokens" onchange="toggleTokensInput()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm">
+                            <option value="NO">NO</option>
+                            <option value="SI">SÍ</option>
+                        </select>
+                    </div>
+
+                    <div id="container-tokens-cantidad" class="hidden fade-in">
+                        <label for="ideace-tokens-cantidad" class="block text-sm font-semibold text-slate-700">¿Cuántos tokens?</label>
+                        <input type="number" id="ideace-tokens-cantidad" min="1" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Ej. 50">
+                    </div>
+
+                    <div class="pt-4 flex space-x-3">
+                        <button type="button" onclick="showView('menu')" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">Cancelar</button>
+                        <button type="submit" class="w-2/3 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md shadow-emerald-200 transition">Registrar Competencia</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- NUEVA VISTA: MENÚ DE PLANILLAS / LOTES DE DESPACHOS -->
+        <section id="view-menu-despachos" class="hidden fade-in w-full max-w-5xl mx-auto py-8 space-y-8">
+            <div class="flex items-center space-x-3 mb-2">
+                <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">Volver al Portal Inicial</span>
+            </div>
+
+            <!-- Encabezado de Despachos -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Planillas de Despachos</h2>
+                    <p class="text-slate-500 mt-1">Configure lotes de despacho unificados para control logístico de remisiones.</p>
+                </div>
+                <div>
+                    <button onclick="openLoteModal()" class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 text-base font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-2xl shadow-lg shadow-amber-100 hover:shadow-xl hover:shadow-amber-200 transition-all">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Nuevo Lote de Despacho
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid de Lotes Existentes (Limitado a 5) -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 px-1">Historial de Planillas / Lotes</h3>
+                
+                <div id="lotes-grid-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Los lotes se renderizan dinámicamente -->
+                </div>
+
+                <!-- Botón Ver más planillas -->
+                <div id="ver-mas-lotes-container" class="hidden text-center pt-4">
+                    <button onclick="openTodasPlanillasModal()" class="inline-flex items-center justify-center px-6 py-3.5 border border-amber-300 text-sm font-bold text-amber-700 bg-amber-50/50 hover:bg-amber-100/50 rounded-2xl shadow-sm transition">
+                        <svg class="w-5 h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                        Ver más planillas (<span id="total-lotes-badge">0</span>)
+                    </button>
+                </div>
+
+                <!-- Empty State de Lotes -->
+                <div id="lotes-empty-state" class="hidden flex-col items-center justify-center bg-white border border-slate-200 rounded-3xl p-12 text-center shadow-sm">
+                    <div class="p-4 bg-amber-50 text-amber-500 rounded-full mb-4">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-900">No hay planillas creadas todavía</h4>
+                    <p class="text-sm text-slate-400 mt-1 max-w-sm mx-auto">Para comenzar a registrar guías de despacho, genere una nueva planilla identificando la ruta o el día.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISTA DE TRABAJO: REGISTRO DE REMISIONES EN UN LOTE ACTIVO -->
+        <section id="view-form-despachos" class="hidden fade-in w-full max-w-6xl mx-auto py-8 space-y-6">
+            <!-- Header dinámico del Lote -->
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <button onclick="showView('menu-despachos')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-800 rounded-full uppercase tracking-wider" id="active-lote-status-badge">Activo</span>
+                            <span class="text-xs text-slate-400 font-mono font-medium" id="active-lote-date">Cargando...</span>
+                        </div>
+                        <h2 class="text-2xl font-black text-slate-900 mt-1" id="active-lote-title">Trabajando en: Planilla de Despacho</h2>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="showView('menu-despachos')" class="px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+                        Pausar y Volver
+                    </button>
+                    <button onclick="finalizarPlanillaActual()" class="px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md shadow-emerald-100 transition">
+                        Finalizar Planilla de Despachos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel de registro de remisiones y listado simultáneo -->
+            <div class="grid lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- Columna Izquierda: Formulario de Despacho -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm lg:col-span-5 space-y-6">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="text-lg font-bold text-slate-950" id="despacho-form-mode-title">Agregar Remisión</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Registre remisiones con sus pesos o bultos específicos.</p>
+                    </div>
+
+                    <form id="form-logistica-despachos" onsubmit="submitDespachoForm(event)" class="space-y-4">
+                        
+                        <!-- Número de Remisión/Factura con prefijo estático RM1- -->
+                        <div>
+                            <label for="despacho-remision" class="block text-sm font-semibold text-slate-700">Número de Remisión / Factura</label>
+                            <div class="mt-1.5 flex rounded-xl border border-slate-300 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 overflow-hidden bg-white">
+                                <span class="inline-flex items-center px-4 bg-slate-50 border-r border-slate-200 text-slate-500 font-mono font-bold select-none text-sm">RM1-</span>
+                                <input type="text" id="despacho-remision" required class="block w-full px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none sm:text-sm" placeholder="Ej. 2504">
+                            </div>
+                        </div>
+
+                        <!-- NUEVO: Número FVE con prefijo estático FVE- -->
+                        <div>
+                            <label for="despacho-fve" class="block text-sm font-semibold text-slate-700">Número de Venta (FVE)</label>
+                            <div class="mt-1.5 flex rounded-xl border border-slate-300 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 overflow-hidden bg-white">
+                                <span class="inline-flex items-center px-4 bg-slate-50 border-r border-slate-200 text-slate-500 font-mono font-bold select-none text-sm">FVE-</span>
+                                <input type="text" id="despacho-fve" required class="block w-full px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none sm:text-sm" placeholder="Ej. 8021">
+                            </div>
+                        </div>
+
+                        <!-- Cliente destinatario con Autocompletado -->
+                        <div class="relative">
+                            <label for="despacho-cliente" class="block text-sm font-semibold text-slate-700">Cliente Destinatario</label>
+                            <input type="text" id="despacho-cliente" required autocomplete="off" oninput="filterClients()" onfocus="showClientsDropdown()" onblur="hideClientsDropdown()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un cliente...">
+                            <!-- Dropdown flotante clientes -->
+                            <div id="despacho-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
+                        </div>
+
+                        <!-- NUEVO: Teléfono del Cliente -->
+                        <div class="relative">
+                            <div class="flex justify-between items-center mb-1">
+                                <label for="despacho-telefono" class="block text-sm font-semibold text-slate-700">Número de Teléfono</label>
+                                
+                                <!-- Checkbox para modificar teléfono -->
+                                <div class="flex items-center">
+                                    <input id="despacho-modificar-telefono" type="checkbox" onchange="toggleTelefonoEdit()" class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-slate-300 rounded-lg cursor-pointer">
+                                    <label for="despacho-modificar-telefono" class="ml-2 text-xs font-bold text-slate-500 cursor-pointer select-none">Modificar teléfono</label>
+                                </div>
+                            </div>
+
+                            <input type="text" id="despacho-telefono" readonly autocomplete="off" class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-400 bg-slate-100 font-medium focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm transition-all" placeholder="Teléfono por defecto del cliente...">
+                        </div>
+
+                        <!-- Población / Ciudad Protegida contra clicks accidentales -->
+                        <div class="relative">
+                            <div class="flex justify-between items-center mb-1">
+                                <label for="despacho-poblacion" class="block text-sm font-semibold text-slate-700">Población de Envío</label>
+                                
+                                <!-- Checkbox para modificar población -->
+                                <div class="flex items-center">
+                                    <input id="despacho-modificar-poblacion" type="checkbox" onchange="togglePoblacionEdit()" class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-slate-300 rounded-lg cursor-pointer">
+                                    <label for="despacho-modificar-poblacion" class="ml-2 text-xs font-bold text-slate-500 cursor-pointer select-none">Modificar población</label>
+                                </div>
+                            </div>
+
+                            <input type="text" id="despacho-poblacion" readonly autocomplete="off" oninput="filterTowns('despacho')" onfocus="showTownsDropdown('despacho')" onblur="hideTownsDropdown('despacho')" class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-400 bg-slate-100 font-medium focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm transition-all" placeholder="Población por defecto del cliente...">
+                            
+                            <!-- Dropdown flotante poblaciones para Despachos -->
+                            <div id="despacho-poblacion-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
+                        </div>
+
+                        <!-- Empaques Actualizados -->
+                        <div class="border-t border-slate-100 pt-4">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Empaques del despacho (Opcional)</label>
+                            
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Caja</span>
+                                    <input type="number" id="despacho-caja" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Paquete</span>
+                                    <input type="number" id="despacho-paquete" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Rollo</span>
+                                    <input type="number" id="despacho-rollo" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Atado</span>
+                                    <input type="number" id="despacho-atado" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Saca</span>
+                                    <input type="number" id="despacho-saca" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Lío</span>
+                                    <input type="number" id="despacho-lio" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Carreta</span>
+                                    <input type="number" id="despacho-carreta" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Cadena</span>
+                                    <input type="number" id="despacho-cadena" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                                <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+                                    <span class="text-[11px] font-bold text-slate-600 block mb-1">Otros</span>
+                                    <input type="number" id="despacho-otros" min="0" placeholder="0" class="w-full text-center py-1.5 px-2 rounded-lg border border-slate-300 text-slate-800 bg-white focus:outline-none text-xs" oninput="calcularTotalEmpaques()">
+                                </div>
+                            </div>
+
+                            <!-- Totalizador de Unidades -->
+                            <div class="mt-3 flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl p-3">
+                                <span class="text-sm font-bold text-amber-800 uppercase tracking-wide">Total Unidades:</span>
+                                <span id="despacho-total-unidades" class="text-xl font-black text-amber-700">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Botonera Formulario -->
+                        <div class="pt-2 flex gap-2">
+                            <button type="button" id="btn-cancelar-edicion" onclick="cancelarEdicionDespacho()" class="hidden w-1/3 py-3 px-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition text-sm">
+                                Cancelar
+                            </button>
+                            <button type="submit" id="btn-guardar-despacho" class="flex-1 py-3 px-4 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl shadow-md shadow-amber-200 transition text-sm">
+                                Registrar Despacho
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Columna Derecha: Listado de Despachos en el Lote -->
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm lg:col-span-7 overflow-hidden flex flex-col min-h-[500px]">
+                    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                        <div>
+                            <h3 class="font-black text-slate-950 text-lg">Remisiones Agregadas</h3>
+                            <p class="text-xs text-slate-400 mt-0.5" id="active-lote-summary-txt">0 remisiones en este lote</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto flex-1">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead class="bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Guía / FVE</th>
+                                    <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Destinatario</th>
+                                    <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Teléfono</th>
+                                    <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Población</th>
+                                    <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Detalle</th>
+                                    <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-despachos-lote-actual" class="divide-y divide-slate-100 text-slate-700">
+                                <!-- Se inyectan dinámicamente -->
+                            </tbody>
+                        </table>
+
+                        <!-- Empty state del lote de despachos -->
+                        <div id="despachos-lote-empty-state" class="hidden flex-col items-center justify-center p-12 text-center h-full">
+                            <div class="p-3 bg-slate-50 rounded-full text-slate-400 mb-3">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                            </div>
+                            <h5 class="text-sm font-bold text-slate-900">Esta planilla está vacía</h5>
+                            <p class="text-xs text-slate-400 mt-1 max-w-xs">Ingrese el número de factura/remisión en el formulario izquierdo para sumar despachos a este lote.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- VISTA 4 & 5: PANEL DE ADMINISTRADOR PROTEGIDO -->
+        <section id="view-admin" class="hidden fade-in w-full py-8 space-y-8">
+            <!-- Header Admin -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900">Panel de Control General</h2>
+                    <p class="text-slate-500 mt-1">Supervisión e informes unificados de registros y flujos.</p>
+                </div>
+                <!-- Botón Exportar Todo Consolidado -->
+                <div>
+                    <button onclick="exportConsolidated()" class="w-full inline-flex justify-center items-center px-5 py-3 text-base font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-2xl shadow-lg shadow-brand-100 hover:shadow-xl hover:shadow-brand-200 transition-all duration-200 transform active:scale-[0.98]">
+                        <svg class="w-5 h-5 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Exportar Todo Consolidado (.xlsx)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contadores Rápidos & Selector -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Botón/Card Respuestas Generales -->
+                <button onclick="switchAdminTab('general')" id="tab-general" class="text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-brand-50 text-brand-600 rounded-2xl">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="block text-slate-500 text-sm font-medium uppercase tracking-wider">Base de Datos</span>
+                            <span class="text-xl font-bold text-slate-900 group-hover:text-brand-600 transition">Respuestas Generales</span>
+                        </div>
+                    </div>
+                    <div class="bg-brand-50 text-brand-700 px-4 py-2 rounded-2xl text-2xl font-black" id="counter-general">0</div>
+                </button>
+
+                <!-- Botón/Card Respuestas IDEACE -->
+                <button onclick="switchAdminTab('ideace')" id="tab-ideace" class="text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="block text-slate-500 text-sm font-medium uppercase tracking-wider">Base de Datos</span>
+                            <span class="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition">Respuestas IDEACE</span>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-2xl text-2xl font-black" id="counter-ideace">0</div>
+                </button>
+
+                <!-- Botón/Card Despachos Logísticos -->
+                <button onclick="switchAdminTab('despachos')" id="tab-despachos" class="text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-amber-50 text-amber-600 rounded-2xl">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10M13 16h6l3-3V9a1 1 0 00-1-1h-3M13 8h7"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="block text-slate-500 text-sm font-medium uppercase tracking-wider">Base de Datos</span>
+                            <span class="text-xl font-bold text-slate-900 group-hover:text-amber-600 transition">Despachos Realizados</span>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 text-amber-700 px-4 py-2 rounded-2xl text-2xl font-black" id="counter-despachos">0</div>
+                </button>
+            </div>
+
+            <!-- CONTENEDOR DE TABLAS DETALLADAS -->
+            <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+                <!-- CABECERA DE TABLA SELECCIONADA -->
+                <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900" id="table-title">Respuestas Generales</h3>
+                        <p class="text-sm text-slate-500 mt-0.5">Mostrando registros guardados en tiempo real por orden de ingreso.</p>
+                    </div>
+                    <div>
+                        <button id="btn-export-individual" onclick="exportActiveTable()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                            Exportar Excel Individual (.xlsx)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TABLAS -->
+                <div class="overflow-x-auto">
+                    <!-- Tabla General -->
+                    <table id="table-general-view" class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Nombre Completo</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Número de Pedido</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Población / Ciudad</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-general" class="divide-y divide-slate-100 text-sm text-slate-700">
+                            <!-- Inserción dinámica por JS -->
+                        </tbody>
+                    </table>
+
+                    <!-- Tabla IDEACE -->
+                    <table id="table-ideace-view" class="hidden w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Nombre Completo</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Número de Pedido</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Población / Ciudad</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-brand-50/50">Chalecos Incluidos</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-emerald-50/50">Tokens Incluidos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-ideace" class="divide-y divide-slate-100 text-sm text-slate-700">
+                            <!-- Inserción dinámica por JS -->
+                        </tbody>
+                    </table>
+
+                    <!-- Tabla Despachos -->
+                    <table id="table-despachos-view" class="hidden w-full text-left border-collapse">
+                        <thead class="bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Lote Planilla</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Remisión / FVE</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cliente Destinatario</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Teléfono</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Población Destino</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-amber-50/50">Detalle Empaques</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-despachos" class="divide-y divide-slate-100 text-sm text-slate-700">
+                            <!-- Inserción dinámica por JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State (Si no hay datos en la seleccionada) -->
+                <div id="table-empty-state" class="hidden flex-col items-center justify-center p-12 text-center">
+                    <div class="p-4 bg-slate-100 rounded-full text-slate-400 mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-950">Aún no hay registros en esta sección</h4>
+                    <p class="text-sm text-slate-400 mt-1 max-w-sm">Los nuevos envíos se listarán aquí en orden cronológico inverso tan pronto como se realicen.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 font-medium mt-auto">
+        <p>&copy; 2026 FERCOSUR S.A.S. - Portal Oficial de Trabajo. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- MODAL DE ACCESO PIN ADMIN -->
+    <div id="pin-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="closePinModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <!-- Contenido Modal -->
+            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-200">
+                <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-2xl bg-brand-50 text-brand-600 mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-slate-950" id="modal-title">Control de Seguridad</h3>
+                        <p class="text-sm text-slate-500 mt-1 max-w-xs mx-auto">Solo personal autorizado. Ingrese el PIN de seguridad de 4 dígitos para continuar.</p>
+                        
+                        <!-- Inputs PIN -->
+                        <div class="flex justify-center gap-3 mt-6">
+                            <input type="password" id="pin-1" maxlength="1" onkeyup="handlePinInput(this, 'pin-2')" class="w-12 h-14 text-center text-2xl font-black bg-slate-50 border border-slate-300 rounded-xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none">
+                            <input type="password" id="pin-2" maxlength="1" onkeyup="handlePinInput(this, 'pin-3', 'pin-1')" class="w-12 h-14 text-center text-2xl font-black bg-slate-50 border border-slate-300 rounded-xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none">
+                            <input type="password" id="pin-3" maxlength="1" onkeyup="handlePinInput(this, 'pin-4', 'pin-2')" class="w-12 h-14 text-center text-2xl font-black bg-slate-50 border border-slate-300 rounded-xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none">
+                            <input type="password" id="pin-4" maxlength="1" onkeyup="handlePinInput(this, null, 'pin-3')" class="w-12 h-14 text-center text-2xl font-black bg-slate-50 border border-slate-300 rounded-xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none">
+                        </div>
+
+                        <!-- Feedback de error -->
+                        <p id="pin-error-msg" class="hidden text-xs text-red-600 font-bold mt-4">PIN incorrecto. Inténtelo nuevamente.</p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3">
+                    <button type="button" onclick="submitPin()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2.5 bg-brand-600 text-sm font-bold text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition">Desbloquear Panel</button>
+                    <button type="button" onclick="closePinModal()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-4 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREAR NUEVO LOTE DE DESPACHO -->
+    <div id="lote-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="lote-modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="closeLoteModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-200">
+                <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-extrabold text-slate-950" id="lote-modal-title">Identificador de Planilla</h3>
+                        <p class="text-sm text-slate-500 mt-1 max-w-xs mx-auto">Escriba un nombre claro para este lote de despachos para agrupar las remisiones.</p>
+                        
+                        <div class="mt-4">
+                            <input type="text" id="lote-input-nombre" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none sm:text-sm text-center font-bold text-slate-900" placeholder="Ej. Ruta Ipiales - Mañana 20-Mayo">
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3">
+                    <button type="button" onclick="crearNuevoLoteLogistico()" class="w-full sm:w-auto inline-flex justify-center rounded-xl shadow-sm px-5 py-2.5 bg-amber-600 text-sm font-bold text-white hover:bg-amber-700 transition">Crear y Empezar</button>
+                    <button type="button" onclick="closeLoteModal()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-5 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: VER TODAS LAS PLANILLAS (NUEVO HISTORIAL) -->
+    <div id="todas-planillas-modal" class="hidden fixed inset-0 z-50 overflow-y-auto animate-fade-in" aria-labelledby="todas-planillas-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="closeTodasPlanillasModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-200">
+                <div class="bg-white px-6 pt-6 pb-4 sm:p-8">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 mb-6 gap-4">
+                        <div>
+                            <h3 class="text-2xl font-black text-slate-950" id="todas-planillas-title">Historial Completo de Planillas</h3>
+                            <p class="text-sm text-slate-500 mt-1">Busque, filtre y gestione todas las planillas de despacho registradas en Fercosur.</p>
+                        </div>
+                        <button onclick="closeTodasPlanillasModal()" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition self-start sm:self-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Buscador y Filtros -->
+                    <div class="grid sm:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label for="search-planillas-input" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Buscar por nombre de planilla</label>
+                            <input type="text" id="search-planillas-input" oninput="renderTodasPlanillasList()" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 text-sm" placeholder="Ej. Ruta Ipiales...">
+                        </div>
+                        <div>
+                            <label for="sort-planillas-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Ordenar por fecha</label>
+                            <select id="sort-planillas-select" onchange="renderTodasPlanillasList()" class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-slate-900 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 text-sm bg-white">
+                                <option value="desc">De Más Reciente a Más Antiguo (Mayor a Menor)</option>
+                                <option value="asc">De Más Antiguo a Más Reciente (Menor a Mayor)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Grid contenedor de todas las planillas -->
+                    <div id="todas-planillas-grid-container" class="grid sm:grid-cols-2 gap-6 max-h-[50vh] overflow-y-auto p-1">
+                        <!-- Se renderizan dinámicamente -->
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse">
+                    <button type="button" onclick="closeTodasPlanillasModal()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar Historial</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGICA SCRIPT -->
+    <script>
+        // --- 1. BASE DE DATOS DE ASESORES Y SUS PREFIJOS DE VENTA ---
+        const sellers = [
+            { nombre: "Juan Pérez", prefijo: "PE4-" },
+            { nombre: "Sofía Torres", prefijo: "PE5-" },
+            { nombre: "Carlos Solarte", prefijo: "PE1-" },
+            { nombre: "Martha Benavides", prefijo: "PE2-" },
+            { nombre: "Gabriela Rosero", prefijo: "PE3-" },
+            { nombre: "Miguel Arciniegas", prefijo: "PE6-" },
+            { nombre: "Juan Carlos Ortiz", prefijo: "PE7-" }
+        ];
+
+        // --- 1.2 BASE DE DATOS DE POBLACIONES DE NARIÑO ---
+        const towns = [
+            "Pasto", "Ipiales", "Tumaco", "Túquerres", "La Unión",
+            "Samaniego", "Sandoná", "El Tambo", "Buesaco", "Chachagüí"
+        ];
+
+        // --- 1.3 BASE DE DATOS DE 10 CLIENTES DE EJEMPLO Y SUS DATOS ASOCIADOS ---
+        const clients = [
+            { nombre: "Ferretería El Progreso", poblacion: "Pasto", telefono: "3101234567" },
+            { nombre: "Distribuidora Suroriental", poblacion: "Ipiales", telefono: "3209876543" },
+            { nombre: "Almacén El Constructor", poblacion: "Tumaco", telefono: "3154567890" },
+            { nombre: "Depósito de Materiales La Unión", poblacion: "La Unión", telefono: "3112223344" },
+            { nombre: "Ferretería Central", poblacion: "Túquerres", telefono: "3185556677" },
+            { nombre: "Suministros Nariño", poblacion: "Samaniego", telefono: "3004445566" },
+            { nombre: "Comercializadora Sandoná", poblacion: "Sandoná", telefono: "3127778899" },
+            { nombre: "Ferretería El Tambo", poblacion: "El Tambo", telefono: "3149990011" },
+            { nombre: "Agregados Buesaco", poblacion: "Buesaco", telefono: "3213332211" },
+            { nombre: "Súper Constructor Chachagüí", poblacion: "Chachagüí", telefono: "3168889900" }
+        ];
+
+        // --- 2. CONFIGURACIÓN DE BASE DE DATOS TEMPORALES (EN MEMORIA) ---
+        let dbGeneral = [
+            { timestamp: "2026-05-20 14:32:05", nombre: "Miguel Arciniegas", pedido: "PE6-9856", poblacion: "Pasto" },
+            { timestamp: "2026-05-20 11:15:40", nombre: "Juan Carlos Ortiz", pedido: "PE7-9850", poblacion: "Ipiales" },
+            { timestamp: "2026-05-19 16:45:22", nombre: "Gabriela Rosero", pedido: "PE3-9844", poblacion: "Tumaco" }
+        ];
+
+        let dbIdeace = [
+            { timestamp: "2026-05-20 15:10:12", nombre: "Carlos Solarte", pedido: "PE1-405", poblacion: "Pasto", chalecos: "SÍ (12)", tokens: "NO" },
+            { timestamp: "2026-05-19 09:22:15", nombre: "Martha Benavides", pedido: "PE2-402", poblacion: "Túquerres", chalecos: "SÍ (8)", tokens: "SÍ (35)" }
+        ];
+
+        // Base de datos de Lotes Logísticos (Estructura de Planillas Avanzada)
+        let dbLotes = [
+            {
+                id: "lote-1",
+                nombre: "Ruta Sur - Ipiales Especial",
+                timestamp: "2026-05-20 10:05:12",
+                finalizado: true,
+                despachos: [
+                    { 
+                        id: "d-1", 
+                        remision: "RM1-4500", 
+                        fve: "FVE-8021",
+                        cliente: "Distribuidora Suroriental", 
+                        telefono: "3209876543",
+                        poblacion: "Ipiales", 
+                        empaques: { caja: 0, paquete: 10, rollo: 0, atado: 1, saca: 0, lio: 0, carreta: 0, cadena: 0, otros: 0, total: 11 } 
+                    }
+                ]
+            },
+            {
+                id: "lote-2",
+                nombre: "Ruta Pasto - Almacenes Norte",
+                timestamp: "2026-05-20 16:15:32",
+                finalizado: false,
+                despachos: [
+                    { 
+                        id: "d-2", 
+                        remision: "RM1-4501", 
+                        fve: "FVE-8033",
+                        cliente: "Ferretería El Progreso", 
+                        telefono: "3101234567",
+                        poblacion: "Pasto", 
+                        empaques: { caja: 5, paquete: 0, rollo: 3, atado: 0, saca: 1, lio: 2, carreta: 0, cadena: 0, otros: 0, total: 11 } 
+                    }
+                ]
+            }
+        ];
+
+        let activeLoteId = null; 
+        let editingDespachoId = null; 
+        let currentActiveAdminTab = "general";
+        let isAdminLoggedIn = false;
+
+        // --- 3. AUTOCOMPLETADO E INYECCIÓN DE PREFIJOS DE ASESORES ---
+        function showSellersDropdown(formPrefix) {
+            const dropdown = document.getElementById(`${formPrefix}-nombre-dropdown`);
+            dropdown.classList.remove('hidden');
+            filterSellers(formPrefix);
+        }
+
+        function filterSellers(formPrefix) {
+            const input = document.getElementById(`${formPrefix}-nombre`);
+            const dropdown = document.getElementById(`${formPrefix}-nombre-dropdown`);
+            const query = input.value.toLowerCase().trim();
+
+            const matches = sellers.filter(s => s.nombre.toLowerCase().includes(query));
+
+            dropdown.innerHTML = '';
+
+            if (matches.length === 0) {
+                const noResult = document.createElement('div');
+                noResult.className = 'px-4 py-3 text-xs text-slate-400 italic bg-slate-50';
+                noResult.innerText = 'Sin coincidencias (Escriba libremente)';
+                dropdown.appendChild(noResult);
+                updatePrefix(formPrefix, "PED-");
+            } else {
+                matches.forEach(seller => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-100 font-semibold transition duration-150 flex justify-between items-center';
+                    btn.innerHTML = `
+                        <span>${seller.nombre}</span>
+                        <span class="text-xs font-mono font-bold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg border border-brand-100">${seller.prefijo}</span>
+                    `;
+                    
+                    btn.onmousedown = (e) => {
+                        e.preventDefault();
+                        selectSeller(formPrefix, seller.nombre, seller.prefijo);
+                    };
+                    dropdown.appendChild(btn);
+                });
+
+                const exactMatch = sellers.find(s => s.nombre.toLowerCase() === input.value.toLowerCase().trim());
+                if (exactMatch) {
+                    updatePrefix(formPrefix, exactMatch.prefijo);
+                } else {
+                    updatePrefix(formPrefix, "PED-");
+                }
+            }
+        }
+
+        function selectSeller(formPrefix, nombre, prefijo) {
+            const input = document.getElementById(`${formPrefix}-nombre`);
+            const dropdown = document.getElementById(`${formPrefix}-nombre-dropdown`);
+            
+            input.value = nombre;
+            updatePrefix(formPrefix, prefijo);
+            dropdown.classList.add('hidden');
+
+            document.getElementById(`${formPrefix}-pedido`).focus();
+        }
+
+        function updatePrefix(formPrefix, prefijoValue) {
+            const badge = document.getElementById(`${formPrefix}-pedido-prefix`);
+            if (badge) {
+                badge.innerText = prefijoValue;
+            }
+        }
+
+        function hideSellersDropdown(formPrefix) {
+            setTimeout(() => {
+                const dropdown = document.getElementById(`${formPrefix}-nombre-dropdown`);
+                if (dropdown) dropdown.classList.add('hidden');
+            }, 200);
+        }
+
+        // --- 4. AUTOCOMPLETADO DE CLIENTES ---
+        function showClientsDropdown() {
+            const dropdown = document.getElementById('despacho-cliente-dropdown');
+            dropdown.classList.remove('hidden');
+            filterClients();
+        }
+
+        function filterClients() {
+            const input = document.getElementById('despacho-cliente');
+            const dropdown = document.getElementById('despacho-cliente-dropdown');
+            const query = input.value.toLowerCase().trim();
+
+            const matches = clients.filter(c => c.nombre.toLowerCase().includes(query));
+
+            dropdown.innerHTML = '';
+
+            if (matches.length === 0) {
+                const noResult = document.createElement('div');
+                noResult.className = 'px-4 py-3 text-xs text-slate-400 italic bg-slate-50';
+                noResult.innerText = 'Sin coincidencias (Escriba libremente)';
+                dropdown.appendChild(noResult);
+            } else {
+                matches.forEach(client => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-100 font-semibold transition duration-150 flex justify-between items-center';
+                    btn.innerHTML = `
+                        <span>${client.nombre}</span>
+                        <span class="text-xs font-semibold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-lg border border-amber-100">${client.poblacion}</span>
+                    `;
+                    
+                    btn.onmousedown = (e) => {
+                        e.preventDefault();
+                        selectClient(client);
+                    };
+                    dropdown.appendChild(btn);
+                });
+            }
+        }
+
+        function selectClient(client) {
+            const input = document.getElementById('despacho-cliente');
+            const dropdown = document.getElementById('despacho-cliente-dropdown');
+            
+            input.value = client.nombre;
+            dropdown.classList.add('hidden');
+
+            // Establecer población automáticamente
+            const pInput = document.getElementById('despacho-poblacion');
+            pInput.value = client.poblacion;
+            const checkboxPob = document.getElementById('despacho-modificar-poblacion');
+            checkboxPob.checked = false;
+            pInput.setAttribute('readonly', 'readonly');
+            pInput.classList.add('bg-slate-100', 'text-slate-400');
+            pInput.classList.remove('bg-white', 'text-slate-900');
+
+            // Establecer teléfono automáticamente
+            const tInput = document.getElementById('despacho-telefono');
+            tInput.value = client.telefono;
+            const checkboxTel = document.getElementById('despacho-modificar-telefono');
+            checkboxTel.checked = false;
+            tInput.setAttribute('readonly', 'readonly');
+            tInput.classList.add('bg-slate-100', 'text-slate-400');
+            tInput.classList.remove('bg-white', 'text-slate-900');
+
+            // Direccionar foco al siguiente campo clave
+            document.getElementById('despacho-remision').focus();
+        }
+
+        function hideClientsDropdown() {
+            setTimeout(() => {
+                const dropdown = document.getElementById('despacho-cliente-dropdown');
+                if (dropdown) dropdown.classList.add('hidden');
+            }, 200);
+        }
+
+        function getClientData(clientName) {
+            const clientObj = clients.find(c => c.nombre.toLowerCase() === clientName.toLowerCase().trim());
+            return clientObj ? clientObj : { poblacion: '', telefono: '' };
+        }
+
+        // --- 5. AUTOCOMPLETADO DE POBLACIONES ---
+        function showTownsDropdown(formPrefix) {
+            if (formPrefix === 'despacho') {
+                const checkbox = document.getElementById('despacho-modificar-poblacion');
+                if (!checkbox || !checkbox.checked) return; 
+            }
+
+            const dropdown = document.getElementById(`${formPrefix}-poblacion-dropdown`);
+            dropdown.classList.remove('hidden');
+            filterTowns(formPrefix);
+        }
+
+        function filterTowns(formPrefix) {
+            const input = document.getElementById(`${formPrefix}-poblacion`);
+            const dropdown = document.getElementById(`${formPrefix}-poblacion-dropdown`);
+            const query = input.value.toLowerCase().trim();
+
+            const matches = towns.filter(t => t.toLowerCase().includes(query));
+
+            dropdown.innerHTML = '';
+
+            if (matches.length === 0) {
+                const noResult = document.createElement('div');
+                noResult.className = 'px-4 py-3 text-xs text-slate-400 italic bg-slate-50';
+                noResult.innerText = 'Sin coincidencias (Escriba libremente)';
+                dropdown.appendChild(noResult);
+            } else {
+                matches.forEach(town => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-100 font-semibold transition duration-150 flex justify-between items-center';
+                    btn.innerHTML = `<span>${town}</span>`;
+                    
+                    btn.onmousedown = (e) => {
+                        e.preventDefault();
+                        selectTown(formPrefix, town);
+                    };
+                    dropdown.appendChild(btn);
+                });
+            }
+        }
+
+        function selectTown(formPrefix, town) {
+            const input = document.getElementById(`${formPrefix}-poblacion`);
+            const dropdown = document.getElementById(`${formPrefix}-poblacion-dropdown`);
+            
+            input.value = town;
+            dropdown.classList.add('hidden');
+        }
+
+        function hideTownsDropdown(formPrefix) {
+            setTimeout(() => {
+                const dropdown = document.getElementById(`${formPrefix}-poblacion-dropdown`);
+                if (dropdown) dropdown.classList.add('hidden');
+            }, 200);
+        }
+
+        // --- 6. LOGICA ASOCIACIÓN CLIENTE -> POBLACIÓN Y TELÉFONO (DESPACHOS) ---
+        function togglePoblacionEdit() {
+            const checkbox = document.getElementById('despacho-modificar-poblacion');
+            const pInput = document.getElementById('despacho-poblacion');
+            const clientName = document.getElementById('despacho-cliente').value;
+            
+            if (checkbox.checked) {
+                pInput.removeAttribute('readonly');
+                pInput.classList.remove('bg-slate-100', 'text-slate-400');
+                pInput.classList.add('bg-white', 'text-slate-900');
+                pInput.focus();
+                showTownsDropdown('despacho');
+            } else {
+                pInput.setAttribute('readonly', 'readonly');
+                pInput.classList.add('bg-slate-100', 'text-slate-400');
+                pInput.classList.remove('bg-white', 'text-slate-900');
+                
+                const dropdown = document.getElementById('despacho-poblacion-dropdown');
+                if (dropdown) dropdown.classList.add('hidden');
+
+                pInput.value = getClientData(clientName).poblacion;
+            }
+        }
+
+        function toggleTelefonoEdit() {
+            const checkbox = document.getElementById('despacho-modificar-telefono');
+            const tInput = document.getElementById('despacho-telefono');
+            const clientName = document.getElementById('despacho-cliente').value;
+            
+            if (checkbox.checked) {
+                tInput.removeAttribute('readonly');
+                tInput.classList.remove('bg-slate-100', 'text-slate-400');
+                tInput.classList.add('bg-white', 'text-slate-900');
+                tInput.focus();
+            } else {
+                tInput.setAttribute('readonly', 'readonly');
+                tInput.classList.add('bg-slate-100', 'text-slate-400');
+                tInput.classList.remove('bg-white', 'text-slate-900');
+
+                tInput.value = getClientData(clientName).telefono;
+            }
+        }
+
+        function calcularTotalEmpaques() {
+            const caja = parseInt(document.getElementById('despacho-caja').value) || 0;
+            const paquete = parseInt(document.getElementById('despacho-paquete').value) || 0;
+            const rollo = parseInt(document.getElementById('despacho-rollo').value) || 0;
+            const atado = parseInt(document.getElementById('despacho-atado').value) || 0;
+            const saca = parseInt(document.getElementById('despacho-saca').value) || 0;
+            const lio = parseInt(document.getElementById('despacho-lio').value) || 0;
+            const carreta = parseInt(document.getElementById('despacho-carreta').value) || 0;
+            const cadena = parseInt(document.getElementById('despacho-cadena').value) || 0;
+            const otros = parseInt(document.getElementById('despacho-otros').value) || 0;
+
+            const total = caja + paquete + rollo + atado + saca + lio + carreta + cadena + otros;
+            document.getElementById('despacho-total-unidades').innerText = total;
+        }
+
+        // --- 7. MANEJO DE ROUTING/VISTAS (SPA) ---
+        function showView(viewId) {
+            document.getElementById('view-portal').classList.add('hidden');
+            document.getElementById('view-menu').classList.add('hidden');
+            document.getElementById('view-form-general').classList.add('hidden');
+            document.getElementById('view-form-ideace').classList.add('hidden');
+            document.getElementById('view-menu-despachos').classList.add('hidden');
+            document.getElementById('view-form-despachos').classList.add('hidden');
+            document.getElementById('view-admin').classList.add('hidden');
+
+            document.getElementById('view-' + viewId).classList.remove('hidden');
+
+            if (viewId === 'menu-despachos') {
+                renderLotesList();
+            }
+
+            if (viewId === 'admin') {
+                document.getElementById('btn-admin-access').classList.add('hidden');
+                document.getElementById('btn-admin-logout').classList.remove('hidden');
+            } else {
+                if (isAdminLoggedIn) {
+                    document.getElementById('btn-admin-access').classList.add('hidden');
+                    document.getElementById('btn-admin-logout').classList.remove('hidden');
+                } else {
+                    document.getElementById('btn-admin-access').classList.remove('hidden');
+                    document.getElementById('btn-admin-logout').classList.add('hidden');
+                }
+            }
+        }
+
+        function goToPortal() {
+            showView('portal');
+        }
+
+        // --- 8. TOAST (MENSAJES FLOTANTES DE ÉXITO O ALERTA) ---
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toastId = 'toast-' + Date.now();
+            
+            const colorClass = type === 'success' 
+                ? 'border-emerald-500 bg-white text-emerald-800' 
+                : 'border-red-500 bg-white text-red-800';
+            
+            const iconSvg = type === 'success'
+                ? `<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`
+                : `<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+
+            const html = `
+                <div id="${toastId}" class="fade-in max-w-sm w-full bg-white shadow-xl rounded-2xl border-l-4 ${colorClass} p-4 flex items-start space-x-3 transition duration-300">
+                    <div class="flex-shrink-0">${iconSvg}</div>
+                    <div class="flex-1">
+                        <p class="font-bold text-sm text-slate-900">${title}</p>
+                        <p class="text-xs text-slate-500 mt-0.5">${message}</p>
+                    </div>
+                    <button onclick="removeToast('${toastId}')" class="text-slate-400 hover:text-slate-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+
+            setTimeout(() => {
+                removeToast(toastId);
+            }, 5000);
+        }
+
+        function removeToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }
+        }
+
+        const formatTimestamp = () => {
+            const now = new Date();
+            const pad = (num) => String(num).padStart(2, '0');
+            return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        };
+
+        // --- 9. GESTIÓN DE PLANILLAS / LOTES DE DESPACHOS ---
+        function openLoteModal() {
+            document.getElementById('lote-modal').classList.remove('hidden');
+            document.getElementById('lote-input-nombre').value = '';
+            document.getElementById('lote-input-nombre').focus();
+        }
+
+        function closeLoteModal() {
+            document.getElementById('lote-modal').classList.add('hidden');
+        }
+
+        function crearNuevoLoteLogistico() {
+            const inputNombre = document.getElementById('lote-input-nombre').value.trim();
+            if (!inputNombre) {
+                showToast('Campo Vacío', 'Escriba un identificador de planilla válido.', 'error');
+                return;
+            }
+
+            const nuevoLoteId = 'lote-' + Date.now();
+            const nuevoLote = {
+                id: nuevoLoteId,
+                nombre: inputNombre,
+                timestamp: formatTimestamp(),
+                finalizado: false,
+                despachos: []
+            };
+
+            dbLotes.unshift(nuevoLote);
+            closeLoteModal();
+            showToast('Lote Creado', `Iniciando planilla: ${inputNombre}`, 'success');
+            
+            cargarLoteParaTrabajar(nuevoLoteId);
+        }
+
+        function createLoteCardElement(lote, isInsideModal) {
+            const cantRemisiones = lote.despachos.length;
+            const totalUnidadesPlanilla = lote.despachos.reduce((sum, d) => sum + (d.empaques.total || 0), 0);
+
+            const badgeClass = lote.finalizado 
+                ? 'bg-slate-100 text-slate-700 border-slate-200' 
+                : 'bg-amber-100 text-amber-800 border-amber-200';
+            const badgeText = lote.finalizado ? 'Finalizado' : 'Activo';
+
+            const borderHoverClass = lote.finalizado
+                ? 'hover:border-slate-300 hover:shadow-md'
+                : 'hover:border-amber-400 hover:shadow-lg hover:shadow-amber-50';
+
+            const actionBtnText = lote.finalizado ? 'Ver / Modificar' : 'Continuar Registrando';
+            const actionBtnColor = lote.finalizado 
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' 
+                : 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm';
+
+            const cardDiv = document.createElement('div');
+            cardDiv.className = `bg-white border border-slate-200 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 ${borderHoverClass}`;
+            cardDiv.innerHTML = `
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeClass}">
+                            ${badgeText}
+                        </span>
+                        <span class="text-xs text-slate-400 font-mono font-medium">${lote.timestamp}</span>
+                    </div>
+                    <h4 class="text-lg font-black text-slate-900 leading-tight">${lote.nombre}</h4>
+                    
+                    <div class="mt-4 flex flex-col gap-1.5 text-slate-500 text-sm">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="font-bold text-slate-800">${cantRemisiones}</span>
+                            <span>remisiones</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                            <span class="font-bold text-amber-700">${totalUnidadesPlanilla}</span>
+                            <span class="text-amber-600">unidades totales</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-slate-50 flex flex-wrap gap-2">
+                    <button onclick="${isInsideModal ? 'closeTodasPlanillasModal();' : ''} cargarLoteParaTrabajar('${lote.id}')" class="flex-1 min-w-[120px] py-2.5 px-3 text-xs font-bold rounded-xl transition text-center ${actionBtnColor}">
+                        ${actionBtnText}
+                    </button>
+                    <button onclick="exportLoteToWord('${lote.id}')" class="px-3.5 py-2.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition text-xs font-bold flex items-center justify-center gap-1" title="Exportar Planilla a Word (Horizontal)">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Word
+                    </button>
+                    <button onclick="eliminarLote('${lote.id}')" class="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition text-xs" title="Eliminar Planilla">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            return cardDiv;
+        }
+
+        function renderLotesList() {
+            const container = document.getElementById('lotes-grid-container');
+            const emptyState = document.getElementById('lotes-empty-state');
+            const verMasContainer = document.getElementById('ver-mas-lotes-container');
+            container.innerHTML = '';
+
+            if (dbLotes.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                verMasContainer.classList.add('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+
+                const lotesToShow = dbLotes.slice(0, 5);
+                lotesToShow.forEach(lote => {
+                    container.appendChild(createLoteCardElement(lote, false));
+                });
+
+                if (dbLotes.length > 5) {
+                    verMasContainer.classList.remove('hidden');
+                    document.getElementById('total-lotes-badge').innerText = dbLotes.length;
+                } else {
+                    verMasContainer.classList.add('hidden');
+                }
+            }
+        }
+
+        function openTodasPlanillasModal() {
+            document.getElementById('todas-planillas-modal').classList.remove('hidden');
+            document.getElementById('search-planillas-input').value = '';
+            document.getElementById('sort-planillas-select').value = 'desc';
+            renderTodasPlanillasList();
+        }
+
+        function closeTodasPlanillasModal() {
+            document.getElementById('todas-planillas-modal').classList.add('hidden');
+        }
+
+        function renderTodasPlanillasList() {
+            const query = document.getElementById('search-planillas-input').value.toLowerCase().trim();
+            const sortOrder = document.getElementById('sort-planillas-select').value;
+            const container = document.getElementById('todas-planillas-grid-container');
+            container.innerHTML = '';
+
+            let filtered = [...dbLotes];
+
+            if (query) {
+                filtered = filtered.filter(l => l.nombre.toLowerCase().includes(query));
+            }
+
+            filtered.sort((a, b) => {
+                const dateA = new Date(a.timestamp).getTime();
+                const dateB = new Date(b.timestamp).getTime();
+                return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400 font-medium">
+                        No se encontraron planillas que coincidan con la búsqueda.
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(lote => {
+                container.appendChild(createLoteCardElement(lote, true));
+            });
+        }
+
+        function cargarLoteParaTrabajar(loteId) {
+            const lote = dbLotes.find(l => l.id === loteId);
+            if (!lote) return;
+
+            activeLoteId = loteId;
+            editingDespachoId = null;
+
+            document.getElementById('active-lote-title').innerText = `Planilla: ${lote.nombre}`;
+            document.getElementById('active-lote-date').innerText = lote.timestamp;
+
+            const badge = document.getElementById('active-lote-status-badge');
+            if (lote.finalizado) {
+                badge.className = 'px-2.5 py-0.5 text-xs font-bold bg-slate-200 text-slate-800 rounded-full uppercase tracking-wider';
+                badge.innerText = 'Finalizado';
+            } else {
+                badge.className = 'px-2.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-800 rounded-full uppercase tracking-wider';
+                badge.innerText = 'Activo';
+            }
+
+            cancelarEdicionDespacho();
+            renderDespachosDeLoteActual();
+            showView('form-despachos');
+        }
+
+        function finalizarPlanillaActual() {
+            const lote = dbLotes.find(l => l.id === activeLoteId);
+            if (lote) {
+                lote.finalizado = true;
+                showToast('Planilla Finalizada', `Se guardó el lote "${lote.nombre}" en el historial.`, 'success');
+            }
+            showView('menu-despachos');
+            renderAdminPanel();
+        }
+
+        function eliminarLote(loteId) {
+            const lote = dbLotes.find(l => l.id === loteId);
+            const confirmation = confirm(`¿Está seguro de eliminar por completo la planilla "${lote ? lote.nombre : ''}" y todos sus despachos?`);
+            if (confirmation) {
+                dbLotes = dbLotes.filter(l => l.id !== loteId);
+                showToast('Lote Eliminado', 'La planilla de despachos fue eliminada de la memoria.', 'success');
+                renderLotesList();
+                renderAdminPanel();
+            }
+        }
+
+        // --- 10. TRABAJO SOBRE EL LOTE ACTUAL (TABLA INTERACTIVA) ---
+        function renderDespachosDeLoteActual() {
+            const lote = dbLotes.find(l => l.id === activeLoteId);
+            const tbody = document.getElementById('tbody-despachos-lote-actual');
+            const emptyState = document.getElementById('despachos-lote-empty-state');
+            tbody.innerHTML = '';
+
+            if (!lote || lote.despachos.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                document.getElementById('active-lote-summary-txt').innerText = "0 remisiones en este lote";
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+                document.getElementById('active-lote-summary-txt').innerText = `${lote.despachos.length} remisiones en este lote`;
+
+                lote.despachos.forEach(despacho => {
+                    const empList = [];
+                    if (despacho.empaques.caja > 0) empList.push(`${despacho.empaques.caja} Caj`);
+                    if (despacho.empaques.paquete > 0) empList.push(`${despacho.empaques.paquete} Paq`);
+                    if (despacho.empaques.rollo > 0) empList.push(`${despacho.empaques.rollo} Rol`);
+                    if (despacho.empaques.atado > 0) empList.push(`${despacho.empaques.atado} Ata`);
+                    if (despacho.empaques.saca > 0) empList.push(`${despacho.empaques.saca} Sac`);
+                    if (despacho.empaques.lio > 0) empList.push(`${despacho.empaques.lio} Lío`);
+                    if (despacho.empaques.carreta > 0) empList.push(`${despacho.empaques.carreta} Car`);
+                    if (despacho.empaques.cadena > 0) empList.push(`${despacho.empaques.cadena} Cad`);
+                    if (despacho.empaques.otros > 0) empList.push(`${despacho.empaques.otros} Otr`);
+                    
+                    const empaquesTexto = empList.length > 0 ? empList.join(', ') + ` <br><strong class="text-amber-700">Total: ${despacho.empaques.total} und.</strong>` : 'Sin empaques';
+
+                    const tr = `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-4 py-3 font-mono text-xs">
+                                <div class="font-bold text-slate-800">${despacho.remision}</div>
+                                <div class="text-slate-500 mt-0.5">${despacho.fve || ''}</div>
+                            </td>
+                            <td class="px-4 py-3 font-medium text-slate-900 max-w-[150px] truncate" title="${despacho.cliente}">${despacho.cliente}</td>
+                            <td class="px-4 py-3 text-xs text-slate-500">${despacho.telefono || ''}</td>
+                            <td class="px-4 py-3">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-slate-100 text-slate-800">${despacho.poblacion}</span>
+                            </td>
+                            <td class="px-4 py-3 text-xs text-slate-500">${empaquesTexto}</td>
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex justify-center items-center space-x-1.5">
+                                    <button onclick="cargarDespachoParaEditar('${despacho.id}')" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition" title="Editar Remisión">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                        </svg>
+                                    </button>
+                                    <button onclick="eliminarDespachoDeLote('${despacho.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition" title="Eliminar Remisión">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', tr);
+                });
+            }
+        }
+
+        function cargarDespachoParaEditar(despachoId) {
+            const lote = dbLotes.find(l => l.id === activeLoteId);
+            if (!lote) return;
+
+            const despacho = lote.despachos.find(d => d.id === despachoId);
+            if (!despacho) return;
+
+            editingDespachoId = despachoId;
+
+            // Inyectar valores básicos (Remisión y FVE)
+            const remisionNumero = despacho.remision.replace("RM1-", "");
+            document.getElementById('despacho-remision').value = remisionNumero;
+
+            if(document.getElementById('despacho-fve') && despacho.fve) {
+                const fveNumero = despacho.fve.replace("FVE-", "");
+                document.getElementById('despacho-fve').value = fveNumero;
+            }
+
+            // Seleccionar cliente
+            document.getElementById('despacho-cliente').value = despacho.cliente;
+
+            // Verificar si la población difiere de la default
+            const clientObj = clients.find(c => c.nombre === despacho.cliente);
+            const checkboxPob = document.getElementById('despacho-modificar-poblacion');
+            const pInput = document.getElementById('despacho-poblacion');
+            
+            pInput.value = despacho.poblacion;
+
+            if (clientObj && clientObj.poblacion !== despacho.poblacion) {
+                checkboxPob.checked = true;
+                pInput.removeAttribute('readonly');
+                pInput.classList.remove('bg-slate-100', 'text-slate-400');
+                pInput.classList.add('bg-white', 'text-slate-900');
+            } else {
+                checkboxPob.checked = false;
+                pInput.setAttribute('readonly', 'readonly');
+                pInput.classList.add('bg-slate-100', 'text-slate-400');
+                pInput.classList.remove('bg-white', 'text-slate-900');
+            }
+
+            const checkboxTel = document.getElementById('despacho-modificar-telefono');
+            const tInput = document.getElementById('despacho-telefono');
+            if(tInput) {
+                tInput.value = despacho.telefono || '';
+                if (clientObj && clientObj.telefono !== despacho.telefono) {
+                    checkboxTel.checked = true;
+                    tInput.removeAttribute('readonly');
+                    tInput.classList.remove('bg-slate-100', 'text-slate-400');
+                    tInput.classList.add('bg-white', 'text-slate-900');
+                } else {
+                    checkboxTel.checked = false;
+                    tInput.setAttribute('readonly', 'readonly');
+                    tInput.classList.add('bg-slate-100', 'text-slate-400');
+                    tInput.classList.remove('bg-white', 'text-slate-900');
+                }
+            }
+
+            // Inyectar Empaques Nuevos (9 empaques)
+            document.getElementById('despacho-caja').value = despacho.empaques.caja || '';
+            document.getElementById('despacho-paquete').value = despacho.empaques.paquete || '';
+            document.getElementById('despacho-rollo').value = despacho.empaques.rollo || '';
+            document.getElementById('despacho-atado').value = despacho.empaques.atado || '';
+            document.getElementById('despacho-saca').value = despacho.empaques.saca || '';
+            document.getElementById('despacho-lio').value = despacho.empaques.lio || '';
+            document.getElementById('despacho-carreta').value = despacho.empaques.carreta || '';
+            document.getElementById('despacho-cadena').value = despacho.empaques.cadena || '';
+            document.getElementById('despacho-otros').value = despacho.empaques.otros || '';
+            calcularTotalEmpaques();
+
+            // Cambiar modo visual del formulario a Edición
+            document.getElementById('despacho-form-mode-title').innerText = "Modificar Remisión";
+            document.getElementById('btn-guardar-despacho').innerText = "Actualizar Despacho";
+            document.getElementById('btn-cancelar-edicion').classList.remove('hidden');
+
+            showToast('Modo de Edición', 'Modifique los campos y presione Actualizar Despacho.', 'success');
+        }
+
+        function cancelarEdicionDespacho() {
+            editingDespachoId = null;
+            document.getElementById('form-logistica-despachos').reset();
+
+            // Reestablecer inputs de población
+            const checkboxPob = document.getElementById('despacho-modificar-poblacion');
+            checkboxPob.checked = false;
+            
+            const pInput = document.getElementById('despacho-poblacion');
+            pInput.value = '';
+            pInput.setAttribute('readonly', 'readonly');
+            pInput.classList.add('bg-slate-100', 'text-slate-400');
+            pInput.classList.remove('bg-white', 'text-slate-900');
+
+            const checkboxTel = document.getElementById('despacho-modificar-telefono');
+            if(checkboxTel) checkboxTel.checked = false;
+            
+            const tInput = document.getElementById('despacho-telefono');
+            if(tInput) {
+                tInput.value = '';
+                tInput.setAttribute('readonly', 'readonly');
+                tInput.classList.add('bg-slate-100', 'text-slate-400');
+                tInput.classList.remove('bg-white', 'text-slate-900');
+            }
+
+            calcularTotalEmpaques();
+
+            // Reestablecer títulos de modo de formulario
+            document.getElementById('despacho-form-mode-title').innerText = "Agregar Remisión";
+            document.getElementById('btn-guardar-despacho').innerText = "Registrar Despacho";
+            document.getElementById('btn-cancelar-edicion').classList.add('hidden');
+        }
+
+        function eliminarDespachoDeLote(despachoId) {
+            const lote = dbLotes.find(l => l.id === activeLoteId);
+            if (!lote) return;
+
+            const confirmacion = confirm("¿Está seguro de eliminar esta remisión de la planilla?");
+            if (confirmacion) {
+                lote.despachos = lote.despachos.filter(d => d.id !== despachoId);
+                showToast('Despacho Removido', 'La remisión fue eliminada del lote actual.', 'success');
+                renderDespachosDeLoteActual();
+                renderAdminPanel();
+
+                // Si se eliminó el que se estaba editando, resetear formulario
+                if (editingDespachoId === despachoId) {
+                    cancelarEdicionDespacho();
+                }
+            }
+        }
+
+        // Guardar o Actualizar Despacho
+        function submitDespachoForm(e) {
+            e.preventDefault();
+            const lote = dbLotes.find(l => l.id === activeLoteId);
+            if (!lote) {
+                showToast('Error de Sistema', 'No se encuentra un lote activo para guardar.', 'error');
+                return;
+            }
+
+            const inputValRemision = document.getElementById('despacho-remision').value.trim();
+            const remisionCompleta = "RM1-" + inputValRemision;
+            
+            const inputValFve = document.getElementById('despacho-fve') ? document.getElementById('despacho-fve').value.trim() : '';
+            const fveCompleta = inputValFve ? "FVE-" + inputValFve : '';
+
+            const cliente = document.getElementById('despacho-cliente').value.trim();
+            const poblacion = document.getElementById('despacho-poblacion').value.trim();
+            const telefono = document.getElementById('despacho-telefono') ? document.getElementById('despacho-telefono').value.trim() : '';
+            
+            // Empaques
+            const caja = parseInt(document.getElementById('despacho-caja').value) || 0;
+            const paquete = parseInt(document.getElementById('despacho-paquete').value) || 0;
+            const rollo = parseInt(document.getElementById('despacho-rollo').value) || 0;
+            const atado = parseInt(document.getElementById('despacho-atado').value) || 0;
+            const saca = parseInt(document.getElementById('despacho-saca').value) || 0;
+            const lio = parseInt(document.getElementById('despacho-lio').value) || 0;
+            const carreta = parseInt(document.getElementById('despacho-carreta').value) || 0;
+            const cadena = parseInt(document.getElementById('despacho-cadena').value) || 0;
+            const otros = parseInt(document.getElementById('despacho-otros').value) || 0;
+            const total = caja + paquete + rollo + atado + saca + lio + carreta + cadena + otros;
+
+            if (!cliente) {
+                showToast('Formulario Incompleto', 'Debe seleccionar o escribir un cliente destinatario.', 'error');
+                return;
+            }
+
+            if (editingDespachoId) {
+                // MODO EDICIÓN / ACTUALIZAR
+                const despacho = lote.despachos.find(d => d.id === editingDespachoId);
+                if (despacho) {
+                    despacho.remision = remisionCompleta;
+                    despacho.fve = fveCompleta;
+                    despacho.cliente = cliente;
+                    despacho.telefono = telefono;
+                    despacho.poblacion = poblacion;
+                    despacho.empaques = { caja, paquete, rollo, atado, saca, lio, carreta, cadena, otros, total };
+                    
+                    showToast('Despacho Actualizado', `Se modificó la remisión ${remisionCompleta} con éxito.`, 'success');
+                }
+                cancelarEdicionDespacho();
+            } else {
+                // MODO NUEVO REGISTRO
+                const nuevoDespacho = {
+                    id: 'despacho-' + Date.now(),
+                    remision: remisionCompleta,
+                    fve: fveCompleta,
+                    cliente: cliente,
+                    telefono: telefono,
+                    poblacion: poblacion,
+                    empaques: { caja, paquete, rollo, atado, saca, lio, carreta, cadena, otros, total }
+                };
+
+                lote.despachos.unshift(nuevoDespacho);
+                showToast('Remisión Registrada', `Se sumó ${remisionCompleta} a la planilla actual.`, 'success');
+                
+                // MEJORA: Limpiar absolutamente todo el formulario tras el registro para un nuevo ingreso limpio
+                cancelarEdicionDespacho();
+                document.getElementById('despacho-remision').focus();
+            }
+
+            renderDespachosDeLoteActual();
+            renderAdminPanel();
+        }
+
+        // --- 11. GENERADOR DE WORD EN FORMATO HORIZONTAL (MANDATORIO) ---
+        function exportLoteToWord(loteId) {
+            const lote = dbLotes.find(l => l.id === loteId);
+            if (!lote) return;
+
+            let tableRows = '';
+            lote.despachos.forEach(d => {
+                const caja = d.empaques.caja > 0 ? d.empaques.caja : '';
+                const paquete = d.empaques.paquete > 0 ? d.empaques.paquete : '';
+                const rollo = d.empaques.rollo > 0 ? d.empaques.rollo : '';
+                const atado = d.empaques.atado > 0 ? d.empaques.atado : '';
+                const saca = d.empaques.saca > 0 ? d.empaques.saca : '';
+                const lio = d.empaques.lio > 0 ? d.empaques.lio : '';
+                const carreta = d.empaques.carreta > 0 ? d.empaques.carreta : '';
+                const cadena = d.empaques.cadena > 0 ? d.empaques.cadena : '';
+                const otros = d.empaques.otros > 0 ? d.empaques.otros : '';
+                const total = d.empaques.total > 0 ? d.empaques.total : '';
+                
+                tableRows += `
+                    <tr>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${d.remision}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center; color:#4B5563;">${d.fve || ''}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold;">${d.cliente}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${d.telefono || ''}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${d.poblacion}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${caja}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${paquete}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${rollo}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${atado}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${saca}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${lio}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${carreta}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${cadena}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center;">${otros}</td>
+                        <td style="border: 1px solid #000000; padding: 1px 2px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: center; background-color: #F8FAFC;">${total}</td>
+                    </tr>
+                `;
+            });
+
+            // Fila final reducida y sin gasto de tinta
+            const granTotal = lote.despachos.reduce((sum, d) => sum + (d.empaques.total || 0), 0);
+            
+            tableRows += `
+                <tr>
+                    <td colspan="13" style="border: none;"></td>
+                    <td style="border: 1px solid #000000; padding: 2px 4px; font-family: Arial; font-size: 7pt; font-weight: bold; text-align: right;">TOTAL:</td>
+                    <td style="border: 1px solid #000000; padding: 2px 4px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center; color: #1E3A8A;">${granTotal}</td>
+                </tr>
+            `;
+
+            const htmlContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset="utf-8">
+                <title>Planilla de Despacho - ${lote.nombre}</title>
+                <!--[if gte mso 9]><xml>
+                <w:WordDocument>
+                    <w:View>Print</w:View>
+                    <w:Zoom>100</w:Zoom>
+                    <w:DoNotOptimizeForBrowser/>
+                </w:WordDocument>
+                </xml><![endif]-->
+                <style>
+                    @page Section1 {
+                        size: 841.9pt 595.3pt; /* Tamaño A4 Horizontal */
+                        mso-page-orientation: landscape;
+                        margin: 0.4in 0.4in 0.4in 0.4in;
+                        mso-header-margin: 0.3in;
+                        mso-footer-margin: 0.3in;
+                    }
+                    div.Section1 {
+                        page: Section1;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        color: #000000;
+                        margin: 0;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 10px;
+                        page-break-inside: auto;
+                    }
+                    tr {
+                        page-break-inside: avoid;
+                        page-break-after: auto;
+                    }
+                    thead {
+                        display: table-header-group;
+                    }
+                    th {
+                        background-color: #E2E8F0;
+                        color: #000000;
+                        font-family: Arial;
+                        font-size: 7pt;
+                        font-weight: bold;
+                        border: 1px solid #000000;
+                        padding: 2px;
+                        text-align: center;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="Section1">
+                    <table style="width: 100%; border: none; margin-bottom: 5px; margin-top: 0px;">
+                        <tr style="border: none;">
+                            <td style="border: none; width: 65%; vertical-align: middle;">
+                                <!-- LOGO CONFIGURADO PEQUEÑO COMO UN TÍTULO -->
+                                <img src="FERCOSUR.jpeg" style="height: 28px; width: auto; display: block; margin-bottom: 4px;" alt="FERCOSUR S.A.S." />
+                                <p style="font-family: Arial; font-size: 9pt; font-weight: bold; color: #4B5563; margin: 2px 0 0 0; letter-spacing: 0.5px;">PLANILLA GENERAL DE DESPACHOS LOGÍSTICOS</p>
+                            </td>
+                            <td style="border: none; width: 35%; text-align: right; vertical-align: middle;">
+                                <p style="font-family: Arial; font-size: 8pt; margin: 0;"><strong>Fecha:</strong> ${formatTimestamp()}</p>
+                                <p style="font-family: Arial; font-size: 8pt; margin: 2px 0 0 0;"><strong>Lote:</strong> ${lote.nombre}</p>
+                                <p style="font-family: Arial; font-size: 8pt; margin: 2px 0 0 0;"><strong>ID:</strong> ${lote.id}</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div style="border-bottom: 2px solid #1E3A8A; margin-bottom: 10px; margin-top: 5px;"></div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width: 7%; border: 1px solid #000000;">N° Guía</th>
+                                <th rowspan="2" style="width: 7%; border: 1px solid #000000;">N° FVE</th>
+                                <th rowspan="2" style="width: 14%; border: 1px solid #000000;">Cliente Destinatario</th>
+                                <th rowspan="2" style="width: 8%; border: 1px solid #000000;">Celular</th>
+                                <th rowspan="2" style="width: 8%; border: 1px solid #000000;">Población</th>
+                                <th colspan="10" style="width: 56%; border: 1px solid #000000;">Información del Despacho (Unidades de Empaque)</th>
+                            </tr>
+                            <tr>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Caja</th>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Paq.</th>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Rollo</th>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Atado</th>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Saca</th>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Lío</th>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Carr.</th>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Cade.</th>
+                                <th style="width: 5.6%; border: 1px solid #000000;">Otros</th>
+                                <th style="width: 5.6%; border: 1px solid #000000; background-color: #CBD5E1;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 15px; border: 1.5px solid #1E3A8A; padding: 8px; page-break-inside: avoid;">
+                        <h3 style="margin-top: 0; margin-bottom: 6px; font-family: Arial; font-size: 9pt; font-weight: bold; color: #1E3A8A; border-bottom: 1px solid #1E3A8A; padding-bottom: 4px;">CONTROL DE ENTREGA Y TRANSPORTE</h3>
+                        <table style="width: 100%; border: none !important; margin-top: 2px;">
+                            <tr style="border: none !important;">
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 4px 0; color: #1E293B;"><strong>Nombre de Conductor:</strong> _________________________________</td>
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 4px 0; color: #1E293B;"><strong>Cédula de Ciudadanía:</strong> _____________________________</td>
+                            </tr>
+                            <tr style="border: none !important;">
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 4px 0; color: #1E293B;"><strong>Placa del Vehículo:</strong> ____________________________________</td>
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 4px 0; color: #1E293B;"><strong>Número de Celular:</strong> ________________________________</td>
+                            </tr>
+                            <tr style="border: none !important;">
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 4px 0; color: #1E293B;"><strong>Nombre de quien entrega:</strong> ______________________________</td>
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 4px 0; color: #1E293B;"><strong>Firma de quien entrega:</strong> _____________________________</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </body>
+            </html>
+            `;
+
+            // Convertir a blob compatible e iniciar descarga
+            const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `PLANILLA_${lote.nombre.replace(/[^a-z0-9]/gi, '_').toUpperCase()}.doc`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Documento Word Listo', 'Se exportó la planilla de despacho en formato horizontal con éxito.', 'success');
+        }
+
+        // --- 12. FORMULARIOS DE REGISTRO ORIGINALES (PEDIDOS) ---
+        function submitGeneralForm(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('gen-nombre').value.trim();
+            const prefixVal = document.getElementById('gen-pedido-prefix').innerText;
+            const inputVal = document.getElementById('gen-pedido').value.trim();
+            const pedidoCompleto = prefixVal + inputVal;
+            const poblacion = document.getElementById('gen-poblacion').value.trim();
+
+            dbGeneral.unshift({
+                timestamp: formatTimestamp(),
+                nombre: nombre,
+                pedido: pedidoCompleto,
+                poblacion: poblacion
+            });
+
+            document.getElementById('form-pedidos-general').reset();
+            updatePrefix('gen', 'PED-');
+            
+            showToast('¡Registro Exitoso!', 'El pedido general ha sido almacenado correctamente.', 'success');
+            showView('menu');
+            renderAdminPanel();
+        }
+
+        function submitIdeaceForm(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('ideace-nombre').value.trim();
+            const prefixVal = document.getElementById('ideace-pedido-prefix').innerText;
+            const inputVal = document.getElementById('ideace-pedido').value.trim();
+            const pedidoCompleto = prefixVal + inputVal;
+            const poblacion = document.getElementById('ideace-poblacion').value.trim();
+            const incluyeChalecos = document.getElementById('ideace-incluye-chalecos').value;
+            const chalecosCantidad = document.getElementById('ideace-chalecos-cantidad').value;
+            const incluyeTokens = document.getElementById('ideace-incluye-tokens').value;
+            const tokensCantidad = document.getElementById('ideace-tokens-cantidad').value;
+
+            const chalecosResultado = incluyeChalecos === 'SI' ? `SÍ (${chalecosCantidad})` : 'NO';
+            const tokensResultado = incluyeTokens === 'SI' ? `SÍ (${tokensCantidad})` : 'NO';
+
+            dbIdeace.unshift({
+                timestamp: formatTimestamp(),
+                nombre: nombre,
+                pedido: pedidoCompleto,
+                poblacion: poblacion,
+                chalecos: chalecosResultado,
+                tokens: tokensResultado
+            });
+
+            document.getElementById('form-pedidos-ideace').reset();
+            updatePrefix('ideace', 'PED-');
+            
+            document.getElementById('container-chalecos-cantidad').classList.add('hidden');
+            document.getElementById('ideace-chalecos-cantidad').removeAttribute('required');
+            document.getElementById('container-tokens-cantidad').classList.add('hidden');
+            document.getElementById('ideace-tokens-cantidad').removeAttribute('required');
+
+            showToast('¡Registro Exitoso!', 'El reporte de competencia IDEACE fue almacenado.', 'success');
+            showView('menu');
+            renderAdminPanel();
+        }
+
+        // --- 13. CONTROL SEGURIDAD POR PIN (MODAL) ---
+        function openPinModal() {
+            if (isAdminLoggedIn) {
+                showView('admin');
+                return;
+            }
+            document.getElementById('pin-modal').classList.remove('hidden');
+            document.getElementById('pin-error-msg').classList.add('hidden');
+            document.getElementById('pin-1').focus();
+        }
+
+        function closePinModal() {
+            document.getElementById('pin-modal').classList.add('hidden');
+            clearPinFields();
+        }
+
+        function clearPinFields() {
+            document.getElementById('pin-1').value = '';
+            document.getElementById('pin-2').value = '';
+            document.getElementById('pin-3').value = '';
+            document.getElementById('pin-4').value = '';
+        }
+
+        function handlePinInput(current, nextFieldId, prevFieldId) {
+            if (current.value.length >= 1 && nextFieldId) {
+                document.getElementById(nextFieldId).focus();
+            }
+            if (current.value.length === 0 && prevFieldId) {
+                document.getElementById(prevFieldId).focus();
+            }
+        }
+
+        function submitPin() {
+            const p1 = document.getElementById('pin-1').value;
+            const p2 = document.getElementById('pin-2').value;
+            const p3 = document.getElementById('pin-3').value;
+            const p4 = document.getElementById('pin-4').value;
+            const enteredPin = p1 + p2 + p3 + p4;
+
+            if (enteredPin === '1234') {
+                isAdminLoggedIn = true;
+                closePinModal();
+                showToast('Acceso Permitido', 'Bienvenido al panel administrativo de Fercosur.', 'success');
+                showView('admin');
+                renderAdminPanel();
+            } else {
+                document.getElementById('pin-error-msg').classList.remove('hidden');
+                clearPinFields();
+                document.getElementById('pin-1').focus();
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('btn-admin-access').classList.remove('hidden');
+            document.getElementById('btn-admin-logout').classList.add('hidden');
+            goToPortal();
+            showToast('Sesión Cerrada', 'Has abandonado el panel de administración de manera segura.', 'success');
+        }
+
+        // --- 14. PANEL DE CONTROL DE ADMINISTRADOR ---
+        function renderAdminPanel() {
+            document.getElementById('counter-general').innerText = dbGeneral.length;
+            document.getElementById('counter-ideace').innerText = dbIdeace.length;
+
+            let totalDespachosCount = 0;
+            dbLotes.forEach(lote => {
+                totalDespachosCount += lote.despachos.length;
+            });
+            document.getElementById('counter-despachos').innerText = totalDespachosCount;
+
+            renderTableData();
+        }
+
+        function switchAdminTab(tabType) {
+            currentActiveAdminTab = tabType;
+            const tabGen = document.getElementById('tab-general');
+            const tabIdeace = document.getElementById('tab-ideace');
+            const tabDespachos = document.getElementById('tab-despachos');
+
+            // Reset borders de las pestañas
+            tabGen.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+            tabIdeace.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+            tabDespachos.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+
+            // Ocultar todas las tablas
+            document.getElementById('table-general-view').classList.add('hidden');
+            document.getElementById('table-ideace-view').classList.add('hidden');
+            document.getElementById('table-despachos-view').classList.add('hidden');
+
+            if (tabType === 'general') {
+                tabGen.className = "text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+                document.getElementById('table-title').innerText = "Respuestas Generales";
+                document.getElementById('table-general-view').classList.remove('hidden');
+            } else if (tabType === 'ideace') {
+                tabIdeace.className = "text-left w-full p-6 bg-white border-2 border-emerald-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+                document.getElementById('table-title').innerText = "Respuestas IDEACE";
+                document.getElementById('table-ideace-view').classList.remove('hidden');
+            } else if (tabType === 'despachos') {
+                tabDespachos.className = "text-left w-full p-6 bg-white border-2 border-amber-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+                document.getElementById('table-title').innerText = "Despachos Logísticos Registrados";
+                document.getElementById('table-despachos-view').classList.remove('hidden');
+            }
+
+            renderTableData();
+        }
+
+        function renderTableData() {
+            const emptyState = document.getElementById('table-empty-state');
+            
+            if (currentActiveAdminTab === 'general') {
+                const tbodyGen = document.getElementById('tbody-general');
+                tbodyGen.innerHTML = '';
+                
+                if (dbGeneral.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    emptyState.classList.add('flex');
+                    document.getElementById('table-general-view').classList.add('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    emptyState.classList.remove('flex');
+                    document.getElementById('table-general-view').classList.remove('hidden');
+
+                    dbGeneral.forEach(item => {
+                        const tr = `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
+                                <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
+                                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${item.pedido}</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
+                                </td>
+                            </tr>
+                        `;
+                        tbodyGen.insertAdjacentHTML('beforeend', tr);
+                    });
+                }
+            } else if (currentActiveAdminTab === 'ideace') {
+                const tbodyIdeace = document.getElementById('tbody-ideace');
+                tbodyIdeace.innerHTML = '';
+
+                if (dbIdeace.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    emptyState.classList.add('flex');
+                    document.getElementById('table-ideace-view').classList.add('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    emptyState.classList.remove('flex');
+                    document.getElementById('table-ideace-view').classList.remove('hidden');
+
+                    dbIdeace.forEach(item => {
+                        const chalecoClass = item.chalecos.includes('SÍ') ? 'bg-brand-50 text-brand-800 border-brand-200' : 'bg-slate-100 text-slate-400 border-slate-200';
+                        const tokenClass = item.tokens.includes('SÍ') ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-slate-100 text-slate-400 border-slate-200';
+
+                        const tr = `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
+                                <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
+                                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${item.pedido}</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
+                                </td>
+                                <td class="px-6 py-4 bg-brand-50/20">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border ${chalecoClass}">${item.chalecos}</span>
+                                </td>
+                                <td class="px-6 py-4 bg-emerald-50/20">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border ${tokenClass}">${item.tokens}</span>
+                                </td>
+                            </tr>
+                        `;
+                        tbodyIdeace.insertAdjacentHTML('beforeend', tr);
+                    });
+                }
+            } else if (currentActiveAdminTab === 'despachos') {
+                const tbodyDespachos = document.getElementById('tbody-despachos');
+                tbodyDespachos.innerHTML = '';
+
+                let allDespachosFlat = [];
+                dbLotes.forEach(lote => {
+                    lote.despachos.forEach(despacho => {
+                        allDespachosFlat.push({
+                            loteNombre: lote.nombre,
+                            loteId: lote.id,
+                            timestamp: lote.timestamp,
+                            ...despacho
+                        });
+                    });
+                });
+
+                if (allDespachosFlat.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    emptyState.classList.add('flex');
+                    document.getElementById('table-despachos-view').classList.add('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    emptyState.classList.remove('flex');
+                    document.getElementById('table-despachos-view').classList.remove('hidden');
+
+                    allDespachosFlat.forEach(item => {
+                        const empList = [];
+                        if (item.empaques.caja > 0) empList.push(`${item.empaques.caja} Caj`);
+                        if (item.empaques.paquete > 0) empList.push(`${item.empaques.paquete} Paq`);
+                        if (item.empaques.rollo > 0) empList.push(`${item.empaques.rollo} Rol`);
+                        if (item.empaques.atado > 0) empList.push(`${item.empaques.atado} Ata`);
+                        if (item.empaques.saca > 0) empList.push(`${item.empaques.saca} Sac`);
+                        if (item.empaques.lio > 0) empList.push(`${item.empaques.lio} Lío`);
+                        if (item.empaques.carreta > 0) empList.push(`${item.empaques.carreta} Car`);
+                        if (item.empaques.cadena > 0) empList.push(`${item.empaques.cadena} Cad`);
+                        if (item.empaques.otros > 0) empList.push(`${item.empaques.otros} Otr`);
+                        
+                        const detalleEmpaques = empList.length > 0 ? empList.join(', ') : 'Sin empaques';
+
+                        const tr = `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
+                                <td class="px-6 py-4 font-bold text-slate-700 truncate max-w-[150px]">${item.loteNombre}</td>
+                                <td class="px-6 py-4 font-mono text-sm">
+                                    <div class="font-bold text-slate-800">${item.remision}</div>
+                                    <div class="text-slate-500 text-xs mt-0.5">${item.fve || ''}</div>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-slate-900">${item.cliente}</td>
+                                <td class="px-6 py-4 font-mono text-slate-600 text-sm">${item.telefono || ''}</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
+                                </td>
+                                <td class="px-6 py-4 font-medium text-slate-600 bg-amber-50/10">${detalleEmpaques}</td>
+                            </tr>
+                        `;
+                        tbodyDespachos.insertAdjacentHTML('beforeend', tr);
+                    });
+                }
+            }
+        }
+
+        // --- 15. EXPORTACIONES NATIVAS A EXCEL (SHEETJS) ---
+        function exportConsolidated() {
+            if (dbGeneral.length === 0 && dbIdeace.length === 0) {
+                showToast('Sin Datos', 'No hay registros de pedidos generales ni IDEACE para consolidar.', 'error');
+                return;
+            }
+
+            const format = (data, tipo) => {
+                return data.map(item => ({
+                    'Hora de Registro': item.timestamp,
+                    'Nombre Completo': item.nombre,
+                    'Número de Pedido': item.pedido,
+                    'Población / Ciudad': item.poblacion,
+                    'Tipo de Formulario': tipo
+                }));
+            };
+
+            const consolidatedList = [
+                ...format(dbGeneral, 'Registro General'),
+                ...format(dbIdeace, 'Competencia IDEACE')
+            ];
+
+            consolidatedList.sort((a, b) => new Date(b['Hora de Registro']) - new Date(a['Hora de Registro']));
+
+            const ws = XLSX.utils.json_to_sheet(consolidatedList);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Consolidado Pedidos");
+
+            XLSX.writeFile(wb, "REPORTE_CONSOLIDADO_PEDIDOS_FERCOSUR.xlsx");
+            showToast('Exportación Exitosa', 'El Excel consolidado de pedidos se descargó correctamente.', 'success');
+        }
+
+        function exportActiveTable() {
+            if (currentActiveAdminTab === 'general') {
+                if (dbGeneral.length === 0) {
+                    showToast('Sin Datos', 'No hay registros en la Base de Datos General.', 'error');
+                    return;
+                }
+
+                const dataToExport = dbGeneral.map(item => ({
+                    'Hora de Registro': item.timestamp,
+                    'Nombre Completo': item.nombre,
+                    'Número de Pedido': item.pedido,
+                    'Población / Ciudad': item.poblacion
+                }));
+
+                const ws = XLSX.utils.json_to_sheet(dataToExport);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Pedidos Generales");
+                XLSX.writeFile(wb, "REPORTE_PEDIDOS_GENERALES.xlsx");
+                showToast('Descarga Exitosa', 'Tabla de pedidos generales exportada.', 'success');
+            } else if (currentActiveAdminTab === 'ideace') {
+                if (dbIdeace.length === 0) {
+                    showToast('Sin Datos', 'No hay registros en la Base de Datos de IDEACE.', 'error');
+                    return;
+                }
+
+                const dataToExport = dbIdeace.map(item => ({
+                    'Hora de Registro': item.timestamp,
+                    'Nombre Completo': item.nombre,
+                    'Número de Pedido': item.pedido,
+                    'Población / Ciudad': item.poblacion,
+                    'Chalecos Incluidos': item.chalecos,
+                    'Tokens Incluidos': item.tokens
+                }));
+
+                const ws = XLSX.utils.json_to_sheet(dataToExport);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Registro Competencia IDEACE");
+                XLSX.writeFile(wb, "REPORTE_COMPETENCIA_IDEACE_DETALLADO.xlsx");
+                showToast('Descarga Exitosa', 'Tabla de competencia IDEACE exportada.', 'success');
+            } else if (currentActiveAdminTab === 'despachos') {
+                let allDespachosFlat = [];
+                dbLotes.forEach(lote => {
+                    lote.despachos.forEach(despacho => {
+                        allDespachosFlat.push({
+                            loteNombre: lote.nombre,
+                            loteId: lote.id,
+                            timestamp: lote.timestamp,
+                            ...despacho
+                        });
+                    });
+                });
+
+                if (allDespachosFlat.length === 0) {
+                    showToast('Sin Datos', 'No hay registros en la Base de Datos de Despachos.', 'error');
+                    return;
+                }
+
+                const dataToExport = allDespachosFlat.map(item => {
+                    const empList = [];
+                    if (item.empaques.caja > 0) empList.push(`${item.empaques.caja} Caj`);
+                    if (item.empaques.paquete > 0) empList.push(`${item.empaques.paquete} Paq`);
+                    if (item.empaques.rollo > 0) empList.push(`${item.empaques.rollo} Rol`);
+                    if (item.empaques.atado > 0) empList.push(`${item.empaques.atado} Ata`);
+                    if (item.empaques.saca > 0) empList.push(`${item.empaques.saca} Sac`);
+                    if (item.empaques.lio > 0) empList.push(`${item.empaques.lio} Lío`);
+                    if (item.empaques.carreta > 0) empList.push(`${item.empaques.carreta} Car`);
+                    if (item.empaques.cadena > 0) empList.push(`${item.empaques.cadena} Cad`);
+                    if (item.empaques.otros > 0) empList.push(`${item.empaques.otros} Otr`);
+                    const detalleEmpaques = empList.length > 0 ? empList.join(', ') + ` (Total: ${item.empaques.total})` : 'Sin empaques';
+
+                    return {
+                        'Hora de Registro': item.timestamp,
+                        'Lote Planilla': item.loteNombre,
+                        'Número de Remisión': item.remision,
+                        'Número FVE': item.fve || '',
+                        'Cliente Destinatario': item.cliente,
+                        'Teléfono': item.telefono || '',
+                        'Población / Ciudad': item.poblacion,
+                        'Detalle Empaques': detalleEmpaques,
+                        'Total Unidades': item.empaques.total
+                    };
+                });
+
+                const ws = XLSX.utils.json_to_sheet(dataToExport);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Despachos Logísticos");
+                XLSX.writeFile(wb, "REPORTE_DESPACHOS_LOGISTICA.xlsx");
+                showToast('Descarga Exitosa', 'Historial de despachos logísticos exportado.', 'success');
+            }
+        }
+
+        // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
+        window.onload = function() {
+            showView('portal');
+        }
+    </script>
+</body>
+</html>
