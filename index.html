@@ -3486,10 +3486,18 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
 `;
 const clients = rawCSVData.split('\n')
     .map(line => line.trim())
-    .filter(line => line.length > 0 && !line.startsWith('RAZON SOCIAL'))
+    .filter(line => line.length > 0 && !line.toUpperCase().startsWith('RAZON SOCIAL'))
     .map(line => {
-        // Modificamos esta línea con una regla especial para que separe por comas O por tabuladores de Excel
-        const parts = line.split(/,|\t/); 
+        let parts = line.split(/[\t;]/);
+        
+        if (parts.length < 2) {
+            parts = line.split(',');
+        }
+        
+        if (parts.length < 2 && line.includes('   ')) {
+            parts = line.split(/ {3,}/);
+        }
+        
         return {
             nombre: (parts[0] || '').trim().toUpperCase(),
             poblacion: (parts[1] || '').trim().toUpperCase(),
@@ -3497,7 +3505,6 @@ const clients = rawCSVData.split('\n')
         };
     })
     .filter(c => c.nombre !== '');
-
         // --- 2. CONFIGURACIÓN DE BASE DE DATOS EN TIEMRE REAL (FIREBASE) ---
         let dbGeneral = [];
         let dbIdeace = [];
