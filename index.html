@@ -203,7 +203,7 @@
                     </div>
 
                     <!-- Tarjeta Módulo Despachos (Corregida, no traslúcida, igual de clara) -->
-                    <div onclick="accederDespachos()" class="group relative bg-white border border-slate-200/80 rounded-3xl p-8 shadow-md hover:shadow-xl hover:border-corporateGreen-600 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1.5">
+                    <div onclick="showView('menu-despachos')" class="group relative bg-white border border-slate-200/80 rounded-3xl p-8 shadow-md hover:shadow-xl hover:border-corporateGreen-600 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1.5">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-corporateGreen-500/5 rounded-bl-full -z-10 group-hover:bg-corporateGreen-500/10 transition-colors duration-300"></div>
                         <div>
                             <!-- Camión con alto contraste: fondo verde corporativo sólido con icono blanco -->
@@ -3830,14 +3830,9 @@ const clients = rawCSVData.split('\n')
             }
         }
 
-        function accederDespachos() {
-    const password = prompt("Ingrese la contraseña de acceso para el Módulo de Despachos:");
-    if (password === "2020") {
-        showView('menu-despachos');
-    } else if (password !== null) {
-        showToast('Acceso Denegado', 'La contraseña ingresada es incorrecta.', 'error');
-    }
-}
+        function goToPortal() {
+            showView('portal');
+        }
 
         // --- 8. TOAST (MENSAJES FLOTANTES DE ÉXITO O ALERTA) ---
         function showToast(title, message, type = 'success') {
