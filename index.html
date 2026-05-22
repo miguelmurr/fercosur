@@ -76,14 +76,14 @@
 <body class="h-full text-slate-800 flex flex-col antialiased bg-slate-50">
 
     <!-- BARRA DE NAVEGACIÓN (Tono más oscuro que el fondo principal) -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <header class="bg-slate-100/95 border-b border-slate-200 sticky top-0 z-40 shadow-sm backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <!-- Logo & Nombre (Ajustado para evitar redundancia de texto) -->
                 <div class="flex items-center space-x-4 cursor-pointer" onclick="goToPortal()">
-                    <div class="flex items-center justify-center">
-                        <!-- Logo de Fercosur Oficial limpio y al tamaño deseado -->
-                        <img id="header-logo" src="logo fercosur.jpeg" alt="Fercosur" class="h-12 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('header-fallback-text').classList.remove('hidden');">
+                   <div class="flex items-center justify-center">
+                        <!-- Logo con filtro de doble inversión para remover fondo blanco de forma nativa -->
+                        <img id="header-logo" src="logo fercosur.jpeg" alt="Fercosur" class="h-12 w-auto object-contain [filter:invert(1)_brightness(1.05)_contrast(2)_invert(1)]" onerror="this.style.display='none'; document.getElementById('header-fallback-text').classList.remove('hidden');">
                         <span id="header-fallback-text" class="hidden text-brand-700 font-extrabold text-lg tracking-wider">FERCOSUR</span>
                     </div>
                     <div class="border-l border-slate-200 pl-4">
@@ -116,14 +116,48 @@
     <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-1 w-full mx-auto flex flex-col justify-center">
         
-       <!-- PANTALLA INICIAL: PORTAL DE BIENVENIDA CON ENFOQUE CORPORATIVO SUAVE (FONDO BLANCO PURO TOTALMENTE UNIFICADO) -->
-        <section id="view-portal" class="fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 bg-white">
+        <!-- PANTALLA INICIAL: PORTAL DE BIENVENIDA CON ENFOQUE CORPORATIVO SUAVE (MENÚ PRINCIPAL BLANCO) -->
+        <section id="view-portal" class="fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
+            
+            <!-- CAPA DE ONDAS AZUL MARINO TRASLÚCIDAS (ESTILO PLAYSTATION SOBRE FONDO BLANCO) -->
+            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <!-- Fondo principal blanco -->
+                <div class="absolute inset-0 bg-white"></div>
+                
+                <!-- Ondas de Luz SVG Suavizadas en Azul Marino -->
+                <svg class="absolute bottom-0 left-0 w-full h-[75%] opacity-15 mix-blend-multiply" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,220 C350,330 550,110 950,290 C1180,360 1300,240 1440,160 L1440,600 L0,600 Z" fill="url(#psGradientBlue)"/>
+                    <defs>
+                        <linearGradient id="psGradientBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0f172a" stop-opacity="0.8"/>
+                            <stop offset="50%" stop-color="#1e3a8a" stop-opacity="0.5"/>
+                            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                
+                <svg class="absolute bottom-[-50px] left-0 w-full h-[65%] opacity-10 mix-blend-multiply" viewBox="0 0 1440 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,320 C280,150 720,380 1080,220 C1280,130 1380,280 1440,240 L1440,500 L0,500 Z" fill="url(#psGradientGreen)"/>
+                    <defs>
+                        <linearGradient id="psGradientGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#1e3a8a" stop-opacity="0.6"/>
+                            <stop offset="60%" stop-color="#0f172a" stop-opacity="0.3"/>
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <!-- Resplandores Nebulosos Suaves -->
+                <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-brand-600/5 rounded-full wave-glow"></div>
+                <div class="absolute bottom-[5%] right-[15%] w-[420px] h-[420px] bg-corporateGreen-600/5 rounded-full wave-glow" style="animation-delay: -3s;"></div>
+            </div>
             
             <div class="max-w-4xl w-full text-center relative z-10">
                 <!-- Logotipo de Fercosur Oficial Centrado -->
                 <div class="flex flex-col items-center justify-center mb-10">
-                    <!-- Logo principal limpio, el fondo de la sección ahora es idéntico al de la imagen -->
-                    <img src="logo fercosur.jpeg" alt="Fercosur SAS" class="h-28 sm:h-40 w-auto object-contain transition-all duration-300 hover:scale-105 mb-6" onerror="this.style.display='none'; document.getElementById('portal-fallback-text-block').classList.remove('hidden');">
+                    <!-- Logo principal con filtro de remoción forzada de fondo blanco -->
+                    <img src="logo fercosur.jpeg" alt="Fercosur SAS" class="h-28 sm:h-40 w-auto object-contain transition-all duration-300 hover:scale-105 mb-6 [filter:invert(1)_brightness(1.05)_contrast(2)_invert(1)]" onerror="this.style.display='none'; document.getElementById('portal-fallback-text-block').classList.remove('hidden');">
+                    
                     <!-- Bloque de texto elegante que actúa como fallback independiente sin recuadros rígidos -->
                     <div id="portal-fallback-text-block" class="hidden text-center py-2 px-6 mb-6 transition-all duration-300 hover:scale-105">
                         <span class="text-4xl font-black text-brand-900 tracking-tight block">FERCOSUR S.A.S.</span>
