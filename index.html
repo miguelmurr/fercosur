@@ -5008,22 +5008,23 @@ const clients = rawCSVData.split('\n')
         }
 
 		// --- NUEVAS FUNCIONES PARA EL MODAL DE WHATSAPP ---
+        // --- VARIABLE GLOBAL PARA EL SEGUIMIENTO DEL LOTE EN EL MODAL ---
+        window.currentWhatsAppLoteId = null;
+
+        // --- FUNCIONES EXPANDIDAS PARA EL MODAL DE WHATSAPP ---
         window.abrirModalWhatsapp = function(loteId) {
+            window.currentWhatsAppLoteId = loteId;
             const lote = dbLotes.find(l => l.id === loteId);
             if (!lote) return;
 
-            // 1. Mostrar el modal removiendo la clase hidden de inmediato
             const modal = document.getElementById('whatsapp-modal');
             if (modal) modal.classList.remove('hidden');
             
-            // 2. Insertar el nombre de la planilla en el subtítulo del modal
             document.getElementById('whatsapp-lote-name').innerText = lote.nombre;
 
-            // 3. Limpiar el contenedor de la lista antes de inyectar datos
             const container = document.getElementById('whatsapp-clients-list');
             container.innerHTML = '';
 
-            // Si la planilla está vacía, mostrar un mensaje preventivo
             if (!lote.despachos || lote.despachos.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-8 text-slate-400 italic text-sm font-medium">
@@ -5033,13 +5034,31 @@ const clients = rawCSVData.split('\n')
                 return;
             }
 
-            // 4. Recorrer los despachos e inyectar solo los nombres de los clientes
             lote.despachos.forEach(despacho => {
                 const item = document.createElement('div');
-                item.className = 'flex items-center space-x-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 hover:bg-slate-100/80 transition';
+                // Estructura en fila responsiva con distribución horizontal
+                item.className = 'flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 gap-4 hover:bg-slate-100/50 transition';
                 item.innerHTML = `
-                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200 flex-shrink-0"></div>
-                    <span class="font-bold text-slate-800 text-sm tracking-wide uppercase">${despacho.cliente}</span>
+                    <!-- Lado izquierdo: Nombre del cliente -->
+                    <div class="flex items-center space-x-3 flex-1 min-w-0">
+                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200 flex-shrink-0"></div>
+                        <span class="font-bold text-slate-800 text-sm tracking-wide uppercase truncate" title="${despacho.cliente}">${despacho.cliente}</span>
+                    </div>
+                    
+                    <!-- Lado derecho: Teléfono editable y Checkbox de control -->
+                    <div class="flex items-center space-x-4 flex-shrink-0">
+                        <!-- Input de Teléfono bloqueado por defecto -->
+                        <input type="text" value="${despacho.telefono || ''}" readonly 
+                            onblur="window.updateModalPhoneValue(this, '${despacho.id}')"
+                            class="whatsapp-phone-input w-40 px-3 py-2 text-xs font-mono font-bold border border-slate-200 rounded-xl bg-slate-100 text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-center" 
+                            placeholder="Sin teléfono">
+                        
+                        <!-- Casilla de verificación para alternar edición -->
+                        <label class="flex items-center space-x-2 cursor-pointer select-none">
+                            <input type="checkbox" onchange="window.toggleModalPhoneEdit(this)" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded-lg cursor-pointer">
+                            <span class="text-xs font-bold text-slate-500">Modificar</span>
+                        </label>
+                    </div>
                 `;
                 container.appendChild(item);
             });
@@ -5048,8 +5067,59 @@ const clients = rawCSVData.split('\n')
         window.cerrarModalWhatsapp = function() {
             const modal = document.getElementById('whatsapp-modal');
             if (modal) modal.classList.add('hidden');
+            window.currentWhatsAppLoteId = null; // Limpiar rastreo
         }
 
+        // Función encargada de bloquear/desbloquear el input según el estado del checkbox
+        window.toggleModalPhoneEdit = function(checkbox) {
+            const parentDiv = checkbox.closest('div');
+            const input = parentDiv.querySelector('.whatsapp-phone-input');
+            
+            if (checkbox.checked) {
+                input.removeAttribute('readonly');
+                input.classList.remove('bg-slate-100', 'text-slate-400');
+                input.classList.add('bg-white', 'text-slate-900', 'border-emerald-400');
+                input.focus();
+            } else {
+                input.setAttribute('readonly', 'readonly');
+                input.classList.add('bg-slate-100', 'text-slate-400');
+                input.classList.remove('bg-white', 'text-slate-900', 'border-emerald-400');
+            }
+        }
+
+        // Función encargada de salvar los cambios en Firebase Firestore al quitar el foco del input
+        window.updateModalPhoneValue = function(input, despachoId) {
+            const nuevoTelefono = input.value.trim();
+            const loteId = window.currentWhatsAppLoteId;
+            if (!loteId) return;
+
+            const lote = dbLotes.find(l => l.id === loteId);
+            if (!lote) return;
+            
+            let despachosActualizados = [...(lote.despachos || [])];
+            const index = despachosActualizados.findIndex(d => d.id === despachoId);
+            
+            if (index !== -1) {
+                // Si el número es exactamente igual al que ya estaba, no hacemos nada para ahorrar red
+                if (despachosActualizados[index].telefono === nuevoTelefono) return;
+
+                // Modificar el teléfono en la estructura
+                despachosActualizados[index].telefono = nuevoTelefono;
+                
+                // Actualizar directamente el lote en Firestore
+                db.collection("lotes_despachos").doc(loteId).update({ despachos: despachosActualizados }).then(() => {
+                    // Refrescar memoria intermedia local
+                    const loteIndex = dbLotes.findIndex(l => l.id === loteId);
+                    if (loteIndex !== -1) {
+                        dbLotes[loteIndex].despachos = despachosActualizados;
+                    }
+                    showToast('Teléfono Sincronizado', 'El número de celular se actualizó correctamente en la nube.', 'success');
+                }).catch(error => {
+                    showToast('Error', 'No se pudo guardar la modificación del teléfono.', 'error');
+                    console.error(error);
+                });
+            }
+        }
         // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
         window.onload = function() {
             showView('portal');
