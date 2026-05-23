@@ -181,7 +181,7 @@
                 <!-- Tarjetas de Selección Robustas y de Alto Contraste (Estilo PlayStation Light) -->
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                     <!-- Tarjeta Módulo Registros (General e IDEACE) -->
-                    <div onclick="showView('menu')" class="group relative bg-white border border-slate-200/80 rounded-3xl p-8 shadow-md hover:shadow-xl hover:border-brand-500 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1.5">
+                   <div onclick="openPinModal('despachos')" class="group relative bg-white border border-slate-200/80 rounded-3xl p-8 shadow-md hover:shadow-xl hover:border-corporateGreen-600 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1.5">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-bl-full -z-10 group-hover:bg-brand-500/10 transition-colors duration-300"></div>
                         <div>
                             <div class="inline-flex p-4 rounded-2xl bg-brand-600 text-white mb-6 group-hover:scale-110 transition-transform duration-300 shadow-md shadow-brand-100">
@@ -4616,11 +4616,15 @@ const clients = rawCSVData.split('\n')
         }
 
         // --- 13. CONTROL SEGURIDAD POR PIN (MODAL) ---
-        function openPinModal() {
-            if (isAdminLoggedIn) {
+        // Variable invisible para saber a dónde va el usuario
+        let pinTargetView = "admin"; 
+
+        function openPinModal(target = 'admin') {
+            if (target === 'admin' && isAdminLoggedIn) {
                 showView('admin');
                 return;
             }
+            pinTargetView = target; // Guardamos si va a admin o a despachos
             document.getElementById('pin-modal').classList.remove('hidden');
             document.getElementById('pin-error-msg').classList.add('hidden');
             document.getElementById('pin-1').focus();
@@ -4654,16 +4658,29 @@ const clients = rawCSVData.split('\n')
             const p4 = document.getElementById('pin-4').value;
             const enteredPin = p1 + p2 + p3 + p4;
 
-            if (enteredPin === '1234') {
-                isAdminLoggedIn = true;
-                closePinModal();
-                showToast('Acceso Permitido', 'Sincronizando panel con Firestore...', 'success');
-                showView('admin');
-                renderAdminPanel();
+            if (pinTargetView === 'despachos') {
+                if (enteredPin === '2020') {
+                    closePinModal();
+                    showToast('Acceso Concedido', 'Abriendo Módulo de Despachos...', 'success');
+                    showView('menu-despachos');
+                } else {
+                    document.getElementById('pin-error-msg').classList.remove('hidden');
+                    clearPinFields();
+                    document.getElementById('pin-1').focus();
+                }
             } else {
-                document.getElementById('pin-error-msg').classList.remove('hidden');
-                clearPinFields();
-                document.getElementById('pin-1').focus();
+                // Control normal para el Administrador (Clave 1234)
+                if (enteredPin === '1234') {
+                    isAdminLoggedIn = true;
+                    closePinModal();
+                    showToast('Acceso Permitido', 'Sincronizando panel con Firestore...', 'success');
+                    showView('admin');
+                    renderAdminPanel();
+                } else {
+                    document.getElementById('pin-error-msg').classList.remove('hidden');
+                    clearPinFields();
+                    document.getElementById('pin-1').focus();
+                }
             }
         }
 
