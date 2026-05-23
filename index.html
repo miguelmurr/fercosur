@@ -5165,15 +5165,15 @@ const clients = rawCSVData.split('\n')
             }
 
             let detalleEmpaques = '';
-            if (despacho.empaques.caja > 0) detalleEmpaques += `* ${despacho.empaques.caja} Caja(s) 📦\n`;
-            if (despacho.empaques.paquete > 0) detalleEmpaques += `* ${despacho.empaques.paquete} Paquete(s) 📦\n`;
-            if (despacho.empaques.rollo > 0) detalleEmpaques += `* ${despacho.empaques.rollo} Rollo(s) 🔹\n`;
-            if (despacho.empaques.atado > 0) detalleEmpaques += `* ${despacho.empaques.atado} Atado(s) 🔹\n`;
-            if (despacho.empaques.saca > 0) detalleEmpaques += `* ${despacho.empaques.saca} Saca(s) 💼\n`;
-            if (despacho.empaques.lio > 0) detalleEmpaques += `* ${despacho.empaques.lio} Lío(s) 📦\n`;
-            if (despacho.empaques.carreta > 0) detalleEmpaques += `* ${despacho.empaques.carreta} Carreta(s) 🚛\n`;
-            if (despacho.empaques.cadena > 0) detalleEmpaques += `* ${despacho.empaques.cadena} Cadena(s) 🔗\n`;
-            if (despacho.empaques.otros > 0) detalleEmpaques += `* ${despacho.empaques.otros} Otros 🔹\n`;
+            if (despacho.empaques.caja > 0) detalleEmpaques += `* ${despacho.empaques.caja} CAJA(S) 📦\n`;
+            if (despacho.empaques.paquete > 0) detalleEmpaques += `* ${despacho.empaques.paquete} PAQUETE(S) 📦\n`;
+            if (despacho.empaques.rollo > 0) detalleEmpaques += `* ${despacho.empaques.rollo} ROLLO(S) 🔹\n`;
+            if (despacho.empaques.atado > 0) detalleEmpaques += `* ${despacho.empaques.atado} ATADO(S) 🔹\n`;
+            if (despacho.empaques.saca > 0) detalleEmpaques += `* ${despacho.empaques.saca} SACA(S) 💼\n`;
+            if (despacho.empaques.lio > 0) detalleEmpaques += `* ${despacho.empaques.lio} LÍO(S) 📦\n`;
+            if (despacho.empaques.carreta > 0) detalleEmpaques += `* ${despacho.empaques.carreta} CARRETA(S) 🚛\n`;
+            if (despacho.empaques.cadena > 0) detalleEmpaques += `* ${despacho.empaques.cadena} CADENA(S) 🔗\n`;
+            if (despacho.empaques.otros > 0) detalleEmpaques += `* ${despacho.empaques.otros} OTROS 🔹\n`;
 
             if (!detalleEmpaques) {
                 detalleEmpaques = '* Sin empaques registrados\n';
