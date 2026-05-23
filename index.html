@@ -4315,23 +4315,13 @@ const clients = rawCSVData.split('\n')
             if (confirmacion) {
                 const despachosActualizados = lote.despachos.filter(d => d.id !== despachoId);
                 
-              db.collection("lotes_despachos").doc(activeLoteId).update({ despachos: despachosActualizados }).then(() => {
-                showToast(editingDespachoId ? 'Despacho Actualizado' : 'Remisión Registrada', `Sincronizado con la nube.`, 'success');
-                
-                // --- LINEAS AGREGADAS PARA LA ACTUALIZACIÓN INMEDIATA ---
-                const loteIndex = dbLotes.findIndex(l => l.id === activeLoteId);
-                if (loteIndex !== -1) {
-                    dbLotes[loteIndex].despachos = despachosActualizados;
-                }
-                renderDespachosDeLoteActual();
-                // --------------------------------------------------------
-
-                cancelarEdicionDespacho();
-                document.getElementById('despacho-remision').focus();
-            }).catch(error => {
-                showToast('Error', 'Hubo un problema de conexión con Firebase.', 'error');
-                console.error(error);
-            });
+                db.collection("lotes_despachos").doc(activeLoteId).update({ despachos: despachosActualizados }).then(() => {
+                    showToast('Despacho Removido', 'La remisión fue eliminada del lote en la nube.', 'success');
+                    if (editingDespachoId === despachoId) {
+                        cancelarEdicionDespacho();
+                    }
+                }).catch(error => console.error(error));
+            }
         }
 
         function submitDespachoForm(e) {
