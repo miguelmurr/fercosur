@@ -4992,6 +4992,47 @@ const clients = rawCSVData.split('\n')
         }
 
         function toggleTokensInput() {
+			// --- NUEVAS FUNCIONES PARA EL MODAL DE WHATSAPP ---
+        function abrirModalWhatsapp(loteId) {
+            const lote = dbLotes.find(l => l.id === loteId);
+            if (!lote) return;
+
+            // 1. Mostrar el modal removiendo la clase hidden
+            document.getElementById('whatsapp-modal').classList.remove('hidden');
+            
+            // 2. Insertar el nombre de la planilla en el subtítulo del modal
+            document.getElementById('whatsapp-lote-name').innerText = lote.nombre;
+
+            // 3. Limpiar el contenedor de la lista antes de inyectar datos
+            const container = document.getElementById('whatsapp-clients-list');
+            container.innerHTML = '';
+
+            // Si la planilla está vacía, mostrar un mensaje preventivo
+            if (!lote.despachos || lote.despachos.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 italic text-sm font-medium">
+                        Esta planilla no tiene remisiones ni clientes registrados todavía.
+                    </div>
+                `;
+                return;
+            }
+
+            // 4. Recorrer los despachos e inyectar solo los nombres de los clientes
+            lote.despachos.forEach(despacho => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center space-x-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 hover:bg-slate-100/80 transition';
+                item.innerHTML = `
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200 flex-shrink-0"></div>
+                    <span class="font-bold text-slate-800 text-sm tracking-wide uppercase">${despacho.cliente}</span>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function cerrarModalWhatsapp() {
+            // Esconder el modal añadiendo la clase hidden de nuevo
+            document.getElementById('whatsapp-modal').classList.add('hidden');
+        }
             const select = document.getElementById('ideace-incluye-tokens');
             const container = document.getElementById('container-tokens-cantidad');
             const input = document.getElementById('ideace-tokens-cantidad');
