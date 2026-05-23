@@ -910,7 +910,7 @@
     </div>
 
     <!-- LOGICA SCRIPT CON FIREBASE INTEGRADO -->
-    <script>
+  <script>
         // --- INICIALIZACIÓN DE FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyAf28WYMTt2bWJdW5njBfZmX-ANNYvx-aM",
@@ -940,7 +940,7 @@
         ];
 
         // --- NUEVA BASE DE DATOS MASIVA DE CLIENTES ---
-const rawCSVData = `RAZON SOCIAL	CIUDAD	TEL
+        const rawCSVData = `RAZON SOCIAL	CIUDAD	TEL
 		
 4G INVERSIONES Y SERVICIOS S.A.S. ZOMAC                                                                                                                         	                              	84296183              
 A Y C SEGURIDAD INDUSTRIAL SAS                                                                                                                                  	Pasto	7377445               
@@ -3436,30 +3436,31 @@ CAICEDO ANDRADE MARIA ROSARIO                                                   
 CHAVES MUÑOZ OMAR ALLYER                                                                                                                                        	MOCOA                         	3133764210            
 CORDOBA AROCA DIEGO FERNEY                                                                                                                                      	Puerto Guzmán	3103455730            
 CUELLAR DIAZ ADOLFO                                                                                                                                             	Puerto Guzmán	3114731506            
-HIDALGO BUCHELI MARIA FERNANDA                                                                                                                                  	Pasto	3147977237            
+HIDALGO BUCHELI MARIA FERNANDA                                                                                                                                  	Pasto	3147977237                                                                                                                        
 `;
-const clients = rawCSVData.split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0 && !line.toUpperCase().startsWith('RAZON SOCIAL'))
-    .map(line => {
-        let parts = line.split(/[\t;]/);
-        
-        if (parts.length < 2) {
-            parts = line.split(',');
-        }
-        
-        if (parts.length < 2 && line.includes('   ')) {
-            parts = line.split(/ {3,}/);
-        }
-        
-        return {
-            nombre: (parts[0] || '').trim().toUpperCase(),
-            poblacion: (parts[1] || '').trim().toUpperCase(),
-            telefono: (parts[2] || '').trim().toUpperCase()
-        };
-    })
-    .filter(c => c.nombre !== '');
-        // --- 2. CONFIGURACIÓN DE BASE DE DATOS EN TIEMRE REAL (FIREBASE) ---
+        const clients = rawCSVData.split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0 && !line.toUpperCase().startsWith('RAZON SOCIAL'))
+            .map(line => {
+                let parts = line.split(/[\t;]/);
+                
+                if (parts.length < 2) {
+                    parts = line.split(',');
+                }
+                
+                if (parts.length < 2 && line.includes('   ')) {
+                    parts = line.split(/ {3,}/);
+                }
+                
+                return {
+                    nombre: (parts[0] || '').trim().toUpperCase(),
+                    poblacion: (parts[1] || '').trim().toUpperCase(),
+                    telefono: (parts[2] || '').trim().toUpperCase()
+                };
+            })
+            .filter(c => c.nombre !== '');
+
+        // --- 2. CONFIGURACIÓN DE BASE DE DATOS EN TIEMPO REAL (FIREBASE) ---
         let dbGeneral = [];
         let dbLotes = [];
 
@@ -3715,11 +3716,11 @@ const clients = rawCSVData.split('\n')
         }
 
         function toggleTelefonoEdit() {
-            const checkbox = document.getElementById('despacho-modificar-telefono');
+            const checkbox = document.getElementById('despificar-modificar-telefono') || document.getElementById('despacho-modificar-telefono');
             const tInput = document.getElementById('despacho-telefono');
             const clientName = document.getElementById('despacho-cliente').value;
             
-            if (checkbox.checked) {
+            if (checkbox && checkbox.checked) {
                 tInput.removeAttribute('readonly');
                 tInput.classList.remove('bg-slate-100', 'text-slate-400');
                 tInput.classList.add('bg-white', 'text-slate-900');
@@ -3914,20 +3915,17 @@ const clients = rawCSVData.split('\n')
                     <button onclick="${isInsideModal ? 'closeTodasPlanillasModal();' : ''} cargarLoteParaTrabajar('${lote.id}')" class="flex-1 min-w-[120px] py-2.5 px-3 text-xs font-bold rounded-xl transition text-center ${actionBtnColor}">
                         ${actionBtnText}
                     </button>
-                    <!-- Botón de Exportar a Word -->
                     <button onclick="exportLoteToWord('${lote.id}')" class="px-3.5 py-2.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition text-xs font-bold flex items-center justify-center gap-1" title="Exportar Planilla a Word (Horizontal)">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         Word
                     </button>
-                    <!-- NUEVO: Botón de WhatsApp -->
                     <button onclick="abrirModalWhatsapp('${lote.id}')" class="px-3.5 py-2.5 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition text-xs font-bold flex items-center justify-center" title="Enviar Notificación por WhatsApp">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                         </svg>
                     </button>
-                    <!-- Botón Eliminar Lote -->
                     <button onclick="eliminarLote('${lote.id}')" class="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition text-xs" title="Eliminar Planilla">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -3942,15 +3940,14 @@ const clients = rawCSVData.split('\n')
             const container = document.getElementById('lotes-grid-container');
             const emptyState = document.getElementById('lotes-empty-state');
             const verMasContainer = document.getElementById('ver-mas-lotes-container');
+            if(!container) return;
             container.innerHTML = '';
 
             if (dbLotes.length === 0) {
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-                verMasContainer.classList.add('hidden');
+                if(emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
+                if(verMasContainer) verMasContainer.classList.add('hidden');
             } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
+                if(emptyState) { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }
 
                 const lotesToShow = dbLotes.slice(0, 5);
                 lotesToShow.forEach(lote => {
@@ -3958,10 +3955,11 @@ const clients = rawCSVData.split('\n')
                 });
 
                 if (dbLotes.length > 5) {
-                    verMasContainer.classList.remove('hidden');
-                    document.getElementById('total-lotes-badge').innerText = dbLotes.length;
+                    if(verMasContainer) verMasContainer.classList.remove('hidden');
+                    const badge = document.getElementById('total-lotes-badge');
+                    if(badge) badge.innerText = dbLotes.length;
                 } else {
-                    verMasContainer.classList.add('hidden');
+                    if(verMasContainer) verMasContainer.classList.add('hidden');
                 }
             }
         }
@@ -3978,10 +3976,14 @@ const clients = rawCSVData.split('\n')
         }
 
         function renderTodasPlanillasList() {
-            const query = document.getElementById('search-planillas-input').value.toLowerCase().trim();
-            const sortOrder = document.getElementById('sort-planillas-select').value;
+            const queryInput = document.getElementById('search-planillas-input');
+            const sortSelect = document.getElementById('sort-planillas-select');
             const container = document.getElementById('todas-planillas-grid-container');
+            if(!container) return;
             container.innerHTML = '';
+
+            const query = queryInput ? queryInput.value.toLowerCase().trim() : '';
+            const sortOrder = sortSelect ? sortSelect.value : 'desc';
 
             let filtered = [...dbLotes];
 
@@ -4055,15 +4057,14 @@ const clients = rawCSVData.split('\n')
             const lote = dbLotes.find(l => l.id === activeLoteId);
             const tbody = document.getElementById('tbody-despachos-lote-actual');
             const emptyState = document.getElementById('despachos-lote-empty-state');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             if (!lote || !lote.despachos || lote.despachos.length === 0) {
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
+                if(emptyState) { emptyState.classList.remove('hidden'); emptyState.classList.add('flex'); }
                 document.getElementById('active-lote-summary-txt').innerText = "0 remisiones en este lote";
             } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
+                if(emptyState) { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }
                 document.getElementById('active-lote-summary-txt').innerText = `${lote.despachos.length} remisiones en este lote`;
 
                 lote.despachos.forEach(despacho => {
@@ -4102,7 +4103,7 @@ const clients = rawCSVData.split('\n')
                                     <button onclick="eliminarDespachoDeLote('${despacho.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition" title="Eliminar Remisión">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                        </svg>
+                                        </svg>
                                     </button>
                                 </div>
                             </td>
@@ -4155,12 +4156,12 @@ const clients = rawCSVData.split('\n')
             if(tInput) {
                 tInput.value = despacho.telefono || '';
                 if (clientObj && clientObj.telefono !== despacho.telefono) {
-                    checkboxTel.checked = true;
+                    if(checkboxTel) checkboxTel.checked = true;
                     tInput.removeAttribute('readonly');
                     tInput.classList.remove('bg-slate-100', 'text-slate-400');
                     tInput.classList.add('bg-white', 'text-slate-900');
                 } else {
-                    checkboxTel.checked = false;
+                    if(checkboxTel) checkboxTel.checked = false;
                     tInput.setAttribute('readonly', 'readonly');
                     tInput.classList.add('bg-slate-100', 'text-slate-400');
                     tInput.classList.remove('bg-white', 'text-slate-900');
@@ -4187,16 +4188,19 @@ const clients = rawCSVData.split('\n')
 
         function cancelarEdicionDespacho() {
             editingDespachoId = null;
-            document.getElementById('form-logistica-despachos').reset();
+            const form = document.getElementById('form-logistica-despachos');
+            if(form) form.reset();
 
             const checkboxPob = document.getElementById('despacho-modificar-poblacion');
-            checkboxPob.checked = false;
+            if(checkboxPob) checkboxPob.checked = false;
             
             const pInput = document.getElementById('despacho-poblacion');
-            pInput.value = '';
-            pInput.setAttribute('readonly', 'readonly');
-            pInput.classList.add('bg-slate-100', 'text-slate-400');
-            pInput.classList.remove('bg-white', 'text-slate-900');
+            if(pInput) {
+                pInput.value = '';
+                pInput.setAttribute('readonly', 'readonly');
+                pInput.classList.add('bg-slate-100', 'text-slate-400');
+                pInput.classList.remove('bg-white', 'text-slate-900');
+            }
 
             const checkboxTel = document.getElementById('despacho-modificar-telefono');
             if(checkboxTel) checkboxTel.checked = false;
@@ -4211,9 +4215,12 @@ const clients = rawCSVData.split('\n')
 
             calcularTotalEmpaques();
 
-            document.getElementById('despacho-form-mode-title').innerText = "Agregar Remisión";
-            document.getElementById('btn-guardar-despacho').innerText = "Registrar Despacho";
-            document.getElementById('btn-cancelar-edicion').classList.add('hidden');
+            const modeTitle = document.getElementById('despacho-form-mode-title');
+            if(modeTitle) modeTitle.innerText = "Agregar Remisión";
+            const btnGuardar = document.getElementById('btn-guardar-despacho');
+            if(btnGuardar) btnGuardar.innerText = "Registrar Despacho";
+            const btnCancelar = document.getElementById('btn-cancelar-edicion');
+            if(btnCancelar) btnCancelar.classList.add('hidden');
         }
 
         function eliminarDespachoDeLote(despachoId) {
@@ -4298,13 +4305,11 @@ const clients = rawCSVData.split('\n')
             db.collection("lotes_despachos").doc(activeLoteId).update({ despachos: despachosActualizados }).then(() => {
                 showToast(editingDespachoId ? 'Despacho Actualizado' : 'Remisión Registrada', `Sincronizado con la nube.`, 'success');
                 
-                // --- LINEAS AGREGADAS PARA LA ACTUALIZACIÓN INMEDIATA ---
                 const loteIndex = dbLotes.findIndex(l => l.id === activeLoteId);
                 if (loteIndex !== -1) {
                     dbLotes[loteIndex].despachos = despachosActualizados;
                 }
                 renderDespachosDeLoteActual();
-                // --------------------------------------------------------
 
                 cancelarEdicionDespacho();
                 document.getElementById('despacho-remision').focus();
@@ -4485,7 +4490,7 @@ const clients = rawCSVData.split('\n')
             });
         }
 
-        // --- 13. CONTROL SEGURIDAD POR PIN (MODAL) ---
+        // --- 13. CONTROL SEGURIDAD POR PIN (MODAL ADMIN) ---
         function openPinModal() {
             if (isAdminLoggedIn) {
                 showView('admin');
@@ -4563,18 +4568,18 @@ const clients = rawCSVData.split('\n')
             const tabGen = document.getElementById('tab-general');
             const tabDespachos = document.getElementById('tab-despachos');
 
-            tabGen.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
-            tabDespachos.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+            if(tabGen) tabGen.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+            if(tabDespachos) tabDespachos.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
 
             document.getElementById('table-general-view').classList.add('hidden');
             document.getElementById('table-despachos-view').classList.add('hidden');
 
             if (tabType === 'general') {
-                tabGen.className = "text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+                if(tabGen) tabGen.className = "text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
                 document.getElementById('table-title').innerText = "Respuestas Generales";
                 document.getElementById('table-general-view').classList.remove('hidden');
             } else if (tabType === 'despachos') {
-                tabDespachos.className = "text-left w-full p-6 bg-white border-2 border-amber-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+                if(tabDespachos) tabDespachos.className = "text-left w-full p-6 bg-white border-2 border-amber-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
                 document.getElementById('table-title').innerText = "Despachos Logísticos Registrados";
                 document.getElementById('table-despachos-view').classList.remove('hidden');
             }
@@ -4584,9 +4589,11 @@ const clients = rawCSVData.split('\n')
 
         function renderTableData() {
             const emptyState = document.getElementById('table-empty-state');
+            if(!emptyState) return;
             
             if (currentActiveAdminTab === 'general') {
                 const tbodyGen = document.getElementById('tbody-general');
+                if(!tbodyGen) return;
                 tbodyGen.innerHTML = '';
                 
                 if (dbGeneral.length === 0) {
@@ -4599,28 +4606,29 @@ const clients = rawCSVData.split('\n')
                     document.getElementById('table-general-view').classList.remove('hidden');
 
                     dbGeneral.forEach(item => {
-    const tr = `
-        <tr class="hover:bg-slate-50 transition-colors">
-            <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
-            <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
-            <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${item.pedido}</td>
-            <td class="px-6 py-4">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
-            </td>
-            <td class="px-6 py-4 text-center">
-                <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                </button>
-            </td>
-        </tr>
-    `;
-    tbodyGen.insertAdjacentHTML('beforeend', tr);
-});
-           
+                        const tr = `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
+                                <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
+                                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${item.pedido}</td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        tbodyGen.insertAdjacentHTML('beforeend', tr);
+                    });
+                }
             } else if (currentActiveAdminTab === 'despachos') {
                 const tbodyDespachos = document.getElementById('tbody-despachos');
+                if(!tbodyDespachos) return;
                 tbodyDespachos.innerHTML = '';
 
                 let allDespachosFlat = [];
@@ -4684,9 +4692,9 @@ const clients = rawCSVData.split('\n')
 
         // --- 15. EXPORTACIONES NATIVAS A EXCEL (SHEETJS) ---
         function exportConsolidated() {
-           if (dbGeneral.length === 0) {
-    showToast('Sin Datos', 'No hay registros de pedidos generales para consolidar.', 'error');
-    return;
+            if (dbGeneral.length === 0) {
+                showToast('Sin Datos', 'No hay registros de pedidos generales para consolidar.', 'error');
+                return;
             }
 
             const format = (data, tipo) => {
@@ -4700,7 +4708,7 @@ const clients = rawCSVData.split('\n')
             };
 
             const consolidatedList = [
-                ...format(dbGeneral, 'Registro General'),
+                ...format(dbGeneral, 'Registro General')
             ];
 
             consolidatedList.sort((a, b) => new Date(b['Hora de Registro']) - new Date(a['Hora de Registro']));
@@ -4732,7 +4740,6 @@ const clients = rawCSVData.split('\n')
                 XLSX.utils.book_append_sheet(wb, ws, "Pedidos Generales");
                 XLSX.writeFile(wb, "REPORTE_PEDIDOS_GENERALES.xlsx");
                 showToast('Descarga Exitosa', 'Tabla de pedidos generales exportada.', 'success');
-            
             } else if (currentActiveAdminTab === 'despachos') {
                 let allDespachosFlat = [];
                 dbLotes.forEach(lote => {
@@ -4787,13 +4794,9 @@ const clients = rawCSVData.split('\n')
             }
         }
 
-     
-
-		// --- NUEVAS FUNCIONES PARA EL MODAL DE WHATSAPP ---
-       // --- VARIABLE GLOBAL PARA EL SEGUIMIENTO DEL LOTE EN EL MODAL ---
+        // --- NUEVAS FUNCIONES PARA EL MODAL DE WHATSAPP ---
         window.currentWhatsAppLoteId = null;
 
-        // --- FUNCIONES EXPANDIDAS PARA EL MODAL DE WHATSAPP ---
         window.abrirModalWhatsapp = function(loteId) {
             window.currentWhatsAppLoteId = loteId;
             const lote = dbLotes.find(l => l.id === loteId);
@@ -4805,6 +4808,7 @@ const clients = rawCSVData.split('\n')
             document.getElementById('whatsapp-lote-name').innerText = lote.nombre;
 
             const container = document.getElementById('whatsapp-clients-list');
+            if(!container) return;
             container.innerHTML = '';
 
             if (!lote.despachos || lote.despachos.length === 0) {
@@ -4818,32 +4822,24 @@ const clients = rawCSVData.split('\n')
 
             lote.despachos.forEach(despacho => {
                 const item = document.createElement('div');
-                // Contenedor principal alineado horizontalmente
                 item.className = 'flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 gap-4 hover:bg-slate-100/50 transition';
                 item.innerHTML = `
-                    <!-- BLOQUE IZQUIERDO: Nombre y Teléfono juntos -->
                     <div class="flex flex-col md:flex-row md:items-center gap-4 flex-1 min-w-0">
-                        <!-- Nombre del cliente -->
                         <div class="flex items-center space-x-3 min-w-[200px] md:max-w-[300px] flex-shrink-0">
                             <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200 flex-shrink-0"></div>
                             <span class="font-bold text-slate-800 text-sm tracking-wide uppercase truncate" title="${despacho.cliente}">${despacho.cliente}</span>
                         </div>
-                        
-                        <!-- Teléfono y Checkbox arrastrados cerca del nombre -->
                         <div class="flex items-center space-x-3 flex-shrink-0">
                             <input type="text" value="${despacho.telefono || ''}" readonly 
                                 onblur="window.updateModalPhoneValue(this, '${despacho.id}')"
                                 class="whatsapp-phone-input w-36 px-2.5 py-1.5 text-xs font-mono font-bold border border-slate-200 rounded-xl bg-slate-100 text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-center" 
                                 placeholder="Sin teléfono">
-                            
                             <label class="flex items-center space-x-1.5 cursor-pointer select-none">
                                 <input type="checkbox" onchange="window.toggleModalPhoneEdit(this)" class="h-3.5 w-3.5 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded-lg cursor-pointer">
                                 <span class="text-[11px] font-bold text-slate-400">Modificar</span>
                             </label>
                         </div>
                     </div>
-                    
-                  <!-- BLOQUE DERECHO: Nuevo botón verde con icono de mensaje (Sin función por ahora) -->
                     <div class="flex items-center flex-shrink-0">
                         <button type="button" onclick="window.abrirChatWhatsapp('${despacho.id}', this)" class="p-2.5 text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-md shadow-emerald-100 flex items-center justify-center group" title="Enviar notificación por WhatsApp">
                             <svg class="w-4 h-4 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4906,26 +4902,8 @@ const clients = rawCSVData.split('\n')
                 });
             }
         }
-		window.abrirChatWhatsapp = function(button) {
-            const itemContainer = button.closest('.flex.items-center.justify-between');
-            const inputTelefono = itemContainer.querySelector('.whatsapp-phone-input');
-            let telefono = inputTelefono.value.trim();
-            
-            if (!telefono) {
-                showToast('Sin Teléfono', 'Este cliente no tiene un número asignado.', 'error');
-                return;
-            }
-            
-            telefono = telefono.replace(/[^0-9+]/g, '');
-            
-            if (telefono.length === 10 && telefono.startsWith('3')) {
-                telefono = '57' + telefono;
-            }
-            
-            const url = 'https://wa.me/' + telefono;
-            window.open(url, '_blank');
-        }
-		window.abrirChatWhatsapp = function(despachoId, button) {
+
+        window.abrirChatWhatsapp = function(despachoId, button) {
             const lote = dbLotes.find(l => l.id === window.currentWhatsAppLoteId);
             if (!lote) return;
             
@@ -4934,7 +4912,7 @@ const clients = rawCSVData.split('\n')
 
             const itemContainer = button.closest('.flex.items-center.justify-between');
             const inputTelefono = itemContainer.querySelector('.whatsapp-phone-input');
-            let telefono = inputTelefono.value.trim();
+            let telefono = inputTelefono ? inputTelefono.value.trim() : '';
             
             if (!telefono) {
                 showToast('Sin Teléfono', 'Este cliente no tiene un número asignado.', 'error');
@@ -4969,12 +4947,12 @@ const clients = rawCSVData.split('\n')
             const url = 'https://wa.me/' + telefono + '?text=' + encodeURIComponent(mensaje);
             window.open(url, '_blank');
         }
-		// --- NUEVAS FUNCIONES DE SEGURIDAD PARA EL MÓDULO DE DESPACHOS ---
+
+        // --- NUEVAS FUNCIONES DE SEGURIDAD PARA EL MÓDULO DE DESPACHOS ---
         function openDespachosModal() {
             document.getElementById('despachos-auth-modal').classList.remove('hidden');
             document.getElementById('despachos-pin-input').value = '';
             document.getElementById('despachos-pin-error-msg').classList.add('hidden');
-            // Este pequeño retraso hace que el cursor aparezca listo dentro del cuadro automáticamente
             setTimeout(() => {
                 document.getElementById('despachos-pin-input').focus();
             }, 100);
@@ -4987,8 +4965,6 @@ const clients = rawCSVData.split('\n')
 
         function submitDespachosPin() {
             const inputClave = document.getElementById('despachos-pin-input').value.trim();
-
-            // Aquí se valida tu clave sencilla "2020"
             if (inputClave === '2020') {
                 closeDespachosModal();
                 showView('menu-despachos');
@@ -4999,10 +4975,11 @@ const clients = rawCSVData.split('\n')
                 document.getElementById('despachos-pin-input').focus();
             }
         }
-		// --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL ---
+
+        // --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL ---
         function eliminarPedidoGeneral(id) {
             const confirmacion = confirm("¿Está seguro de eliminar permanentemente este registro de pedido de la nube? Esta acción no se puede deshacer.");
-            if (confirmacion) {
+            if (confirmation) {
                 db.collection("pedidos_generales").doc(id).delete().then(() => {
                     showToast('Registro Eliminado', 'El pedido general fue removido con éxito de la base de datos.', 'success');
                 }).catch((error) => {
@@ -5012,10 +4989,8 @@ const clients = rawCSVData.split('\n')
             }
         }
        
-		// --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
+        // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
         window.onload = function() {
             showView('portal');
         }
     </script>
-</body>
-</html>
