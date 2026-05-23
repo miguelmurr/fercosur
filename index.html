@@ -909,8 +909,7 @@
         </div>
     </div>
 
-    <!-- LOGICA SCRIPT CON FIREBASE INTEGRADO -->
-  <script>
+    <script>
         // --- INICIALIZACIÓN DE FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyAf28WYMTt2bWJdW5njBfZmX-ANNYvx-aM",
@@ -3436,7 +3435,7 @@ CAICEDO ANDRADE MARIA ROSARIO                                                   
 CHAVES MUÑOZ OMAR ALLYER                                                                                                                                        	MOCOA                         	3133764210            
 CORDOBA AROCA DIEGO FERNEY                                                                                                                                      	Puerto Guzmán	3103455730            
 CUELLAR DIAZ ADOLFO                                                                                                                                             	Puerto Guzmán	3114731506            
-HIDALGO BUCHELI MARIA FERNANDA                                                                                                                                  	Pasto	3147977237                                                                                                                        
+HIDALGO BUCHELI MARIA FERNANDA                                                                                                                                  	Pasto	3147977237                                                                                                                      
 `;
         const clients = rawCSVData.split('\n')
             .map(line => line.trim())
@@ -3627,11 +3626,6 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 const dropdown = document.getElementById('despacho-cliente-dropdown');
                 if (dropdown) dropdown.classList.add('hidden');
             }, 200);
-        }
-
-        function getClientData(clientName) {
-            const clientObj = clients.find(c => c.nombre.toLowerCase() === clientName.toLowerCase().trim());
-            return clientObj ? clientObj : { poblacion: '', telefono: '' };
         }
 
         // --- 5. AUTOCOMPLETADO DE POBLACIONES ---
@@ -4976,15 +4970,15 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             }
         }
 
-        // --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL CORREGIDA ---
+        // --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL CORREGIDA Y REFORZADA ---
         function eliminarPedidoGeneral(id) {
             const confirmacion = confirm("¿Está seguro de eliminar permanentemente este registro de pedido de la nube? Esta acción no se puede deshacer.");
             if (confirmacion) {
                 db.collection("pedidos_generales").doc(id).delete().then(() => {
-                    // Refuerzo con plastilina: Sacamos el pedido del arreglo local inmediatamente
+                    // Sacamos el pedido del mapa local de inmediato
                     dbGeneral = dbGeneral.filter(item => item.id !== id);
                     
-                    // Forzamos al panel a volver a pintarse con los datos ya actualizados
+                    // Obligamos al panel a redibujarse al instante con el registro borrado
                     renderAdminPanel();
                     
                     showToast('Registro Eliminado', 'El pedido general fue removido con éxito de la base de datos.', 'success');
@@ -4994,3 +4988,9 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 });
             }
         }
+       
+        // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
+        window.onload = function() {
+            showView('portal');
+        }
+    </script>
