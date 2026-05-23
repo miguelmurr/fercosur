@@ -180,7 +180,7 @@
 
                 <!-- Tarjetas de Selección Robustas y de Alto Contraste (Estilo PlayStation Light) -->
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-                    <!-- Tarjeta Módulo Registros (General e IDEACE) -->
+                    <!-- Tarjeta Módulo Registros (General) -->
                     <div onclick="showView('menu')" class="group relative bg-white border border-slate-200/80 rounded-3xl p-8 shadow-md hover:shadow-xl hover:border-brand-500 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1.5">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-bl-full -z-10 group-hover:bg-brand-500/10 transition-colors duration-300"></div>
                         <div>
@@ -191,7 +191,7 @@
                             </div>
                             <h3 class="text-2xl font-extrabold text-slate-900 text-left">Módulo de Registros</h3>
                             <p class="mt-3 text-slate-600 leading-relaxed text-left text-sm">
-                                Registro y homologación de planillas de Pedidos Generales y Competencia IDEACE en tiempo real.
+                                Registro y homologación de planillas de Pedidos Generales en tiempo real.
                             </p>
                         </div>
                         <div class="mt-8 flex items-center text-brand-600 font-extrabold text-sm group-hover:text-brand-700 transition-colors">
@@ -202,7 +202,7 @@
                         </div>
                     </div>
 
-                    <!-- Tarjeta Módulo Despachos (Corregida, no traslúcida, igual de clara) -->
+                    <!-- Tarjeta Módulo Despachos -->
                     <div onclick="showView('menu-despachos')" class="group relative bg-white border border-slate-200/80 rounded-3xl p-8 shadow-md hover:shadow-xl hover:border-corporateGreen-600 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1.5">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-corporateGreen-500/5 rounded-bl-full -z-10 group-hover:bg-corporateGreen-500/10 transition-colors duration-300"></div>
                         <div>
@@ -219,7 +219,7 @@
                                 Gestión de remisiones, asignación de poblaciones, cuantificación de empaques y planillas horizontales.
                             </p>
                         </div>
-                        <!-- Texto "Ingresar a Despachos" con alto contraste (corporateGreen-700 / corporateGreen-800) -->
+                        <!-- Texto "Ingresar a Despachos" con alto contraste -->
                         <div class="mt-8 flex items-center text-corporateGreen-700 font-extrabold text-sm group-hover:text-corporateGreen-800 transition-colors">
                             Ingresar a Despachos
                             <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,11 +243,11 @@
             </div>
 
             <div class="text-center mb-12">
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Registro de Ingresos y Competencia</h1>
-                <p class="mt-3 text-slate-500 max-w-xl mx-auto">Seleccione el tipo de planilla para iniciar el registro de actividad comercial.</p>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Registro de Ingresos</h1>
+                <p class="mt-3 text-slate-500 max-w-xl mx-auto">Seleccione la planilla para iniciar el registro de actividad comercial.</p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="max-w-md mx-auto">
                 <!-- Tarjeta Registro Pedidos General -->
                 <div onclick="showView('form-general')" class="group relative bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-brand-300 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
@@ -262,26 +262,6 @@
                     </div>
                     <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm">
                         Comenzar registro 
-                        <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Tarjeta Registro Competencia IDEACE -->
-                <div onclick="showView('form-ideace')" class="group relative bg-white border border-slate-200 rounded-3xl p-8 shadow-sm hover:shadow-xl hover:border-emerald-300 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-10 group-hover:bg-emerald-100/50 transition-colors duration-300"></div>
-                    <div>
-                        <div class="inline-flex p-4 rounded-2xl bg-emerald-50 text-emerald-600 mb-6 group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-slate-900">Registro Competencia IDEACE</h3>
-                        <p class="mt-3 text-slate-500 leading-relaxed">Formulario especial con conteo de accesorios específicos de la competencia, como chalecos y tokens de control.</p>
-                    </div>
-                    <div class="mt-8 flex items-center text-emerald-600 font-semibold text-sm">
-                        Iniciar competencia
                         <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
@@ -334,83 +314,6 @@
                     <div class="pt-4 flex space-x-3">
                         <button type="button" onclick="showView('menu')" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">Cancelar</button>
                         <button type="submit" class="w-2/3 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md shadow-brand-200 transition">Registrar Pedido</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- VISTA 3: FORMULARIO REGISTRO IDEACE (CONDICIONAL) -->
-        <section id="view-form-ideace" class="hidden fade-in max-w-xl mx-auto w-full py-8 px-4">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg">
-                <div class="flex items-center space-x-3 mb-6">
-                    <button onclick="showView('menu')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                    </button>
-                    <div>
-                        <h2 class="text-2xl font-extrabold text-slate-950">Registro Competencia IDEACE</h2>
-                        <p class="text-sm text-slate-500 mt-1">Formulario de control con lógica condicional de accesorios.</p>
-                    </div>
-                </div>
-
-                <form id="form-pedidos-ideace" onsubmit="submitIdeaceForm(event)" class="space-y-6">
-                    <!-- Autocompletado Nombre Asesor IDEACE -->
-                    <div class="relative">
-                        <label for="ideace-nombre" class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
-                        <input type="text" id="ideace-nombre" required autocomplete="off" oninput="filterSellers('ideace')" onfocus="showSellersDropdown('ideace')" onblur="hideSellersDropdown('ideace')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un vendedor...">
-                        <!-- Dropdown flotante asesores -->
-                        <div id="ideace-nombre-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
-                    </div>
-
-                    <!-- Número de pedido con prefijo dinámico -->
-                    <div>
-                        <label for="ideace-pedido" class="block text-sm font-semibold text-slate-700">Número de Pedido</label>
-                        <div class="mt-1.5 flex rounded-xl border border-slate-300 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500 overflow-hidden bg-white">
-                            <span id="ideace-pedido-prefix" class="inline-flex items-center px-4 bg-slate-50 border-r border-slate-200 text-slate-500 font-mono font-bold select-none text-sm">PED-</span>
-                            <input type="text" id="ideace-pedido" required class="block w-full px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none sm:text-sm" placeholder="Ej. 20599">
-                        </div>
-                    </div>
-
-                    <!-- Autocompletado de Población / Ciudad (IDEACE) -->
-                    <div class="relative">
-                        <label for="ideace-poblacion" class="block text-sm font-semibold text-slate-700">Población / Ciudad</label>
-                        <input type="text" id="ideace-poblacion" required autocomplete="off" oninput="filterTowns('ideace')" onfocus="showTownsDropdown('ideace')" onblur="hideTownsDropdown('ideace')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione una población...">
-                        <!-- Dropdown flotante poblaciones -->
-                        <div id="ideace-poblacion-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
-                    </div>
-
-                    <!-- Condicional 1: Chalecos -->
-                    <div>
-                        <label for="ideace-incluye-chalecos" class="block text-sm font-semibold text-slate-700">¿Incluye Chalecos?</label>
-                        <select id="ideace-incluye-chalecos" onchange="toggleChalecosInput()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm">
-                            <option value="NO">NO</option>
-                            <option value="SI">SÍ</option>
-                        </select>
-                    </div>
-
-                    <div id="container-chalecos-cantidad" class="hidden fade-in">
-                        <label for="ideace-chalecos-cantidad" class="block text-sm font-semibold text-slate-700">¿Cuántos chalecos?</label>
-                        <input type="number" id="ideace-chalecos-cantidad" min="1" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Ej. 15">
-                    </div>
-
-                    <!-- Condicional 2: Tokens -->
-                    <div>
-                        <label for="ideace-incluye-tokens" class="block text-sm font-semibold text-slate-700">¿Incluye Tokens?</label>
-                        <select id="ideace-incluye-tokens" onchange="toggleTokensInput()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm">
-                            <option value="NO">NO</option>
-                            <option value="SI">SÍ</option>
-                        </select>
-                    </div>
-
-                    <div id="container-tokens-cantidad" class="hidden fade-in">
-                        <label for="ideace-tokens-cantidad" class="block text-sm font-semibold text-slate-700">¿Cuántos tokens?</label>
-                        <input type="number" id="ideace-tokens-cantidad" min="1" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Ej. 50">
-                    </div>
-
-                    <div class="pt-4 flex space-x-3">
-                        <button type="button" onclick="showView('menu')" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">Cancelar</button>
-                        <button type="submit" class="w-2/3 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md shadow-emerald-200 transition">Registrar Competencia</button>
                     </div>
                 </form>
             </div>
@@ -677,7 +580,7 @@
             </div>
         </section>
 
-        <!-- VISTA 4 & 5: PANEL DE ADMINISTRADOR PROTEGIDO -->
+        <!-- VISTA 4: PANEL DE ADMINISTRADOR PROTEGIDO -->
         <section id="view-admin" class="hidden fade-in w-full py-8 space-y-8 px-4">
             <!-- Header Admin -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
@@ -697,7 +600,7 @@
             </div>
 
             <!-- Contadores Rápidos & Selector -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Botón/Card Respuestas Generales -->
                 <button onclick="switchAdminTab('general')" id="tab-general" class="text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group">
                     <div class="flex items-center space-x-4">
@@ -712,22 +615,6 @@
                         </div>
                     </div>
                     <div class="bg-brand-50 text-brand-700 px-4 py-2 rounded-2xl text-2xl font-black" id="counter-general">0</div>
-                </button>
-
-                <!-- Botón/Card Respuestas IDEACE -->
-                <button onclick="switchAdminTab('ideace')" id="tab-ideace" class="text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group">
-                    <div class="flex items-center space-x-4">
-                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <span class="block text-slate-500 text-sm font-medium uppercase tracking-wider">Base de Datos</span>
-                            <span class="text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition">Respuestas IDEACE</span>
-                        </div>
-                    </div>
-                    <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-2xl text-2xl font-black" id="counter-ideace">0</div>
                 </button>
 
                 <!-- Botón/Card Despachos Logísticos -->
@@ -779,23 +666,6 @@
                             </tr>
                         </thead>
                         <tbody id="tbody-general" class="divide-y divide-slate-100 text-sm text-slate-700">
-                            <!-- Inserción dinámica por JS -->
-                        </tbody>
-                    </table>
-
-                    <!-- Tabla IDEACE -->
-                    <table id="table-ideace-view" class="hidden w-full text-left border-collapse">
-                        <thead class="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Nombre Completo</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Número de Pedido</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Población / Ciudad</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-brand-50/50">Chalecos Incluidos</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 bg-emerald-50/50">Tokens Incluidos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-ideace" class="divide-y divide-slate-100 text-sm text-slate-700">
                             <!-- Inserción dinámica por JS -->
                         </tbody>
                     </table>
@@ -1015,7 +885,7 @@
             { nombre: "Martha Benavides", prefijo: "PE2-" },
             { nombre: "Gabriela Rosero", prefijo: "PE3-" },
             { nombre: "Miguel Arciniegas", prefijo: "PE6-" },
-            { nombre: "Juan Carlos Ortiz", prefijo: "PE7-" }
+            { font: "Juan Carlos Ortiz", prefijo: "PE7-" }
         ];
 
         const towns = [
@@ -3520,7 +3390,7 @@ CAICEDO ANDRADE MARIA ROSARIO                                                   
 CHAVES MUÑOZ OMAR ALLYER                                                                                                                                        	MOCOA                         	3133764210            
 CORDOBA AROCA DIEGO FERNEY                                                                                                                                      	Puerto Guzmán	3103455730            
 CUELLAR DIAZ ADOLFO                                                                                                                                             	Puerto Guzmán	3114731506            
-HIDALGO BUCHELI MARIA FERNANDA                                                                                                                                  	Pasto	3147977237            
+HIDALGO BUCHELI MARIA FERNANDA                                                                                                                                  	Pasto	3147977237                                                                                                                    
 `;
 const clients = rawCSVData.split('\n')
     .map(line => line.trim())
@@ -3545,7 +3415,6 @@ const clients = rawCSVData.split('\n')
     .filter(c => c.nombre !== '');
         // --- 2. CONFIGURACIÓN DE BASE DE DATOS EN TIEMRE REAL (FIREBASE) ---
         let dbGeneral = [];
-        let dbIdeace = [];
         let dbLotes = [];
 
         let activeLoteId = null; 
@@ -3556,11 +3425,6 @@ const clients = rawCSVData.split('\n')
         // --- LISTENERS EN TIEMPO REAL A FIREBASE ---
         db.collection("pedidos_generales").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
             dbGeneral = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            if(isAdminLoggedIn) renderAdminPanel();
-        });
-
-        db.collection("registros_ideace").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
-            dbIdeace = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             if(isAdminLoggedIn) renderAdminPanel();
         });
 
@@ -3718,12 +3582,12 @@ const clients = rawCSVData.split('\n')
             }, 200);
         }
 
+        // --- 5. GESTIÓN ASOCIACIÓN CLIENTE -> POBLACIÓN Y TELÉFONO ---
         function getClientData(clientName) {
             const clientObj = clients.find(c => c.nombre.toLowerCase() === clientName.toLowerCase().trim());
             return clientObj ? clientObj : { poblacion: '', telefono: '' };
         }
 
-        // --- 5. AUTOCOMPLETADO DE POBLACIONES ---
         function showTownsDropdown(formPrefix) {
             if (formPrefix === 'despacho') {
                 const checkbox = document.getElementById('despacho-modificar-poblacion');
@@ -3780,7 +3644,6 @@ const clients = rawCSVData.split('\n')
             }, 200);
         }
 
-        // --- 6. LOGICA ASOCIACIÓN CLIENTE -> POBLACIÓN Y TELÉFONO (DESPACHOS) ---
         function togglePoblacionEdit() {
             const checkbox = document.getElementById('despacho-modificar-poblacion');
             const pInput = document.getElementById('despacho-poblacion');
@@ -3843,7 +3706,6 @@ const clients = rawCSVData.split('\n')
             document.getElementById('view-portal').classList.add('hidden');
             document.getElementById('view-menu').classList.add('hidden');
             document.getElementById('view-form-general').classList.add('hidden');
-            document.getElementById('view-form-ideace').classList.add('hidden');
             document.getElementById('view-menu-despachos').classList.add('hidden');
             document.getElementById('view-form-despachos').classList.add('hidden');
             document.getElementById('view-admin').classList.add('hidden');
@@ -3982,7 +3844,7 @@ const clients = rawCSVData.split('\n')
                         </span>
                         <span class="text-xs text-slate-400 font-mono font-medium">${lote.timestamp}</span>
                     </div>
-                    <h4 class="text-lg font-black text-slate-900 leading-tight">${lote.nombre}</h4>
+                    h4 class="text-lg font-black text-slate-900 leading-tight">${lote.nombre}</h4>
                     
                     <div class="mt-4 flex flex-col gap-1.5 text-slate-500 text-sm">
                         <div class="flex items-center space-x-2">
@@ -4012,7 +3874,7 @@ const clients = rawCSVData.split('\n')
                         </svg>
                         Word
                     </button>
-                    <!-- NUEVO: Botón de WhatsApp -->
+                    <!-- Botón de WhatsApp -->
                     <button onclick="abrirModalWhatsapp('${lote.id}')" class="px-3.5 py-2.5 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition text-xs font-bold flex items-center justify-center" title="Enviar Notificación por WhatsApp">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
@@ -4136,7 +3998,7 @@ const clients = rawCSVData.split('\n')
             const confirmation = confirm(`¿Está seguro de eliminar por completo la planilla "${lote ? lote.nombre : ''}" y todos sus despachos de la nube?`);
             if (confirmation) {
                 db.collection("lotes_despachos").doc(loteId).delete().then(() => {
-                    showToast('Lote Eliminado', 'La planilla de despachos fue eliminada permanentemente.', 'success');
+                    showToast('Lote Evaluado', 'La planilla de despachos fue eliminada permanentemente.', 'success');
                 }).catch(error => console.error(error));
             }
         }
@@ -4348,10 +4210,10 @@ const clients = rawCSVData.split('\n')
             const atado = parseInt(document.getElementById('despacho-atado').value) || 0;
             const saca = parseInt(document.getElementById('despacho-saca').value) || 0;
             const lio = parseInt(document.getElementById('despacho-lio').value) || 0;
-            const carreta = parseInt(document.getElementById('despacho-carreta').value) || 0;
+            const合理 = parseInt(document.getElementById('despacho-carreta').value) || 0;
             const cadena = parseInt(document.getElementById('despacho-cadena').value) || 0;
             const otros = parseInt(document.getElementById('despacho-otros').value) || 0;
-            const total = caja + paquete + rollo + atado + saca + lio + carreta + cadena + otros;
+            const total = caja + paquete + rollo + atado + saca + lio +合理 + cadena + otros;
 
             if (!cliente) {
                 showToast('Formulario Incompleto', 'Debe seleccionar o escribir un cliente destinatario.', 'error');
@@ -4389,13 +4251,11 @@ const clients = rawCSVData.split('\n')
             db.collection("lotes_despachos").doc(activeLoteId).update({ despachos: despachosActualizados }).then(() => {
                 showToast(editingDespachoId ? 'Despacho Actualizado' : 'Remisión Registrada', `Sincronizado con la nube.`, 'success');
                 
-                // --- LINEAS AGREGADAS PARA LA ACTUALIZACIÓN INMEDIATA ---
                 const loteIndex = dbLotes.findIndex(l => l.id === activeLoteId);
                 if (loteIndex !== -1) {
                     dbLotes[loteIndex].despachos = despachosActualizados;
                 }
                 renderDespachosDeLoteActual();
-                // --------------------------------------------------------
 
                 cancelarEdicionDespacho();
                 document.getElementById('despacho-remision').focus();
@@ -4551,7 +4411,7 @@ const clients = rawCSVData.split('\n')
             showToast('Documento Word Listo', 'Se exportó la planilla de despacho en formato horizontal con éxito.', 'success');
         }
 
-        // --- 12. FORMULARIOS DE REGISTRO ORIGINALES A FIREBASE ---
+        // --- 12. FORMULARIO DE REGISTRO ORIGINAL A FIREBASE ---
         function submitGeneralForm(e) {
             e.preventDefault();
             const nombre = document.getElementById('gen-nombre').value.trim();
@@ -4572,45 +4432,6 @@ const clients = rawCSVData.split('\n')
                 showView('menu');
             }).catch((error) => {
                 showToast('Error', 'No se pudo guardar el pedido.', 'error');
-                console.error(error);
-            });
-        }
-
-        function submitIdeaceForm(e) {
-            e.preventDefault();
-            const nombre = document.getElementById('ideace-nombre').value.trim();
-            const prefixVal = document.getElementById('ideace-pedido-prefix').innerText;
-            const inputVal = document.getElementById('ideace-pedido').value.trim();
-            const pedidoCompleto = prefixVal + inputVal;
-            const poblacion = document.getElementById('ideace-poblacion').value.trim();
-            const incluyeChalecos = document.getElementById('ideace-incluye-chalecos').value;
-            const chalecosCantidad = document.getElementById('ideace-chalecos-cantidad').value;
-            const incluyeTokens = document.getElementById('ideace-incluye-tokens').value;
-            const tokensCantidad = document.getElementById('ideace-tokens-cantidad').value;
-
-            const chalecosResultado = incluyeChalecos === 'SI' ? `SÍ (${chalecosCantidad})` : 'NO';
-            const tokensResultado = incluyeTokens === 'SI' ? `SÍ (${tokensCantidad})` : 'NO';
-
-            db.collection("registros_ideace").add({
-                timestamp: formatTimestamp(),
-                nombre: nombre,
-                pedido: pedidoCompleto,
-                poblacion: poblacion,
-                chalecos: chalecosResultado,
-                tokens: tokensResultado
-            }).then(() => {
-                document.getElementById('form-pedidos-ideace').reset();
-                updatePrefix('ideace', 'PED-');
-                
-                document.getElementById('container-chalecos-cantidad').classList.add('hidden');
-                document.getElementById('ideace-chalecos-cantidad').removeAttribute('required');
-                document.getElementById('container-tokens-cantidad').classList.add('hidden');
-                document.getElementById('ideace-tokens-cantidad').removeAttribute('required');
-
-                showToast('¡Registro Exitoso!', 'El reporte IDEACE fue almacenado en la nube.', 'success');
-                showView('menu');
-            }).catch((error) => {
-                showToast('Error', 'No se pudo guardar el registro IDEACE.', 'error');
                 console.error(error);
             });
         }
@@ -4678,7 +4499,6 @@ const clients = rawCSVData.split('\n')
         // --- 14. PANEL DE CONTROL DE ADMINISTRADOR ---
         function renderAdminPanel() {
             document.getElementById('counter-general').innerText = dbGeneral.length;
-            document.getElementById('counter-ideace').innerText = dbIdeace.length;
 
             let totalDespachosCount = 0;
             dbLotes.forEach(lote => {
@@ -4692,25 +4512,18 @@ const clients = rawCSVData.split('\n')
         function switchAdminTab(tabType) {
             currentActiveAdminTab = tabType;
             const tabGen = document.getElementById('tab-general');
-            const tabIdeace = document.getElementById('tab-ideace');
             const tabDespachos = document.getElementById('tab-despachos');
 
             tabGen.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
-            tabIdeace.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
             tabDespachos.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
 
             document.getElementById('table-general-view').classList.add('hidden');
-            document.getElementById('table-ideace-view').classList.add('hidden');
             document.getElementById('table-despachos-view').classList.add('hidden');
 
             if (tabType === 'general') {
                 tabGen.className = "text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
                 document.getElementById('table-title').innerText = "Respuestas Generales";
                 document.getElementById('table-general-view').classList.remove('hidden');
-            } else if (tabType === 'ideace') {
-                tabIdeace.className = "text-left w-full p-6 bg-white border-2 border-emerald-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
-                document.getElementById('table-title').innerText = "Respuestas IDEACE";
-                document.getElementById('table-ideace-view').classList.remove('hidden');
             } else if (tabType === 'despachos') {
                 tabDespachos.className = "text-left w-full p-6 bg-white border-2 border-amber-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
                 document.getElementById('table-title').innerText = "Despachos Logísticos Registrados";
@@ -4748,42 +4561,6 @@ const clients = rawCSVData.split('\n')
                             </tr>
                         `;
                         tbodyGen.insertAdjacentHTML('beforeend', tr);
-                    });
-                }
-            } else if (currentActiveAdminTab === 'ideace') {
-                const tbodyIdeace = document.getElementById('tbody-ideace');
-                tbodyIdeace.innerHTML = '';
-
-                if (dbIdeace.length === 0) {
-                    emptyState.classList.remove('hidden');
-                    emptyState.classList.add('flex');
-                    document.getElementById('table-ideace-view').classList.add('hidden');
-                } else {
-                    emptyState.classList.add('hidden');
-                    emptyState.classList.remove('flex');
-                    document.getElementById('table-ideace-view').classList.remove('hidden');
-
-                    dbIdeace.forEach(item => {
-                        const chalecoClass = item.chalecos.includes('SÍ') ? 'bg-brand-50 text-brand-800 border-brand-200' : 'bg-slate-100 text-slate-400 border-slate-200';
-                        const tokenClass = item.tokens.includes('SÍ') ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-slate-100 text-slate-400 border-slate-200';
-
-                        const tr = `
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
-                                <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
-                                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${item.pedido}</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
-                                </td>
-                                <td class="px-6 py-4 bg-brand-50/20">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border ${chalecoClass}">${item.chalecos}</span>
-                                </td>
-                                <td class="px-6 py-4 bg-emerald-50/20">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border ${tokenClass}">${item.tokens}</span>
-                                </td>
-                            </tr>
-                        `;
-                        tbodyIdeace.insertAdjacentHTML('beforeend', tr);
                     });
                 }
             } else if (currentActiveAdminTab === 'despachos') {
@@ -4851,8 +4628,8 @@ const clients = rawCSVData.split('\n')
 
         // --- 15. EXPORTACIONES NATIVAS A EXCEL (SHEETJS) ---
         function exportConsolidated() {
-            if (dbGeneral.length === 0 && dbIdeace.length === 0) {
-                showToast('Sin Datos', 'No hay registros de pedidos generales ni IDEACE para consolidar.', 'error');
+            if (dbGeneral.length === 0) {
+                showToast('Sin Datos', 'No hay registros de pedidos generales para consolidar.', 'error');
                 return;
             }
 
@@ -4867,8 +4644,7 @@ const clients = rawCSVData.split('\n')
             };
 
             const consolidatedList = [
-                ...format(dbGeneral, 'Registro General'),
-                ...format(dbIdeace, 'Competencia IDEACE')
+                ...format(dbGeneral, 'Registro General')
             ];
 
             consolidatedList.sort((a, b) => new Date(b['Hora de Registro']) - new Date(a['Hora de Registro']));
@@ -4900,26 +4676,6 @@ const clients = rawCSVData.split('\n')
                 XLSX.utils.book_append_sheet(wb, ws, "Pedidos Generales");
                 XLSX.writeFile(wb, "REPORTE_PEDIDOS_GENERALES.xlsx");
                 showToast('Descarga Exitosa', 'Tabla de pedidos generales exportada.', 'success');
-            } else if (currentActiveAdminTab === 'ideace') {
-                if (dbIdeace.length === 0) {
-                    showToast('Sin Datos', 'No hay registros en la Base de Datos de IDEACE.', 'error');
-                    return;
-                }
-
-                const dataToExport = dbIdeace.map(item => ({
-                    'Hora de Registro': item.timestamp,
-                    'Nombre Completo': item.nombre,
-                    'Número de Pedido': item.pedido,
-                    'Población / Ciudad': item.poblacion,
-                    'Chalecos Incluidos': item.chalecos,
-                    'Tokens Incluidos': item.tokens
-                }));
-
-                const ws = XLSX.utils.json_to_sheet(dataToExport);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Registro Competencia IDEACE");
-                XLSX.writeFile(wb, "REPORTE_COMPETENCIA_IDEACE_DETALLADO.xlsx");
-                showToast('Descarga Exitosa', 'Tabla de competencia IDEACE exportada.', 'success');
             } else if (currentActiveAdminTab === 'despachos') {
                 let allDespachosFlat = [];
                 dbLotes.forEach(lote => {
@@ -4974,44 +4730,9 @@ const clients = rawCSVData.split('\n')
             }
         }
 
-        // LÓGICA CONDICIONALES DE FORMULARIO IDEACE
-        function toggleChalecosInput() {
-            const select = document.getElementById('ideace-incluye-chalecos');
-            const container = document.getElementById('container-chalecos-cantidad');
-            const input = document.getElementById('ideace-chalecos-cantidad');
-            
-            if (select.value === 'SI') {
-                container.classList.remove('hidden');
-                input.setAttribute('required', 'required');
-                input.focus();
-            } else {
-                container.classList.add('hidden');
-                input.removeAttribute('required');
-                input.value = '';
-            }
-        }
-
-        function toggleTokensInput() {
-            const select = document.getElementById('ideace-incluye-tokens');
-            const container = document.getElementById('container-tokens-cantidad');
-            const input = document.getElementById('ideace-tokens-cantidad');
-            
-            if (select.value === 'SI') {
-                container.classList.remove('hidden');
-                input.setAttribute('required', 'required');
-                input.focus();
-            } else {
-                container.classList.add('hidden');
-                input.removeAttribute('required');
-                input.value = '';
-            }
-        }
-
 		// --- NUEVAS FUNCIONES PARA EL MODAL DE WHATSAPP ---
-       // --- VARIABLE GLOBAL PARA EL SEGUIMIENTO DEL LOTE EN EL MODAL ---
         window.currentWhatsAppLoteId = null;
 
-        // --- FUNCIONES EXPANDIDAS PARA EL MODAL DE WHATSAPP ---
         window.abrirModalWhatsapp = function(loteId) {
             window.currentWhatsAppLoteId = loteId;
             const lote = dbLotes.find(l => l.id === loteId);
@@ -5036,18 +4757,14 @@ const clients = rawCSVData.split('\n')
 
             lote.despachos.forEach(despacho => {
                 const item = document.createElement('div');
-                // Contenedor principal alineado horizontalmente
                 item.className = 'flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 gap-4 hover:bg-slate-100/50 transition';
                 item.innerHTML = `
-                    <!-- BLOQUE IZQUIERDO: Nombre y Teléfono juntos -->
                     <div class="flex flex-col md:flex-row md:items-center gap-4 flex-1 min-w-0">
-                        <!-- Nombre del cliente -->
                         <div class="flex items-center space-x-3 min-w-[200px] md:max-w-[300px] flex-shrink-0">
                             <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200 flex-shrink-0"></div>
                             <span class="font-bold text-slate-800 text-sm tracking-wide uppercase truncate" title="${despacho.cliente}">${despacho.cliente}</span>
                         </div>
                         
-                        <!-- Teléfono y Checkbox arrastrados cerca del nombre -->
                         <div class="flex items-center space-x-3 flex-shrink-0">
                             <input type="text" value="${despacho.telefono || ''}" readonly 
                                 onblur="window.updateModalPhoneValue(this, '${despacho.id}')"
@@ -5061,7 +4778,6 @@ const clients = rawCSVData.split('\n')
                         </div>
                     </div>
                     
-                  <!-- BLOQUE DERECHO: Nuevo botón verde con icono de mensaje (Sin función por ahora) -->
                     <div class="flex items-center flex-shrink-0">
                         <button type="button" onclick="window.abrirChatWhatsapp('${despacho.id}', this)" class="p-2.5 text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-md shadow-emerald-100 flex items-center justify-center group" title="Enviar notificación por WhatsApp">
                             <svg class="w-4 h-4 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5124,25 +4840,7 @@ const clients = rawCSVData.split('\n')
                 });
             }
         }
-		window.abrirChatWhatsapp = function(button) {
-            const itemContainer = button.closest('.flex.items-center.justify-between');
-            const inputTelefono = itemContainer.querySelector('.whatsapp-phone-input');
-            let telefono = inputTelefono.value.trim();
-            
-            if (!telefono) {
-                showToast('Sin Teléfono', 'Este cliente no tiene un número asignado.', 'error');
-                return;
-            }
-            
-            telefono = telefono.replace(/[^0-9+]/g, '');
-            
-            if (telefono.length === 10 && telefono.startsWith('3')) {
-                telefono = '57' + telefono;
-            }
-            
-            const url = 'https://wa.me/' + telefono;
-            window.open(url, '_blank');
-        }
+
 		window.abrirChatWhatsapp = function(despachoId, button) {
             const lote = dbLotes.find(l => l.id === window.currentWhatsAppLoteId);
             if (!lote) return;
