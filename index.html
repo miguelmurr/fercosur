@@ -5009,23 +5009,12 @@ const clients = rawCSVData.split('\n')
 
 		// --- NUEVAS FUNCIONES PARA EL MODAL DE WHATSAPP ---
         window.abrirModalWhatsapp = function(loteId) {
-            // ALERTA DE PRUEBA: Si ves este mensaje en pantalla, el botón está funcionando perfectamente
-            alert("¡El botón funciona! Buscando la planilla con ID: " + loteId);
-
             const lote = dbLotes.find(l => l.id === loteId);
-            if (!lote) {
-                alert("Error: No se encontró ninguna planilla con esa ID en la base de datos.");
-                return;
-            }
+            if (!lote) return;
 
-            // 1. Mostrar el modal removiendo la clase hidden
+            // 1. Mostrar el modal removiendo la clase hidden de inmediato
             const modal = document.getElementById('whatsapp-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-            } else {
-                alert("Error: No se encontró el elemento HTML con el ID 'whatsapp-modal'.");
-                return;
-            }
+            if (modal) modal.classList.remove('hidden');
             
             // 2. Insertar el nombre de la planilla en el subtítulo del modal
             document.getElementById('whatsapp-lote-name').innerText = lote.nombre;
