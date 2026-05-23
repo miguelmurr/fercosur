@@ -4388,6 +4388,15 @@ const clients = rawCSVData.split('\n')
 
             db.collection("lotes_despachos").doc(activeLoteId).update({ despachos: despachosActualizados }).then(() => {
                 showToast(editingDespachoId ? 'Despacho Actualizado' : 'Remisión Registrada', `Sincronizado con la nube.`, 'success');
+                
+                // --- LINEAS AGREGADAS PARA LA ACTUALIZACIÓN INMEDIATA ---
+                const loteIndex = dbLotes.findIndex(l => l.id === activeLoteId);
+                if (loteIndex !== -1) {
+                    dbLotes[loteIndex].despachos = despachosActualizados;
+                }
+                renderDespachosDeLoteActual();
+                // --------------------------------------------------------
+
                 cancelarEdicionDespacho();
                 document.getElementById('despacho-remision').focus();
             }).catch(error => {
