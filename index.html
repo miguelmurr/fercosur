@@ -879,6 +879,56 @@
     </div>
 
     <!-- MODAL: CREAR NUEVO LOTE DE DESPACHO -->
+	<div id="todas-planillas-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Backdrop (Fondo translúcido) -->
+            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="closeTodasPlanillasModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <!-- Contenido del Modal -->
+            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full border border-slate-200">
+                <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 mb-6 gap-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-black text-slate-950">Historial de Planillas</h3>
+                                <p class="text-sm text-slate-500 mt-1">Busca, organiza y gestiona todos los lotes de despacho de Fercosur.</p>
+                            </div>
+                        </div>
+                        <button onclick="closeTodasPlanillasModal()" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Caja de Filtros y Búsqueda -->
+                    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                        <div class="flex-1 relative">
+                            <input type="text" id="search-planillas-input" oninput="renderTodasPlanillasList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none sm:text-sm font-medium text-slate-900" placeholder="Buscar planilla por nombre o ruta...">
+                        </div>
+                        <div class="sm:w-52">
+                            <select id="sort-planillas-select" onchange="renderTodasPlanillasList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none sm:text-sm font-semibold text-slate-700 bg-white">
+                                <option value="desc">Más recientes primero</option>
+                                <option value="asc">Más antiguas primero</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor donde se renderizan los lotes -->
+                    <div id="todas-planillas-grid-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[50vh] overflow-y-auto p-1">
+                        <!-- Las tarjetas se cargan dinámicamente aquí -->
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse">
+                    <button type="button" onclick="closeTodasPlanillasModal()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar Ventana</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="lote-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="lote-modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="closeLoteModal()"></div>
