@@ -5008,7 +5008,7 @@ const clients = rawCSVData.split('\n')
         }
 
 		// --- NUEVAS FUNCIONES PARA EL MODAL DE WHATSAPP ---
-        // --- VARIABLE GLOBAL PARA EL SEGUIMIENTO DEL LOTE EN EL MODAL ---
+       // --- VARIABLE GLOBAL PARA EL SEGUIMIENTO DEL LOTE EN EL MODAL ---
         window.currentWhatsAppLoteId = null;
 
         // --- FUNCIONES EXPANDIDAS PARA EL MODAL DE WHATSAPP ---
@@ -5036,28 +5036,38 @@ const clients = rawCSVData.split('\n')
 
             lote.despachos.forEach(despacho => {
                 const item = document.createElement('div');
-                // Estructura en fila responsiva con distribución horizontal
-                item.className = 'flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 gap-4 hover:bg-slate-100/50 transition';
+                // Contenedor principal alineado horizontalmente
+                item.className = 'flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 gap-4 hover:bg-slate-100/50 transition';
                 item.innerHTML = `
-                    <!-- Lado izquierdo: Nombre del cliente -->
-                    <div class="flex items-center space-x-3 flex-1 min-w-0">
-                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200 flex-shrink-0"></div>
-                        <span class="font-bold text-slate-800 text-sm tracking-wide uppercase truncate" title="${despacho.cliente}">${despacho.cliente}</span>
+                    <!-- BLOQUE IZQUIERDO: Nombre y Teléfono juntos -->
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 flex-1 min-w-0">
+                        <!-- Nombre del cliente -->
+                        <div class="flex items-center space-x-3 min-w-[200px] md:max-w-[300px] flex-shrink-0">
+                            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-200 flex-shrink-0"></div>
+                            <span class="font-bold text-slate-800 text-sm tracking-wide uppercase truncate" title="${despacho.cliente}">${despacho.cliente}</span>
+                        </div>
+                        
+                        <!-- Teléfono y Checkbox arrastrados cerca del nombre -->
+                        <div class="flex items-center space-x-3 flex-shrink-0">
+                            <input type="text" value="${despacho.telefono || ''}" readonly 
+                                onblur="window.updateModalPhoneValue(this, '${despacho.id}')"
+                                class="whatsapp-phone-input w-36 px-2.5 py-1.5 text-xs font-mono font-bold border border-slate-200 rounded-xl bg-slate-100 text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-center" 
+                                placeholder="Sin teléfono">
+                            
+                            <label class="flex items-center space-x-1.5 cursor-pointer select-none">
+                                <input type="checkbox" onchange="window.toggleModalPhoneEdit(this)" class="h-3.5 w-3.5 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded-lg cursor-pointer">
+                                <span class="text-[11px] font-bold text-slate-400">Modificar</span>
+                            </label>
+                        </div>
                     </div>
                     
-                    <!-- Lado derecho: Teléfono editable y Checkbox de control -->
-                    <div class="flex items-center space-x-4 flex-shrink-0">
-                        <!-- Input de Teléfono bloqueado por defecto -->
-                        <input type="text" value="${despacho.telefono || ''}" readonly 
-                            onblur="window.updateModalPhoneValue(this, '${despacho.id}')"
-                            class="whatsapp-phone-input w-40 px-3 py-2 text-xs font-mono font-bold border border-slate-200 rounded-xl bg-slate-100 text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all text-center" 
-                            placeholder="Sin teléfono">
-                        
-                        <!-- Casilla de verificación para alternar edición -->
-                        <label class="flex items-center space-x-2 cursor-pointer select-none">
-                            <input type="checkbox" onchange="window.toggleModalPhoneEdit(this)" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded-lg cursor-pointer">
-                            <span class="text-xs font-bold text-slate-500">Modificar</span>
-                        </label>
+                    <!-- BLOQUE DERECHO: Nuevo botón verde con icono de mensaje (Sin función por ahora) -->
+                    <div class="flex items-center flex-shrink-0">
+                        <button type="button" class="p-2.5 text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-md shadow-emerald-100 flex items-center justify-center group" title="Enviar notificación por WhatsApp">
+                            <svg class="w-4 h-4 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                            </svg>
+                        </button>
                     </div>
                 `;
                 container.appendChild(item);
@@ -5067,10 +5077,9 @@ const clients = rawCSVData.split('\n')
         window.cerrarModalWhatsapp = function() {
             const modal = document.getElementById('whatsapp-modal');
             if (modal) modal.classList.add('hidden');
-            window.currentWhatsAppLoteId = null; // Limpiar rastreo
+            window.currentWhatsAppLoteId = null;
         }
 
-        // Función encargada de bloquear/desbloquear el input según el estado del checkbox
         window.toggleModalPhoneEdit = function(checkbox) {
             const parentDiv = checkbox.closest('div');
             const input = parentDiv.querySelector('.whatsapp-phone-input');
@@ -5087,7 +5096,6 @@ const clients = rawCSVData.split('\n')
             }
         }
 
-        // Función encargada de salvar los cambios en Firebase Firestore al quitar el foco del input
         window.updateModalPhoneValue = function(input, despachoId) {
             const nuevoTelefono = input.value.trim();
             const loteId = window.currentWhatsAppLoteId;
@@ -5100,15 +5108,11 @@ const clients = rawCSVData.split('\n')
             const index = despachosActualizados.findIndex(d => d.id === despachoId);
             
             if (index !== -1) {
-                // Si el número es exactamente igual al que ya estaba, no hacemos nada para ahorrar red
                 if (despachosActualizados[index].telefono === nuevoTelefono) return;
 
-                // Modificar el teléfono en la estructura
                 despachosActualizados[index].telefono = nuevoTelefono;
                 
-                // Actualizar directamente el lote en Firestore
                 db.collection("lotes_despachos").doc(loteId).update({ despachos: despachosActualizados }).then(() => {
-                    // Refrescar memoria intermedia local
                     const loteIndex = dbLotes.findIndex(l => l.id === loteId);
                     if (loteIndex !== -1) {
                         dbLotes[loteIndex].despachos = despachosActualizados;
