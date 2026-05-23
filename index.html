@@ -4976,21 +4976,21 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             }
         }
 
-        // --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL ---
+        // --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL CORREGIDA ---
         function eliminarPedidoGeneral(id) {
             const confirmacion = confirm("¿Está seguro de eliminar permanentemente este registro de pedido de la nube? Esta acción no se puede deshacer.");
-            if (confirmation) {
+            if (confirmacion) {
                 db.collection("pedidos_generales").doc(id).delete().then(() => {
+                    // Refuerzo con plastilina: Sacamos el pedido del arreglo local inmediatamente
+                    dbGeneral = dbGeneral.filter(item => item.id !== id);
+                    
+                    // Forzamos al panel a volver a pintarse con los datos ya actualizados
+                    renderAdminPanel();
+                    
                     showToast('Registro Eliminado', 'El pedido general fue removido con éxito de la base de datos.', 'success');
                 }).catch((error) => {
-                    showToast('Error', 'No se pudo eliminar el registro. Verifique su conexión.', 'error');
-                    console.error(error);
+                    showToast('Error', 'No se pudo eliminar el registro. Verifique su conexión o permisos.', 'error');
+                    console.error("Error al borrar en Firebase:", error);
                 });
             }
         }
-       
-        // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
-        window.onload = function() {
-            showView('portal');
-        }
-    </script>
