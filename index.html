@@ -5061,14 +5061,14 @@ const clients = rawCSVData.split('\n')
                         </div>
                     </div>
                     
-                   <!-- BLOQUE DERECHO: Nuevo botón verde con icono de mensaje (Sin función por ahora) -->
-<div class="flex items-center flex-shrink-0">
-    <button type="button" onclick="window.abrirChatWhatsapp(this)" class="p-2.5 text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-md shadow-emerald-100 flex items-center justify-center group" title="Enviar notificación por WhatsApp">
-        <svg class="w-4 h-4 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-        </svg>
-    </button>
-</div>
+                  <!-- BLOQUE DERECHO: Nuevo botón verde con icono de mensaje (Sin función por ahora) -->
+                    <div class="flex items-center flex-shrink-0">
+                        <button type="button" onclick="window.abrirChatWhatsapp('${despacho.id}', this)" class="p-2.5 text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-md shadow-emerald-100 flex items-center justify-center group" title="Enviar notificación por WhatsApp">
+                            <svg class="w-4 h-4 transform group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                            </svg>
+                        </button>
+                    </div>
                 `;
                 container.appendChild(item);
             });
@@ -5141,6 +5141,50 @@ const clients = rawCSVData.split('\n')
             }
             
             const url = 'https://wa.me/' + telefono;
+            window.open(url, '_blank');
+        }
+		window.abrirChatWhatsapp = function(despachoId, button) {
+            const lote = dbLotes.find(l => l.id === window.currentWhatsAppLoteId);
+            if (!lote) return;
+            
+            const despacho = lote.despachos.find(d => d.id === despachoId);
+            if (!despacho) return;
+
+            const itemContainer = button.closest('.flex.items-center.justify-between');
+            const inputTelefono = itemContainer.querySelector('.whatsapp-phone-input');
+            let telefono = inputTelefono.value.trim();
+            
+            if (!telefono) {
+                showToast('Sin Teléfono', 'Este cliente no tiene un número asignado.', 'error');
+                return;
+            }
+            
+            telefono = telefono.replace(/[^0-9+]/g, '');
+            if (telefono.length === 10 && telefono.startsWith('3')) {
+                telefono = '57' + telefono;
+            }
+
+            let detalleEmpaques = '';
+            if (despacho.empaques.caja > 0) detalleEmpaques += `* ${despacho.empaques.caja} Caja(s) 📦\n`;
+            if (despacho.empaques.paquete > 0) detalleEmpaques += `* ${despacho.empaques.paquete} Paquete(s) 🛍️\n`;
+            if (despacho.empaques.rollo > 0) detalleEmpaques += `* ${despacho.empaques.rollo} Rollo(s) 🧵\n`;
+            if (despacho.empaques.atado > 0) detalleEmpaques += `* ${despacho.empaques.atado} Atado(s) 🪵\n`;
+            if (despacho.empaques.saca > 0) detalleEmpaques += `* ${despacho.empaques.saca} Saca(s) 🎒\n`;
+            if (despacho.empaques.lio > 0) detalleEmpaques += `* ${despacho.empaques.lio} Lío(s) 📦\n`;
+            if (despacho.empaques.carreta > 0) detalleEmpaques += `* ${despacho.empaques.carreta} Carreta(s) 🛒\n`;
+            if (despacho.empaques.cadena > 0) detalleEmpaques += `* ${despacho.empaques.cadena} Cadena(s) ⛓️\n`;
+            if (despacho.empaques.otros > 0) detalleEmpaques += `* ${despacho.empaques.otros} Otros ⚙️\n`;
+
+            if (!detalleEmpaques) {
+                detalleEmpaques = '* Sin empaques registrados\n';
+            }
+
+            const mensaje = `Cordial saludo, ${despacho.cliente} 👋.\n\n` +
+                            `De parte de FERCOSUR PASTO, le informamos que su pedido ha sido despachado bajo la remisión *${despacho.remision}* y factura *${despacho.fve || 'N/A'}* 🚚.\n\n` +
+                            `El detalle de su despacho es:\n${detalleEmpaques}\n` +
+                            `Estaremos atentos a su recepción. ¡Gracias por confiar en nosotros! 🤝`;
+
+            const url = 'https://wa.me/' + telefono + '?text=' + encodeURIComponent(mensaje);
             window.open(url, '_blank');
         }
        
