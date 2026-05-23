@@ -4617,7 +4617,6 @@ const clients = rawCSVData.split('\n')
 
         // --- 13. CONTROL SEGURIDAD POR PIN (MODAL) ---
         // Variable invisible para saber a dónde va el usuario
-        ```javascript
         let pinTargetView = "admin"; 
 
         function openPinModal(target = 'admin') {
@@ -4628,6 +4627,7 @@ const clients = rawCSVData.split('\n')
             pinTargetView = target; 
             document.getElementById('pin-modal').classList.remove('hidden');
             document.getElementById('pin-error-msg').classList.add('hidden');
+            clearPinFields();
             document.getElementById('pin-1').focus();
         }
 
@@ -4660,7 +4660,6 @@ const clients = rawCSVData.split('\n')
             const enteredPin = p1 + p2 + p3 + p4;
 
             if (pinTargetView === 'registros') {
-                // Candado para el Módulo de Registros
                 if (enteredPin === '2020') {
                     closePinModal();
                     showToast('Acceso Concedido', 'Abriendo Módulo de Registros...', 'success');
@@ -4671,7 +4670,6 @@ const clients = rawCSVData.split('\n')
                     document.getElementById('pin-1').focus();
                 }
             } else if (pinTargetView === 'despachos') {
-                // Candado para el Módulo de Despachos
                 if (enteredPin === '2026') {
                     closePinModal();
                     showToast('Acceso Concedido', 'Abriendo Módulo de Despachos...', 'success');
@@ -4682,7 +4680,6 @@ const clients = rawCSVData.split('\n')
                     document.getElementById('pin-1').focus();
                 }
             } else {
-                // Candado original para el Panel de Administrador
                 if (enteredPin === '1234') {
                     isAdminLoggedIn = true;
                     closePinModal();
@@ -4695,14 +4692,6 @@ const clients = rawCSVData.split('\n')
                     document.getElementById('pin-1').focus();
                 }
             }
-        }
-
-        function logoutAdmin() {
-            isAdminLoggedIn = false;
-            document.getElementById('btn-admin-access').classList.remove('hidden');
-            document.getElementById('btn-admin-logout').classList.add('hidden');
-            goToPortal();
-            showToast('Sesión Cerrada', 'Has abandonado el panel de administración de manera segura.', 'success');
         }
 
         // --- 14. PANEL DE CONTROL DE ADMINISTRADOR ---
