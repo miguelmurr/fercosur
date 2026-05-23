@@ -5165,24 +5165,24 @@ const clients = rawCSVData.split('\n')
             }
 
             let detalleEmpaques = '';
-            if (despacho.empaques.caja > 0) detalleEmpaques += `* ${despacho.empaques.caja} CAJA(S) 📦\n`;
-            if (despacho.empaques.paquete > 0) detalleEmpaques += `* ${despacho.empaques.paquete} PAQUETE(S) 📦\n`;
-            if (despacho.empaques.rollo > 0) detalleEmpaques += `* ${despacho.empaques.rollo} ROLLO(S) 🔹\n`;
-            if (despacho.empaques.atado > 0) detalleEmpaques += `* ${despacho.empaques.atado} ATADO(S) 🔹\n`;
-            if (despacho.empaques.saca > 0) detalleEmpaques += `* ${despacho.empaques.saca} SACA(S) 💼\n`;
-            if (despacho.empaques.lio > 0) detalleEmpaques += `* ${despacho.empaques.lio} LÍO(S) 📦\n`;
-            if (despacho.empaques.carreta > 0) detalleEmpaques += `* ${despacho.empaques.carreta} CARRETA(S) 🚛\n`;
-            if (despacho.empaques.cadena > 0) detalleEmpaques += `* ${despacho.empaques.cadena} CADENA(S) 🔗\n`;
-            if (despacho.empaques.otros > 0) detalleEmpaques += `* ${despacho.empaques.otros} OTROS 🔹\n`;
+            if (despacho.empaques.caja > 0) detalleEmpaques += `* ${despacho.empaques.caja} CAJA(S)\n`;
+            if (despacho.empaques.paquete > 0) detalleEmpaques += `* ${despacho.empaques.paquete} PAQUETE(S)\n`;
+            if (despacho.empaques.rollo > 0) detalleEmpaques += `* ${despacho.empaques.rollo} ROLLO(S)\n`;
+            if (despacho.empaques.atado > 0) detalleEmpaques += `* ${despacho.empaques.atado} ATADO(S)\n`;
+            if (despacho.empaques.saca > 0) detalleEmpaques += `* ${despacho.empaques.saca} SACA(S)\n`;
+            if (despacho.empaques.lio > 0) detalleEmpaques += `* ${despacho.empaques.lio} LÍO(S)\n`;
+            if (despacho.empaques.carreta > 0) detalleEmpaques += `* ${despacho.empaques.carreta} CARRETA(S)\n`;
+            if (despacho.empaques.cadena > 0) detalleEmpaques += `* ${despacho.empaques.cadena} CADENA(S)\n`;
+            if (despacho.empaques.otros > 0) detalleEmpaques += `* ${despacho.empaques.otros} OTROS\n`;
 
             if (!detalleEmpaques) {
                 detalleEmpaques = '* Sin empaques registrados\n';
             }
 
-            const mensaje = `Cordial saludo, ${despacho.cliente} 👋.\n\n` +
-                            `De parte de FERCOSUR PASTO, le informamos que su pedido ha sido despachado bajo la remisión *${despacho.remision}* y factura *${despacho.fve || 'N/A'}* 🚚.\n\n` +
+            const mensaje = `Cordial saludo, ${despacho.cliente}.\n\n` +
+                            `De parte de FERCOSUR PASTO, le informamos que su pedido ha sido despachado bajo la remisión *${despacho.remision}* y factura *${despacho.fve || 'N/A'}*.\n\n` +
                             `El detalle de su despacho es:\n${detalleEmpaques}\n` +
-                            `Estaremos atentos a su recepción. ¡Gracias por confiar en nosotros! 🤝`;
+                            `Estaremos atentos a su recepción. ¡Gracias por confiar en nosotros!`;
 
             const url = 'https://wa.me/' + telefono + '?text=' + encodeURIComponent(mensaje);
             window.open(url, '_blank');
