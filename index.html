@@ -5008,16 +5008,33 @@ const clients = rawCSVData.split('\n')
         }
 
 		// --- NUEVAS FUNCIONES PARA EL MODAL DE WHATSAPP ---
-        function abrirModalWhatsapp(loteId) {
-            const lote = dbLotes.find(l => l.id === loteId);
-            if (!lote) return;
+        window.abrirModalWhatsapp = function(loteId) {
+            // ALERTA DE PRUEBA: Si ves este mensaje en pantalla, el botón está funcionando perfectamente
+            alert("¡El botón funciona! Buscando la planilla con ID: " + loteId);
 
-            document.getElementById('whatsapp-modal').classList.remove('hidden');
+            const lote = dbLotes.find(l => l.id === loteId);
+            if (!lote) {
+                alert("Error: No se encontró ninguna planilla con esa ID en la base de datos.");
+                return;
+            }
+
+            // 1. Mostrar el modal removiendo la clase hidden
+            const modal = document.getElementById('whatsapp-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            } else {
+                alert("Error: No se encontró el elemento HTML con el ID 'whatsapp-modal'.");
+                return;
+            }
+            
+            // 2. Insertar el nombre de la planilla en el subtítulo del modal
             document.getElementById('whatsapp-lote-name').innerText = lote.nombre;
 
+            // 3. Limpiar el contenedor de la lista antes de inyectar datos
             const container = document.getElementById('whatsapp-clients-list');
             container.innerHTML = '';
 
+            // Si la planilla está vacía, mostrar un mensaje preventivo
             if (!lote.despachos || lote.despachos.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-8 text-slate-400 italic text-sm font-medium">
@@ -5027,6 +5044,7 @@ const clients = rawCSVData.split('\n')
                 return;
             }
 
+            // 4. Recorrer los despachos e inyectar solo los nombres de los clientes
             lote.despachos.forEach(despacho => {
                 const item = document.createElement('div');
                 item.className = 'flex items-center space-x-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 hover:bg-slate-100/80 transition';
@@ -5038,8 +5056,9 @@ const clients = rawCSVData.split('\n')
             });
         }
 
-        function cerrarModalWhatsapp() {
-            document.getElementById('whatsapp-modal').classList.add('hidden');
+        window.cerrarModalWhatsapp = function() {
+            const modal = document.getElementById('whatsapp-modal');
+            if (modal) modal.classList.add('hidden');
         }
 
         // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
