@@ -179,23 +179,23 @@
                     </p>
                 </div>
 
-                <!-- Tarjetas de Selección Robustas y de Alto Contraste (Estilo PlayStation Light) -->
+              <!-- Tarjetas de Selección Robustas y de Alto Contraste (Estilo Premium con Degradado Vibrante) -->
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-                    <!-- Tarjeta Módulo Registros (General e IDEACE) -->
-                   <div onclick="showView('menu')" class="group relative bg-white/70 backdrop-blur-xl border border-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(16,185,129,0.12)] hover:border-corporateGreen-400 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-bl-full -z-10 group-hover:bg-brand-500/10 transition-colors duration-300"></div>
+                    <!-- Tarjeta Módulo Registros -->
+                    <div onclick="showView('menu')" class="group relative bg-gradient-to-br from-brand-900/90 to-corporateGreen-900/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.25)] hover:border-corporateGreen-400/50 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full -z-10 group-hover:bg-white/10 transition-colors duration-300"></div>
                         <div>
-                            <div class="inline-flex p-4 rounded-2xl bg-brand-600 text-white mb-6 group-hover:scale-110 transition-transform duration-300 shadow-md shadow-brand-100">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="inline-flex p-4 rounded-2xl bg-white/10 text-white mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg backdrop-blur-md">
+                                <svg class="w-8 h-8 text-corporateGreen-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-extrabold text-slate-900 text-left">Módulo de Registros</h3>
-                            <p class="mt-3 text-slate-600 leading-relaxed text-left text-sm">
+                            <h3 class="text-2xl font-black text-white text-left tracking-tight">Módulo de Registros</h3>
+                            <p class="mt-3 text-slate-300 leading-relaxed text-left text-sm font-medium">
                                 Registro y homologación de planillas de Pedidos Generales en tiempo real.
                             </p>
                         </div>
-                        <div class="mt-8 flex items-center text-brand-600 font-extrabold text-sm group-hover:text-brand-700 transition-colors">
+                        <div class="mt-8 flex items-center text-corporateGreen-400 font-black text-sm group-hover:text-corporateGreen-300 transition-colors">
                             Ingresar a Registros 
                             <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -203,25 +203,22 @@
                         </div>
                     </div>
 
-                    <!-- Tarjeta Módulo Despachos (Corregida, no traslúcida, igual de clara) -->
-                   <div onclick="openDespachosModal()" class="group relative bg-white/70 backdrop-blur-xl border border-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(16,185,129,0.12)] hover:border-corporateGreen-400 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-corporateGreen-500/5 rounded-bl-full -z-10 group-hover:bg-corporateGreen-500/10 transition-colors duration-300"></div>
+                    <!-- Tarjeta Módulo Despachos -->
+                    <div onclick="openDespachosModal()" class="group relative bg-gradient-to-br from-brand-900/90 to-corporateGreen-900/80 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.25)] hover:border-corporateGreen-400/50 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full -z-10 group-hover:bg-white/10 transition-colors duration-300"></div>
                         <div>
-                            <!-- Camión con alto contraste: fondo verde corporativo sólido con icono blanco -->
-                            <div class="inline-flex p-4 rounded-2xl bg-corporateGreen-600 text-white mb-6 group-hover:scale-110 transition-transform duration-300 shadow-md shadow-corporateGreen-100">
-                                <!-- Icono de Camión/Despacho -->
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="inline-flex p-4 rounded-2xl bg-white/10 text-white mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg backdrop-blur-md">
+                                <svg class="w-8 h-8 text-corporateGreen-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10M13 16h6l3-3V9a1 1 0 00-1-1h-3M13 8h7"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-extrabold text-slate-900 text-left">Módulo de Despachos</h3>
-                            <p class="mt-3 text-slate-600 leading-relaxed text-left text-sm">
+                            <h3 class="text-2xl font-black text-white text-left tracking-tight">Módulo de Despachos</h3>
+                            <p class="mt-3 text-slate-300 leading-relaxed text-left text-sm font-medium">
                                 Gestión de remisiones, asignación de poblaciones, cuantificación de empaques y planillas horizontales.
                             </p>
                         </div>
-                        <!-- Texto "Ingresar a Despachos" con alto contraste (corporateGreen-700 / corporateGreen-800) -->
-                        <div class="mt-8 flex items-center text-corporateGreen-700 font-extrabold text-sm group-hover:text-corporateGreen-800 transition-colors">
+                        <div class="mt-8 flex items-center text-corporateGreen-400 font-black text-sm group-hover:text-corporateGreen-300 transition-colors">
                             Ingresar a Despachos
                             <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -229,10 +226,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </section>
         
-        <!-- SUB-VISTA: SELECCIÓN DE PLANILLAS DE REGISTRO (ORIGINAL MENU) -->
        <!-- SUB-VISTA: SELECCIÓN DE PLANILLAS DE REGISTRO (ORIGINAL MENU) -->
         <section id="view-menu" class="hidden fade-in max-w-4xl mx-auto w-full py-8 px-4">
             <div class="flex items-center space-x-3 mb-6">
@@ -3863,25 +3858,24 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             const cantRemisiones = lote.despachos ? lote.despachos.length : 0;
             const totalUnidadesPlanilla = lote.despachos ? lote.despachos.reduce((sum, d) => sum + (d.empaques.total || 0), 0) : 0;
 
+            // Ajustamos las etiquetas internas para que contrasten sobre el fondo oscuro
             const badgeClass = lote.finalizado 
-                ? 'bg-slate-100 text-slate-700 border-slate-200' 
-                : 'bg-corporateGreen-100 text-corporateGreen-800 border-corporateGreen-200';
+                ? 'bg-white/10 text-slate-300 border-white/10' 
+                : 'bg-corporateGreen-500/20 text-corporateGreen-300 border-corporateGreen-500/30';
             const badgeText = lote.finalizado ? 'Finalizado' : 'Activo';
 
-            // Animación de sombras avanzadas y rebote
             const borderHoverClass = lote.finalizado
-                ? 'hover:border-slate-300 hover:shadow-[0_15px_30px_rgb(0,0,0,0.08)]'
-                : 'hover:border-corporateGreen-400 hover:shadow-[0_15px_30px_rgb(16,185,129,0.15)]';
+                ? 'hover:border-white/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)]'
+                : 'hover:border-corporateGreen-400/50 hover:shadow-[0_20px_40px_rgba(16,185,129,0.2)]';
 
             const actionBtnText = lote.finalizado ? 'Ver / Modificar' : 'Continuar Registrando';
-            // Botón verde Fercosur para los activos
             const actionBtnColor = lote.finalizado 
-                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' 
-                : 'bg-corporateGreen-600 hover:bg-corporateGreen-700 text-white shadow-md shadow-corporateGreen-200';
+                ? 'bg-white/10 hover:bg-white/20 text-white border border-white/10' 
+                : 'bg-corporateGreen-600 hover:bg-corporateGreen-500 text-white shadow-md shadow-corporateGreen-900/50';
 
             const cardDiv = document.createElement('div');
-            // Clases de Glassmorphism aplicadas al contenedor principal
-            cardDiv.className = `bg-white/80 backdrop-blur-xl border border-white rounded-[1.5rem] p-7 flex flex-col justify-between transition-all duration-500 transform hover:-translate-y-2 shadow-[0_4px_20px_rgb(0,0,0,0.03)] ${borderHoverClass}`;
+            // Aplicamos el degradado azul-verde traslúcido de Fercosur a las tarjetas de los lotes
+            cardDiv.className = `bg-gradient-to-br from-brand-950/95 to-corporateGreen-950/90 backdrop-blur-2xl border border-white/5 rounded-[1.8rem] p-7 flex flex-col justify-between transition-all duration-500 transform hover:-translate-y-2 shadow-[0_15px_35px_rgba(0,0,0,0.1)] ${borderHoverClass}`;
             cardDiv.innerHTML = `
                 <div>
                     <div class="flex items-center justify-between mb-4">
@@ -3890,42 +3884,41 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                         </span>
                         <span class="text-[11px] text-slate-400 font-mono font-bold">${lote.timestamp}</span>
                     </div>
-                    <!-- Título con más aire y presencia -->
-                    <h4 class="text-xl font-black text-slate-900 leading-tight tracking-tight mb-4">${lote.nombre}</h4>
+                    <h4 class="text-xl font-black text-white leading-tight tracking-tight mb-4 uppercase">${lote.nombre}</h4>
                     
-                    <div class="mt-4 flex flex-col gap-2 text-slate-500 text-sm">
+                    <div class="mt-4 flex flex-col gap-2 text-slate-300 text-sm font-medium">
                         <div class="flex items-center space-x-2">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <span class="font-bold text-slate-800">${cantRemisiones}</span>
+                            <span class="font-black text-white">${cantRemisiones}</span>
                             <span>remisiones</span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <svg class="w-4 h-4 text-corporateGreen-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 text-corporateGreen-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                             </svg>
-                            <span class="font-bold text-corporateGreen-700">${totalUnidadesPlanilla}</span>
-                            <span class="text-corporateGreen-600">unidades totales</span>
+                            <span class="font-black text-corporateGreen-300">${totalUnidadesPlanilla}</span>
+                            <span class="text-corporateGreen-400">unidades totales</span>
                         </div>
                     </div>
                 </div>
-                <div class="mt-6 pt-5 border-t border-slate-100 flex flex-wrap gap-2">
-                    <button onclick="${isInsideModal ? 'closeTodasPlanillasModal();' : ''} cargarLoteParaTrabajar('${lote.id}')" class="flex-1 min-w-[120px] py-2.5 px-3 text-xs font-bold rounded-xl transition-colors duration-300 text-center ${actionBtnColor}">
+                <div class="mt-6 pt-5 border-t border-white/5 flex flex-wrap gap-2">
+                    <button onclick="${isInsideModal ? 'closeTodasPlanillasModal();' : ''} cargarLoteParaTrabajar('${lote.id}')" class="flex-1 min-w-[120px] py-2.5 px-3 text-xs font-black rounded-xl transition-colors duration-300 text-center ${actionBtnColor}">
                         ${actionBtnText}
                     </button>
-                    <button onclick="exportLoteToWord('${lote.id}')" class="px-3.5 py-2.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition text-xs font-bold flex items-center justify-center gap-1" title="Exportar Planilla a Word (Horizontal)">
+                    <button onclick="exportLoteToWord('${lote.id}')" class="px-3.5 py-2.5 text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-xl border border-blue-500/20 transition text-xs font-bold flex items-center justify-center gap-1" title="Exportar Planilla a Word (Horizontal)">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         Word
                     </button>
-                    <button onclick="abrirModalWhatsapp('${lote.id}')" class="px-3.5 py-2.5 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition text-xs font-bold flex items-center justify-center" title="Enviar Notificación por WhatsApp">
+                    <button onclick="abrirModalWhatsapp('${lote.id}')" class="px-3.5 py-2.5 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl border border-emerald-500/20 transition text-xs font-bold flex items-center justify-center" title="Enviar Notificación por WhatsApp">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                         </svg>
                     </button>
-                    <button onclick="eliminarLote('${lote.id}')" class="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition text-xs" title="Eliminar Planilla">
+                    <button onclick="eliminarLote('${lote.id}')" class="p-2.5 text-red-400 bg-red-500/10 hover:bg-red-500/20 rounded-xl border border-red-500/20 transition text-xs" title="Eliminar Planilla">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                         </svg>
