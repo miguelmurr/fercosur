@@ -3983,19 +3983,20 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             } else {
                 if(emptyState) { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }
 
-                // Ajuste Quirúrgico: Cambiamos de 5 a 6 el límite de lotes para tener 2 filas completas
-                const lotesToShow = dbLotes.slice(0, 6);
+                const lotesToShow = dbLotes.slice(0, 5);
                 lotesToShow.forEach(lote => {
                     container.appendChild(createLoteCardElement(lote, false));
                 });
-                // También actualizamos la condición del botón "Ver más planillas" a 6
-                if (dbLotes.length > 6) {
+
+                if (dbLotes.length > 5) {
                     if(verMasContainer) verMasContainer.classList.remove('hidden');
                     const badge = document.getElementById('total-lotes-badge');
                     if(badge) badge.innerText = dbLotes.length;
                 } else {
                     if(verMasContainer) verMasContainer.classList.add('hidden');
                 }
+            }
+        }
 
         function openTodasPlanillasModal() {
             document.getElementById('todas-planillas-modal').classList.remove('hidden');
