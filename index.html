@@ -234,48 +234,9 @@
                 </div>
         </section>
         
-     <!-- SUB-VISTA: SELECCIÓN DE PLANILLAS DE REGISTRO (ORIGINAL MENU - REDISEÑO ONDAS NARANJAS) -->
-        <section id="view-menu-despachos" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center py-12 px-4 relative overflow-hidden bg-white">
-            <!-- CAPA DE ONDAS AMBER Y NARANJA LOGÍSTICO -->
-            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <!-- Fondo base con un leve tono cálido de descanso -->
-                <div class="absolute inset-0 bg-[#fffbeb]"></div>
-                
-                <!-- Ondas de Luz SVG de Alta Intensidad (Mezcla de Ámbar y Naranja Fercosur Logística) -->
-                <svg class="absolute bottom-0 left-0 w-full h-[85%] opacity-25 mix-blend-multiply" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <path d="M0,150 C400,280 600,50 1000,220 C1200,290 1320,180 1440,100 L1440,600 L0,600 Z" fill="url(#fercosurGradientOrange)"/>
-                    <!-- Rayas estructurales decorativas de color Amarillo/Ámbar Vibrante -->
-                    <path d="M0,160 C400,290 600,60 1000,230 C1200,300 1320,190 1440,110" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 4" opacity="0.3"/>
-                    <defs>
-                        <linearGradient id="fercosurGradientOrange" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#ea580c" stop-opacity="0.8"/>
-                            <stop offset="50%" stop-color="#d97706" stop-opacity="0.6"/>
-                            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.3"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-                
-                <svg class="absolute bottom-[-20px] left-0 w-full h-[70%] opacity-20 mix-blend-multiply" viewBox="0 0 1440 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <path d="M0,250 C300,100 800,320 1100,180 C1300,90 1380,220 1440,180 L1440,500 L0,500 Z" fill="url(#fercosurGradientAmber)"/>
-                    <!-- Segunda línea decorativa para simular rutas logísticas en el fondo -->
-                    <path d="M0,260 C300,110 800,330 1100,190 C1300,100 1380,230 1440,190" stroke="#ea580c" stroke-width="2" opacity="0.2"/>
-                    <defs>
-                        <linearGradient id="fercosurGradientAmber" x1="0%" y1="100%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.7"/>
-                            <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.4"/>
-                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-
-                <!-- Resplandores Nebulosos Vivos Naranjas (Manchas difuminadas) -->
-                <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-amber-500/15 rounded-full wave-glow"></div>
-                <div class="absolute bottom-[10%] right-[-5%] w-[550px] h-[550px] bg-orange-500/20 rounded-full wave-glow" style="animation-delay: -3s;"></div>
-            </div>
-            
-            <!-- Contenedor de contenido con z-10 para flotar sobre el fondo naranja -->
-            <div class="max-w-5xl w-full mx-auto relative z-10 space-y-8">
-                <div class="flex items-center space-x-3 mb-2">
+       <!-- SUB-VISTA: SELECCIÓN DE PLANILLAS DE REGISTRO (ORIGINAL MENU) -->
+        <section id="view-menu" class="hidden fade-in max-w-4xl mx-auto w-full py-8 px-4">
+            <div class="flex items-center space-x-3 mb-6">
                 <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -364,102 +325,62 @@
 
        
 
-      <!-- NUEVA VISTA: MENÚ DE PLANILLAS / LOTES DE DESPACHOS (REDISEÑO ONDAS NARANJAS EN CUADRO IMPERMEABLE) -->
-        <section id="view-menu-despachos" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
-            <!-- CAPA DE ONDAS AMBER Y NARANJA LOGÍSTICO -->
-            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <!-- Fondo base con un leve tono cálido de descanso -->
-                <div class="absolute inset-0 bg-[#fffbeb]"></div>
-                
-                <!-- Ondas de Luz SVG de Alta Intensidad (Mezcla de Ámbar y Naranja Fercosur Logística) -->
-                <svg class="absolute bottom-0 left-0 w-full h-[85%] opacity-25 mix-blend-multiply" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <path d="M0,150 C400,280 600,50 1000,220 C1200,290 1320,180 1440,100 L1440,600 L0,600 Z" fill="url(#fercosurGradientOrange)"/>
-                    <!-- Rayas estructurales decorativas de color Amarillo/Ámbar Vibrante -->
-                    <path d="M0,160 C400,290 600,60 1000,230 C1200,300 1320,190 1440,110" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 4" opacity="0.3"/>
-                    <defs>
-                        <linearGradient id="fercosurGradientOrange" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#ea580c" stop-opacity="0.8"/>
-                            <stop offset="50%" stop-color="#d97706" stop-opacity="0.6"/>
-                            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.3"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-                
-                <svg class="absolute bottom-[-20px] left-0 w-full h-[70%] opacity-20 mix-blend-multiply" viewBox="0 0 1440 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <path d="M0,250 C300,100 800,320 1100,180 C1300,90 1380,220 1440,180 L1440,500 L0,500 Z" fill="url(#fercosurGradientAmber)"/>
-                    <!-- Segunda línea decorativa para simular rutas logísticas en el fondo -->
-                    <path d="M0,260 C300,110 800,330 1100,190 C1300,100 1380,230 1440,190" stroke="#ea580c" stroke-width="2" opacity="0.2"/>
-                    <defs>
-                        <linearGradient id="fercosurGradientAmber" x1="0%" y1="100%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.7"/>
-                            <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.4"/>
-                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-
-                <!-- Resplandores Nebulosos Vivos Naranjas -->
-                <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-amber-500/15 rounded-full wave-glow"></div>
-                <div class="absolute bottom-[10%] right-[-5%] w-[550px] h-[550px] bg-orange-500/20 rounded-full wave-glow" style="animation-delay: -3s;"></div>
+        <!-- NUEVA VISTA: MENÚ DE PLANILLAS / LOTES DE DESPACHOS -->
+        <section id="view-menu-despachos" class="hidden fade-in w-full max-w-5xl mx-auto py-8 space-y-8 px-4">
+            <div class="flex items-center space-x-3 mb-2">
+                <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">Volver al Portal Inicial</span>
             </div>
 
-            <!-- Contenedor del Contenido Protegido -->
-            <div class="max-w-5xl w-full mx-auto relative z-10 space-y-8">
-                <div class="flex items-center space-x-3 mb-2">
-                    <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            <!-- Encabezado de Despachos -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Planillas de Despachos</h2>
+                    <p class="text-slate-500 mt-1">Configure lotes de despacho unificados para control logístico de remisiones.</p>
+                </div>
+                <div>
+                    <button onclick="openLoteModal()" class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 text-base font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-2xl shadow-lg shadow-amber-100 hover:shadow-xl hover:shadow-amber-200 transition-all">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
+                        Nuevo Lote de Despacho
                     </button>
-                    <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">Volver al Portal Inicial</span>
+                </div>
+            </div>
+
+            <!-- Grid de Lotes Existentes (Limitado a 5) -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 px-1">Historial de Planillas / Lotes</h3>
+                
+                <div id="lotes-grid-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Los lotes se renderizan dinámicamente -->
                 </div>
 
-                <!-- Encabezado de Despachos -->
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-                    <div>
-                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Planillas de Despachos</h2>
-                        <p class="text-slate-500 mt-1">Configure lotes de despacho unificados para control logístico de remisiones.</p>
-                    </div>
-                    <div>
-                        <button onclick="openLoteModal()" class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 text-base font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-2xl shadow-lg shadow-amber-100 hover:shadow-xl hover:shadow-amber-200 transition-all">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Nuevo Lote de Despacho
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Grid de Lotes Existentes (Limitado a 5) -->
-                <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-slate-900 px-1">Historial de Planillas / Lotes</h3>
-                    
-                    <div id="lotes-grid-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Los lotes se renderizan dinámicamente -->
-                    </div>
-
-                    <!-- Botón Ver más planillas -->
-                    <div id="ver-mas-lotes-container" class="hidden text-center pt-4">
-                        <button onclick="openTodasPlanillasModal()" class="inline-flex items-center justify-center px-6 py-3.5 border border-amber-300 text-sm font-bold text-amber-700 bg-amber-50/50 hover:bg-amber-100/50 rounded-2xl shadow-sm transition">
-                            <svg class="w-5 h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                <!-- Botón Ver más planillas -->
+                <div id="ver-mas-lotes-container" class="hidden text-center pt-4">
+                    <button onclick="openTodasPlanillasModal()" class="inline-flex items-center justify-center px-6 py-3.5 border border-amber-300 text-sm font-bold text-amber-700 bg-amber-50/50 hover:bg-amber-100/50 rounded-2xl shadow-sm transition">
+                        <svg class="w-5 h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                         </svg>
-                            Ver más planillas (<span id="total-lotes-badge">0</span>)
-                        </button>
-                    </div>
-
-                    <!-- Empty State de Lotes -->
-                    <div id="lotes-empty-state" class="hidden flex-col items-center justify-center bg-white border border-slate-200 rounded-3xl p-12 text-center shadow-sm">
-                        <div class="p-4 bg-amber-50 text-amber-500 rounded-full mb-4">
-                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                            </svg>
-                        </div>
-                        <h4 class="text-lg font-bold text-slate-900">No hay planillas creadas todavía</h4>
-                        <p class="text-sm text-slate-400 mt-1 max-w-sm mx-auto">Para comenzar a registrar guías de despacho, genere una nueva planilla identificando la ruta o el día.</p>
-                    </div>
+                        Ver más planillas (<span id="total-lotes-badge">0</span>)
+                    </button>
                 </div>
-            </div> <!-- Cierre perfecto del contenedor z-10 -->
+
+                <!-- Empty State de Lotes -->
+                <div id="lotes-empty-state" class="hidden flex-col items-center justify-center bg-white border border-slate-200 rounded-3xl p-12 text-center shadow-sm">
+                    <div class="p-4 bg-amber-50 text-amber-500 rounded-full mb-4">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-900">No hay planillas creadas todavía</h4>
+                    <p class="text-sm text-slate-400 mt-1 max-w-sm mx-auto">Para comenzar a registrar guías de despacho, genere una nueva planilla identificando la ruta o el día.</p>
+                </div>
+            </div>
         </section>
 
         <!-- VISTA DE TRABAJO: REGISTRO DE REMISIONES EN UN LOTE ACTIVO -->
