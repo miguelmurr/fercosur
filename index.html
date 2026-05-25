@@ -326,8 +326,8 @@
                     </div>
 
                     <div class="pt-4 flex space-x-3">
-                        <button type="button" onclick="showView('menu')" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">Cancelar</button>
-                        <button type="submit" class="w-2/3 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md shadow-brand-200 transition">Registrar Pedido</button>
+                        <button type="button" onclick="showView('menu')" class="flex-1 bg-white py-3 px-4 border border-slate-300 rounded-xl shadow-sm text-sm font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Cancelar</button>
+                        <button type="submit" class="flex-1 bg-brand-600 py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Enviar ubicación y registrar visita</button>
                     </div>
                 </form>
             </div>
@@ -729,13 +729,14 @@
                  <!-- Tabla General -->
                     <table id="table-general-view" class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 border-b border-slate-200">
-  <tr>
+<tr>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Nombre Completo</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cliente Destinatario</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Motivo</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Venta</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cobro</th>
+        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Ubicación</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Acciones</th>
     </tr>
 </thead>
@@ -4637,28 +4638,63 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         // --- 12. FORMULARIOS DE REGISTRO ORIGINALES A FIREBASE ---
      function submitGeneralForm(e) {
             e.preventDefault();
+            
+            // Cambiamos el texto del botón temporalmente para que el vendedor sepa que está cargando el GPS
+            const btnSubmit = e.target.querySelector('button[type="submit"]');
+            const originalText = btnSubmit.innerText;
+            btnSubmit.innerText = "Obteniendo GPS...";
+            btnSubmit.disabled = true;
+
             const nombre = document.getElementById('gen-nombre').value.trim();
             const cliente = document.getElementById('gen-cliente').value.trim();
             const motivo = document.getElementById('gen-motivo').value;
             const montoVenta = document.getElementById('gen-monto-venta').value || '$0';
             const montoCobro = document.getElementById('gen-monto-cobro').value || '$0';
 
-            db.collection("pedidos_generales").add({
-                timestamp: formatTimestamp(),
-                nombre: nombre,
-                cliente: cliente,
-                motivo: motivo,
-                montoVenta: montoVenta,
-                montoCobro: montoCobro
-            }).then(() => {
-                document.getElementById('form-pedidos-general').reset();
-                toggleMotivoCampos(); // Esto oculta de nuevo las casillas de dinero para el próximo registro
-                showToast('¡Registro Exitoso!', 'El registro ha sido almacenado en la nube.', 'success');
-                showView('menu');
-            }).catch((error) => {
-                showToast('Error', 'No se pudo guardar el registro.', 'error');
-                console.error(error);
-            });
+            // Función interna que se encarga de subir todo a la nube (con o sin GPS)
+            const guardarEnNube = (ubicacionFinal) => {
+                db.collection("pedidos_generales").add({
+                    timestamp: formatTimestamp(),
+                    nombre: nombre,
+                    cliente: cliente,
+                    motivo: motivo,
+                    montoVenta: montoVenta,
+                    montoCobro: montoCobro,
+                    ubicacion: ubicacionFinal
+                }).then(() => {
+                    document.getElementById('form-pedidos-general').reset();
+                    toggleMotivoCampos(); 
+                    btnSubmit.innerText = originalText;
+                    btnSubmit.disabled = false;
+                    showToast('¡Registro Exitoso!', 'Visita y ubicación guardadas correctamente.', 'success');
+                    showView('menu');
+                }).catch((error) => {
+                    btnSubmit.innerText = originalText;
+                    btnSubmit.disabled = false;
+                    showToast('Error', 'No se pudo guardar el registro.', 'error');
+                    console.error(error);
+                });
+            };
+
+            // Pedimos permiso al celular para usar la ubicación
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // Si el vendedor acepta, creamos el link de Google Maps
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const linkMapa = `https://www.google.com/maps?q=${lat},${lon}`;
+                        guardarEnNube(linkMapa);
+                    },
+                    (error) => {
+                        // Si lo rechaza o no tiene señal, guardamos la visita de todas formas
+                        guardarEnNube("No compartida");
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 } // Forzamos alta precisión del GPS
+                );
+            } else {
+                guardarEnNube("GPS no soportado");
+            }
         }
 
         // --- 13. CONTROL SEGURIDAD POR PIN (MODAL ADMIN) ---
@@ -4775,8 +4811,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     emptyState.classList.add('hidden');
                     emptyState.classList.remove('flex');
                     document.getElementById('table-general-view').classList.remove('hidden');
-
-				dbGeneral.forEach(item => {
+dbGeneral.forEach(item => {
                         const tr = `
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
@@ -4785,6 +4820,11 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                                 <td class="px-6 py-4 text-slate-600 font-semibold">${item.motivo || 'N/A'}</td>
                                 <td class="px-6 py-4 text-emerald-600 font-bold">${item.montoVenta || '$0'}</td>
                                 <td class="px-6 py-4 text-blue-600 font-bold">${item.montoCobro || '$0'}</td>
+                                <td class="px-6 py-4 text-xs">
+                                    ${item.ubicacion && item.ubicacion.startsWith('http') 
+                                        ? `<a href="${item.ubicacion}" target="_blank" class="text-brand-600 hover:text-brand-800 underline font-semibold">Ver Mapa</a>` 
+                                        : `<span class="text-slate-400 italic">${item.ubicacion || 'N/A'}</span>`}
+                                </td>
                                 <td class="px-6 py-4 text-center">
                                     <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4868,7 +4908,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 return;
             }
 
-     const format = (data, tipo) => {
+ const format = (data, tipo) => {
                 return data.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
@@ -4876,6 +4916,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     'Motivo de Visita': item.motivo || 'N/A',
                     'Monto Venta': item.montoVenta || '$0',
                     'Monto Cobro': item.montoCobro || '$0',
+                    'Link Ubicación': item.ubicacion || 'N/A',
                     'Tipo de Formulario': tipo
                 }));
             };
@@ -4907,7 +4948,8 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     'Cliente': item.cliente || 'N/A',
                     'Motivo de Visita': item.motivo || 'N/A',
                     'Monto Venta': item.montoVenta || '$0',
-                    'Monto Cobro': item.montoCobro || '$0'
+                    'Monto Cobro': item.montoCobro || '$0',
+                    'Link Ubicación': item.ubicacion || 'N/A'
                 }));
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
