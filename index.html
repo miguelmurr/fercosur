@@ -291,7 +291,7 @@
 
                 <form id="form-pedidos-general" onsubmit="submitGeneralForm(event)" class="space-y-6">
                     <!-- Autocompletado Nombre Asesor -->
-                    <div class="relative">
+                    
                         <label for="gen-nombre" class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
                         <input type="text" id="gen-nombre" required autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un vendedor...">
                         <!-- Dropdown flotante asesores -->
@@ -299,13 +299,7 @@
                     </div>
 
                     <!-- Autocompletado de Población / Ciudad -->
-                    <div class="relative">
-                        <label for="gen-poblacion" class="block text-sm font-semibold text-slate-700">Población / Ciudad</label>
-                        <input type="text" id="gen-poblacion" required autocomplete="off" oninput="filterTowns('gen')" onfocus="showTownsDropdown('gen')" onblur="hideTownsDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione una población...">
-                        <!-- Dropdown flotante poblaciones -->
-                        <div id="gen-poblacion-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
-                    </div>
-
+                   
                     <div class="pt-4 flex space-x-3">
                         <button type="button" onclick="showView('menu')" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">Cancelar</button>
                         <button type="submit" class="w-2/3 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md shadow-brand-200 transition">Registrar Pedido</button>
@@ -709,10 +703,9 @@
                     <!-- Tabla General -->
                     <table id="table-general-view" class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 border-b border-slate-200">
-    <tr>
+ <tr>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Nombre Completo</th>
-        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Población / Ciudad</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Acciones</th>
     </tr>
 </thead>
@@ -3558,6 +3551,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-100 font-semibold transition duration-150 flex justify-between items-center';
+                    // Aquí quitamos cualquier rastro de etiquetas de prefijos extras
                     btn.innerHTML = `<span>${seller.nombre}</span>`;
                     
                     btn.onmousedown = (e) => {
@@ -3575,8 +3569,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             
             input.value = nombre;
             dropdown.classList.add('hidden');
-
-            document.getElementById(`${formPrefix}-poblacion`).focus();
+            // Ya no le enviamos el foco a la casilla de población porque la eliminamos
         }
 
         function updatePrefix(formPrefix, prefijoValue) {
@@ -4518,12 +4511,10 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
        function submitGeneralForm(e) {
             e.preventDefault();
             const nombre = document.getElementById('gen-nombre').value.trim();
-            const poblacion = document.getElementById('gen-poblacion').value.trim();
 
             db.collection("pedidos_generales").add({
                 timestamp: formatTimestamp(),
-                nombre: nombre,
-                poblacion: poblacion
+                nombre: nombre
             }).then(() => {
                 document.getElementById('form-pedidos-general').reset();
                 showToast('¡Registro Exitoso!', 'El registro ha sido almacenado en la nube.', 'success');
@@ -4650,13 +4641,10 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     document.getElementById('table-general-view').classList.remove('hidden');
 
                     dbGeneral.forEach(item => {
-                            const tr = `
-                                <tr class="hover:bg-slate-50 transition-colors">
-                                    <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
-                                    <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
-                                    <td class="px-6 py-4">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
-                                    </td>
+                        const tr = `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
+                                <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
                                 <td class="px-6 py-4 text-center">
                                     <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4740,11 +4728,10 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 return;
             }
 
-            const format = (data, tipo) => {
+          const format = (data, tipo) => {
                 return data.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
-                    'Población / Ciudad': item.poblacion,
                     'Tipo de Formulario': tipo
                 }));
             };
@@ -4772,8 +4759,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
 
                 const dataToExport = dbGeneral.map(item => ({
                     'Hora de Registro': item.timestamp,
-                    'Nombre Completo': item.nombre,
-                    'Población / Ciudad': item.poblacion
+                    'Nombre Completo': item.nombre
                 }));
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
