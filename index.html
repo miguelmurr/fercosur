@@ -4927,14 +4927,15 @@ dbGeneral.forEach(item => {
 
             const ws = XLSX.utils.json_to_sheet(consolidatedList);
             
+            // Ampliamos los tamaños al máximo para que quepan los nombres largos y los links de Google Maps
             ws['!cols'] = [
-                { wch: 20 }, 
-                { wch: 30 }, 
-                { wch: 30 }, 
-                { wch: 18 }, 
-                { wch: 15 }, 
-                { wch: 15 }, 
-                { wch: 45 }  
+                { wch: 22 }, // Hora de Registro
+                { wch: 40 }, // Nombre Completo del Vendedor
+                { wch: 50 }, // Nombre del Cliente (Espacio de sobra para nombres largos)
+                { wch: 20 }, // Motivo de Visita
+                { wch: 18 }, // Monto Venta
+                { wch: 18 }, // Monto Cobro
+                { wch: 70 }  // Link Ubicación de Google Maps (Ultra ancho)
             ];
 
             // Pintamos los encabezados (A1 hasta G1) de azul con texto blanco centrado
@@ -4975,14 +4976,15 @@ dbGeneral.forEach(item => {
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
                 
+                // Aplicamos los mismos tamaños súper amplios para este reporte
                 ws['!cols'] = [
-                    { wch: 20 }, 
-                    { wch: 30 }, 
-                    { wch: 30 }, 
-                    { wch: 18 }, 
-                    { wch: 15 }, 
-                    { wch: 15 }, 
-                    { wch: 45 }  
+                    { wch: 22 }, // Hora de Registro
+                    { wch: 40 }, // Nombre Completo del Vendedor
+                    { wch: 50 }, // Nombre del Cliente
+                    { wch: 20 }, // Motivo de Visita
+                    { wch: 18 }, // Monto Venta
+                    { wch: 18 }, // Monto Cobro
+                    { wch: 70 }  // Link Ubicación de Google Maps
                 ];
 
                 // Pintamos los encabezados (A1 hasta G1) de azul con texto blanco centrado
