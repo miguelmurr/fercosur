@@ -712,7 +712,6 @@
     <tr>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Nombre Completo</th>
-        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Número de Pedido</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Población / Ciudad</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Acciones</th>
     </tr>
@@ -3554,42 +3553,30 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 noResult.className = 'px-4 py-3 text-xs text-slate-400 italic bg-slate-50';
                 noResult.innerText = 'Sin coincidencias (Escriba libremente)';
                 dropdown.appendChild(noResult);
-                updatePrefix(formPrefix, "PED-");
             } else {
                 matches.forEach(seller => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-100 font-semibold transition duration-150 flex justify-between items-center';
-                    btn.innerHTML = `
-                        <span>${seller.nombre}</span>
-                        <span class="text-xs font-mono font-bold bg-brand-50 text-brand-700 px-2.5 py-1 rounded-lg border border-brand-100">${seller.prefijo}</span>
-                    `;
+                    btn.innerHTML = `<span>${seller.nombre}</span>`;
                     
                     btn.onmousedown = (e) => {
                         e.preventDefault();
-                        selectSeller(formPrefix, seller.nombre, seller.prefijo);
+                        selectSeller(formPrefix, seller.nombre);
                     };
                     dropdown.appendChild(btn);
                 });
-
-                const exactMatch = sellers.find(s => s.nombre.toLowerCase() === input.value.toLowerCase().trim());
-                if (exactMatch) {
-                    updatePrefix(formPrefix, exactMatch.prefijo);
-                } else {
-                    updatePrefix(formPrefix, "PED-");
-                }
             }
         }
 
-        function selectSeller(formPrefix, nombre, prefijo) {
+        function selectSeller(formPrefix, nombre) {
             const input = document.getElementById(`${formPrefix}-nombre`);
             const dropdown = document.getElementById(`${formPrefix}-nombre-dropdown`);
             
             input.value = nombre;
-            updatePrefix(formPrefix, prefijo);
             dropdown.classList.add('hidden');
 
-            document.getElementById(`${formPrefix}-pedido`).focus();
+            document.getElementById(`${formPrefix}-poblacion`).focus();
         }
 
         function updatePrefix(formPrefix, prefijoValue) {
@@ -4528,26 +4515,21 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         }
 
         // --- 12. FORMULARIOS DE REGISTRO ORIGINALES A FIREBASE ---
-        function submitGeneralForm(e) {
+       function submitGeneralForm(e) {
             e.preventDefault();
             const nombre = document.getElementById('gen-nombre').value.trim();
-            const prefixVal = document.getElementById('gen-pedido-prefix').innerText;
-            const inputVal = document.getElementById('gen-pedido').value.trim();
-            const pedidoCompleto = prefixVal + inputVal;
             const poblacion = document.getElementById('gen-poblacion').value.trim();
 
             db.collection("pedidos_generales").add({
                 timestamp: formatTimestamp(),
                 nombre: nombre,
-                pedido: pedidoCompleto,
                 poblacion: poblacion
             }).then(() => {
                 document.getElementById('form-pedidos-general').reset();
-                updatePrefix('gen', 'PED-');
-                showToast('¡Registro Exitoso!', 'El pedido general ha sido almacenado en la nube.', 'success');
+                showToast('¡Registro Exitoso!', 'El registro ha sido almacenado en la nube.', 'success');
                 showView('menu');
             }).catch((error) => {
-                showToast('Error', 'No se pudo guardar el pedido.', 'error');
+                showToast('Error', 'No se pudo guardar el registro.', 'error');
                 console.error(error);
             });
         }
@@ -4668,14 +4650,13 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     document.getElementById('table-general-view').classList.remove('hidden');
 
                     dbGeneral.forEach(item => {
-                        const tr = `
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
-                                <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
-                                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${item.pedido}</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
-                                </td>
+                            const tr = `
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
+                                    <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-800">${item.poblacion}</span>
+                                    </td>
                                 <td class="px-6 py-4 text-center">
                                     <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4755,7 +4736,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         // --- 15. EXPORTACIONES NATIVAS A EXCEL (SHEETJS) ---
         function exportConsolidated() {
             if (dbGeneral.length === 0) {
-                showToast('Sin Datos', 'No hay registros de pedidos generales para consolidar.', 'error');
+                showToast('Sin Datos', 'No hay registros para consolidar.', 'error');
                 return;
             }
 
@@ -4763,7 +4744,6 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 return data.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
-                    'Número de Pedido': item.pedido,
                     'Población / Ciudad': item.poblacion,
                     'Tipo de Formulario': tipo
                 }));
@@ -4793,7 +4773,6 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 const dataToExport = dbGeneral.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
-                    'Número de Pedido': item.pedido,
                     'Población / Ciudad': item.poblacion
                 }));
 
