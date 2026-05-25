@@ -409,7 +409,36 @@
         </section>
 
         <!-- VISTA DE TRABAJO: REGISTRO DE REMISIONES EN UN LOTE ACTIVO -->
-        <section id="view-form-despachos" class="hidden fade-in w-full max-w-6xl mx-auto py-8 space-y-6 px-4">
+       <section id="view-form-despachos" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col py-8 px-4 relative overflow-hidden bg-white">
+            
+            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <svg class="absolute bottom-0 left-0 w-full h-[85%] opacity-25 mix-blend-multiply" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,150 C400,280 600,50 1000,220 C1200,290 1320,180 1440,100 L1440,600 L0,600 Z" fill="url(#formDespachosGradientOrange)"/>
+                    <path d="M0,160 C400,290 600,60 1000,230 C1200,300 1320,190 1440,110" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 4" opacity="0.3"/>
+                    <defs>
+                        <linearGradient id="formDespachosGradientOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ea580c" stop-opacity="0.8"/>
+                            <stop offset="50%" stop-color="#d97706" stop-opacity="0.6"/>
+                            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.3"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <svg class="absolute bottom-[-20px] left-0 w-full h-[70%] opacity-20 mix-blend-multiply" viewBox="0 0 1440 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,250 C300,100 800,320 1100,180 C1300,90 1380,220 1440,180 L1440,500 L0,500 Z" fill="url(#formDespachosGradientAmber)"/>
+                    <path d="M0,260 C300,110 800,330 1100,190 C1300,100 1380,230 1440,190" stroke="#ea580c" stroke-width="2" opacity="0.2"/>
+                    <defs>
+                        <linearGradient id="formDespachosGradientAmber" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.7"/>
+                            <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.4"/>
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="absolute top-[10%] left-[20%] w-[500px] h-[500px] bg-amber-500/15 rounded-full wave-glow"></div>
+                <div class="absolute bottom-[5%] right-[15%] w-[420px] h-[420px] bg-orange-500/20 rounded-full wave-glow" style="animation-delay: -3s;"></div>
+            </div>
+
+            <div class="max-w-6xl w-full mx-auto relative z-10 space-y-6">
             <!-- Header dinámico del Lote -->
             <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div class="flex items-center space-x-4">
@@ -608,8 +637,7 @@
                     </div>
                 </div>
 
-            </div>
-        </section>
+            </div> </section>
 
         <!-- VISTA 4 & 5: PANEL DE ADMINISTRADOR PROTEGIDO -->
         <section id="view-admin" class="hidden fade-in w-full py-8 space-y-8 px-4">
