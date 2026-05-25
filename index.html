@@ -4952,15 +4952,27 @@ dbGeneral.forEach(item => {
             });
 
             // Recorremos las filas para aplicar el formato de separador de miles a las columnas E y F
-            const range = XLSX.utils.decode_range(ws['!ref']);
-            for (let R = 1; R <= range.e.r; ++R) {
-                const cellVenta = ws[XLSX.utils.encode_cell({c: 4, r: R})]; // Columna E (Venta)
-                const cellCobro = ws[XLSX.utils.encode_cell({c: 5, r: R})]; // Columna F (Cobro)
-                if (cellVenta && cellVenta.t === 'n') cellVenta.z = '#,##0';
-                if (cellCobro && cellCobro.t === 'n') cellCobro.z = '#,##0';
-            }
+           // Recorremos las filas para aplicar el formato de miles y activar los links funcionales
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = 1; R <= range.e.r; ++R) {
+                    const cellVenta = ws[XLSX.utils.encode_cell({c: 4, r: R})]; // Columna E (Venta)
+                    const cellCobro = ws[XLSX.utils.encode_cell({c: 5, r: R})]; // Columna F (Cobro)
+                    if (cellVenta && cellVenta.t === 'n') cellVenta.z = '#,##0';
+                    if (cellCobro && cellCobro.t === 'n') cellCobro.z = '#,##0';
 
-            const wb = XLSX.utils.book_new();
+                    // Localizamos la columna G (índice 6) que es donde está la ubicación
+                    const cellUbicacion = ws[XLSX.utils.encode_cell({c: 6, r: R})];
+                    if (cellUbicacion && cellUbicacion.v && cellUbicacion.v.startsWith('http')) {
+                        // Creamos el hipervínculo interno en el archivo Excel
+                        cellUbicacion.l = { Target: cellUbicacion.v, Tooltip: "Abrir en Google Maps" };
+                        // Le damos un estilo estético de link azul y subrayado
+                        cellUbicacion.s = {
+                            font: { color: { rgb: "0069C4" }, underline: true, name: "Arial", sz: 10 }
+                        };
+                    }
+                }
+
+                const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Consolidado Pedidos");
 
             XLSX.writeFile(wb, "REPORTE_CONSOLIDADO_PEDIDOS_FERCOSUR.xlsx");
@@ -5011,15 +5023,27 @@ dbGeneral.forEach(item => {
                 });
 
                 // Recorremos las filas para aplicar el formato de separador de miles a las columnas E y F
-                const range = XLSX.utils.decode_range(ws['!ref']);
-                for (let R = 1; R <= range.e.r; ++R) {
-                    const cellVenta = ws[XLSX.utils.encode_cell({c: 4, r: R})]; // Columna E (Venta)
-                    const cellCobro = ws[XLSX.utils.encode_cell({c: 5, r: R})]; // Columna F (Cobro)
-                    if (cellVenta && cellVenta.t === 'n') cellVenta.z = '#,##0';
-                    if (cellCobro && cellCobro.t === 'n') cellCobro.z = '#,##0';
-                }
+               // Recorremos las filas para aplicar el formato de miles y activar los links funcionales
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let R = 1; R <= range.e.r; ++R) {
+                const cellVenta = ws[XLSX.utils.encode_cell({c: 4, r: R})]; // Columna E (Venta)
+                const cellCobro = ws[XLSX.utils.encode_cell({c: 5, r: R})]; // Columna F (Cobro)
+                if (cellVenta && cellVenta.t === 'n') cellVenta.z = '#,##0';
+                if (cellCobro && cellCobro.t === 'n') cellCobro.z = '#,##0';
 
-                const wb = XLSX.utils.book_new();
+                // Localizamos la columna G (índice 6) que es donde está la ubicación
+                const cellUbicacion = ws[XLSX.utils.encode_cell({c: 6, r: R})];
+                if (cellUbicacion && cellUbicacion.v && cellUbicacion.v.startsWith('http')) {
+                    // Creamos el hipervínculo interno en el archivo Excel
+                    cellUbicacion.l = { Target: cellUbicacion.v, Tooltip: "Abrir en Google Maps" };
+                    // Le damos un estilo estético de link azul y subrayado
+                    cellUbicacion.s = {
+                        font: { color: { rgb: "0069C4" }, underline: true, name: "Arial", sz: 10 }
+                    };
+                }
+            }
+
+            const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Pedidos Generales");
                 XLSX.writeFile(wb, "REPORTE_PEDIDOS_GENERALES.xlsx");
                 showToast('Descarga Exitosa', 'Tabla de pedidos generales exportada.', 'success');
