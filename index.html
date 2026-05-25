@@ -289,17 +289,23 @@
                     </div>
                 </div>
 
-                <form id="form-pedidos-general" onsubmit="submitGeneralForm(event)" class="space-y-6">
+             <form id="form-pedidos-general" onsubmit="submitGeneralForm(event)" class="space-y-6">
                     <!-- Autocompletado Nombre Asesor -->
-                    
+                    <div class="relative">
                         <label for="gen-nombre" class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
                         <input type="text" id="gen-nombre" required autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un vendedor...">
                         <!-- Dropdown flotante asesores -->
                         <div id="gen-nombre-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
                     </div>
 
-                    <!-- Autocompletado de Población / Ciudad -->
-                   
+                    <!-- Autocompletado de Cliente para Registros -->
+                    <div class="relative">
+                        <label for="gen-cliente" class="block text-sm font-semibold text-slate-700">Cliente</label>
+                        <input type="text" id="gen-cliente" required autocomplete="off" oninput="filterClientsGen()" onfocus="showClientsDropdownGen()" onblur="hideClientsDropdownGen()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un cliente...">
+                        <!-- Dropdown flotante clientes -->
+                        <div id="gen-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
+                    </div>
+
                     <div class="pt-4 flex space-x-3">
                         <button type="button" onclick="showView('menu')" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition">Cancelar</button>
                         <button type="submit" class="w-2/3 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md shadow-brand-200 transition">Registrar Pedido</button>
@@ -701,11 +707,13 @@
                 <!-- TABLAS -->
                 <div class="overflow-x-auto">
                     <!-- Tabla General -->
+                 <!-- Tabla General -->
                     <table id="table-general-view" class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 border-b border-slate-200">
- <tr>
+    <tr>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Nombre Completo</th>
+        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cliente Destinatario</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Acciones</th>
     </tr>
 </thead>
@@ -3652,9 +3660,61 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             document.getElementById('despacho-remision').focus();
         }
 
-        function hideClientsDropdown() {
+      function hideClientsDropdown() {
             setTimeout(() => {
                 const dropdown = document.getElementById('despacho-cliente-dropdown');
+                if (dropdown) dropdown.classList.add('hidden');
+            }, 200);
+        }
+
+        // --- FUNCIONES DE BÚSQUEDA DE CLIENTES PARA EL MÓDULO DE REGISTROS ---
+        function showClientsDropdownGen() {
+            const dropdown = document.getElementById('gen-cliente-dropdown');
+            dropdown.classList.remove('hidden');
+            filterClientsGen();
+        }
+
+        function filterClientsGen() {
+            const input = document.getElementById('gen-cliente');
+            const dropdown = document.getElementById('gen-cliente-dropdown');
+            const query = input.value.toLowerCase().trim();
+
+            const matches = clients.filter(c => c.nombre.toLowerCase().includes(query));
+
+            dropdown.innerHTML = '';
+
+            if (matches.length === 0) {
+                const noResult = document.createElement('div');
+                noResult.className = 'px-4 py-3 text-xs text-slate-400 italic bg-slate-50';
+                noResult.innerText = 'Sin coincidencias (Escriba libremente)';
+                dropdown.appendChild(noResult);
+            } else {
+                matches.forEach(client => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-100 font-semibold transition duration-150 flex justify-between items-center';
+                    btn.innerHTML = `<span>${client.nombre}</span>`;
+                    
+                    btn.onmousedown = (e) => {
+                        e.preventDefault();
+                        selectClientGen(client.nombre);
+                    };
+                    dropdown.appendChild(btn);
+                });
+            }
+        }
+
+        function selectClientGen(nombre) {
+            const input = document.getElementById('gen-cliente');
+            const dropdown = document.getElementById('gen-cliente-dropdown');
+            
+            input.value = nombre;
+            dropdown.classList.add('hidden');
+        }
+
+        function hideClientsDropdownGen() {
+            setTimeout(() => {
+                const dropdown = document.getElementById('gen-cliente-dropdown');
                 if (dropdown) dropdown.classList.add('hidden');
             }, 200);
         }
@@ -4508,13 +4568,15 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         }
 
         // --- 12. FORMULARIOS DE REGISTRO ORIGINALES A FIREBASE ---
-       function submitGeneralForm(e) {
+      function submitGeneralForm(e) {
             e.preventDefault();
             const nombre = document.getElementById('gen-nombre').value.trim();
+            const cliente = document.getElementById('gen-cliente').value.trim();
 
             db.collection("pedidos_generales").add({
                 timestamp: formatTimestamp(),
-                nombre: nombre
+                nombre: nombre,
+                cliente: cliente
             }).then(() => {
                 document.getElementById('form-pedidos-general').reset();
                 showToast('¡Registro Exitoso!', 'El registro ha sido almacenado en la nube.', 'success');
@@ -4640,11 +4702,12 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     emptyState.classList.remove('flex');
                     document.getElementById('table-general-view').classList.remove('hidden');
 
-                    dbGeneral.forEach(item => {
+					dbGeneral.forEach(item => {
                         const tr = `
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
                                 <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
+                                <td class="px-6 py-4 text-slate-700 font-medium">${item.cliente || 'N/A'}</td>
                                 <td class="px-6 py-4 text-center">
                                     <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4728,10 +4791,11 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 return;
             }
 
-          const format = (data, tipo) => {
+        const format = (data, tipo) => {
                 return data.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
+                    'Cliente': item.cliente || 'N/A',
                     'Tipo de Formulario': tipo
                 }));
             };
@@ -4759,7 +4823,8 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
 
                 const dataToExport = dbGeneral.map(item => ({
                     'Hora de Registro': item.timestamp,
-                    'Nombre Completo': item.nombre
+                    'Nombre Completo': item.nombre,
+                    'Cliente': item.cliente || 'N/A'
                 }));
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
