@@ -3938,9 +3938,9 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 ? 'hover:border-slate-400 hover:shadow-md'
                 : 'hover:border-orange-500 hover:shadow-lg hover:shadow-orange-50';
             
-            const actionBtnText = lote.finalizado ? 'Ver / Modificar' : 'Continuar Registrando';
+           const actionBtnText = lote.finalizado ? 'Ver / Modificar' : 'Continuar Registrando';
             const actionBtnColor = lote.finalizado 
-                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' 
+                ? 'bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200/60' 
                 : 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm';
 
             const cardDiv = document.createElement('div');
@@ -4010,12 +4010,13 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             } else {
                 if(emptyState) { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }
 
-                const lotesToShow = dbLotes.slice(0, 5);
+               // Ajuste Quirúrgico: Cambiamos de 5 a 6 el límite de lotes para tener 2 filas completas
+                const lotesToShow = dbLotes.slice(0, 6);
                 lotesToShow.forEach(lote => {
                     container.appendChild(createLoteCardElement(lote, false));
                 });
-
-                if (dbLotes.length > 5) {
+                // También actualizamos la condición del botón "Ver más planillas" a 6
+                if (dbLotes.length > 6) {
                     if(verMasContainer) verMasContainer.classList.remove('hidden');
                     const badge = document.getElementById('total-lotes-badge');
                     if(badge) badge.innerText = dbLotes.length;
