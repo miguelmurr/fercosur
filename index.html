@@ -4908,26 +4908,38 @@ dbGeneral.forEach(item => {
                 return;
             }
 
- const format = (data, tipo) => {
+const format = (data, tipo) => {
                 return data.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
                     'Cliente': item.cliente || 'N/A',
                     'Motivo de Visita': item.motivo || 'N/A',
-                    'Monto Venta': item.montoVenta || '$0',
-                    'Monto Cobro': item.montoCobro || '$0',
+                    // La instrucción parseInt y replace limpia los textos para enviar números reales a Excel
+                    'Monto Venta': parseInt((item.montoVenta || '0').replace(/\D/g, ''), 10) || 0,
+                    'Monto Cobro': parseInt((item.montoCobro || '0').replace(/\D/g, ''), 10) || 0,
                     'Link Ubicación': item.ubicacion || 'N/A',
                     'Tipo de Formulario': tipo
                 }));
             };
-
             const consolidatedList = [
                 ...format(dbGeneral, 'Registro General')
             ];
-
             consolidatedList.sort((a, b) => new Date(b['Hora de Registro']) - new Date(a['Hora de Registro']));
 
             const ws = XLSX.utils.json_to_sheet(consolidatedList);
+            
+            // Damos instrucciones de tamaño de columnas (wch = ancho en caracteres)
+            ws['!cols'] = [
+                { wch: 20 }, // Hora de Registro
+                { wch: 30 }, // Nombre Completo
+                { wch: 30 }, // Cliente
+                { wch: 18 }, // Motivo de Visita
+                { wch: 15 }, // Monto Venta
+                { wch: 15 }, // Monto Cobro
+                { wch: 45 }, // Link Ubicación
+                { wch: 20 }  // Tipo de Formulario
+            ];
+
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Consolidado Pedidos");
 
@@ -4935,24 +4947,36 @@ dbGeneral.forEach(item => {
             showToast('Exportación Exitosa', 'El Excel consolidado de pedidos se descargó correctamente.', 'success');
         }
 
-        function exportActiveTable() {
+      function exportActiveTable() {
             if (currentActiveAdminTab === 'general') {
                 if (dbGeneral.length === 0) {
                     showToast('Sin Datos', 'No hay registros en la Base de Datos General.', 'error');
                     return;
                 }
 
-              const dataToExport = dbGeneral.map(item => ({
+                const dataToExport = dbGeneral.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
                     'Cliente': item.cliente || 'N/A',
                     'Motivo de Visita': item.motivo || 'N/A',
-                    'Monto Venta': item.montoVenta || '$0',
-                    'Monto Cobro': item.montoCobro || '$0',
+                    'Monto Venta': parseInt((item.montoVenta || '0').replace(/\D/g, ''), 10) || 0,
+                    'Monto Cobro': parseInt((item.montoCobro || '0').replace(/\D/g, ''), 10) || 0,
                     'Link Ubicación': item.ubicacion || 'N/A'
                 }));
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
+                
+                // Damos instrucciones de tamaño de columnas para este archivo
+                ws['!cols'] = [
+                    { wch: 20 }, // Hora de Registro
+                    { wch: 30 }, // Nombre Completo
+                    { wch: 30 }, // Cliente
+                    { wch: 18 }, // Motivo de Visita
+                    { wch: 15 }, // Monto Venta
+                    { wch: 15 }, // Monto Cobro
+                    { wch: 45 }  // Link Ubicación
+                ];
+
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Pedidos Generales");
                 XLSX.writeFile(wb, "REPORTE_PEDIDOS_GENERALES.xlsx");
