@@ -449,7 +449,7 @@
                     </button>
                     <div>
                         <div class="flex items-center space-x-2">
-                            <span id="lote-status-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border">Activo</span>
+                            <span class="px-2.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-800 rounded-full uppercase tracking-wider" id="active-lote-status-badge">Activo</span>
                             <span class="text-xs text-slate-400 font-mono font-medium" id="active-lote-date">Cargando...</span>
                         </div>
                         <h2 class="text-2xl font-black text-slate-900 mt-1" id="active-lote-title">Trabajando en: Planilla de Despacho</h2>
@@ -3929,8 +3929,8 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
       function createLoteCardElement(lote, isInsideModal) {
             const cantRemisiones = lote.despachos ? lote.despachos.length : 0;
             const totalUnidadesPlanilla = lote.despachos ? lote.despachos.reduce((sum, d) => sum + (d.empaques.total || 0), 0) : 0;
-           const badgeClass = lote.finalizado 
-                ? 'bg-orange-600 text-white border-transparent shadow-sm shadow-orange-100' 
+            const badgeClass = lote.finalizado 
+                ? 'bg-slate-100 text-slate-700 border-slate-200' 
                 : 'bg-amber-100 text-amber-800 border-amber-200';
             const badgeText = lote.finalizado ? 'Finalizado' : 'Activo';
 
@@ -4010,13 +4010,12 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             } else {
                 if(emptyState) { emptyState.classList.add('hidden'); emptyState.classList.remove('flex'); }
 
-                // Ajuste Quirúrgico: Cambiamos de 5 a 6 el límite de lotes para tener 2 filas completas
-                const lotesToShow = dbLotes.slice(0, 6);
+                const lotesToShow = dbLotes.slice(0, 5);
                 lotesToShow.forEach(lote => {
                     container.appendChild(createLoteCardElement(lote, false));
                 });
-                // También actualizamos la condición del botón "Ver más planillas" a 6
-                if (dbLotes.length > 6) {
+
+                if (dbLotes.length > 5) {
                     if(verMasContainer) verMasContainer.classList.remove('hidden');
                     const badge = document.getElementById('total-lotes-badge');
                     if(badge) badge.innerText = dbLotes.length;
@@ -4077,22 +4076,21 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             const lote = dbLotes.find(l => l.id === loteId);
             if (!lote) return;
 
-            currentLoteId = loteId;
+            activeLoteId = loteId;
+            editingDespachoId = null;
 
-            document.getElementById('lote-title-display').innerText = lote.nombre;
-            const statusBadge = document.getElementById('lote-status-badge');
-            if (statusBadge) {
-                statusBadge.innerText = lote.finalizado ? 'Finalizado' : 'Activo';
-                // Forzamos el color naranja corporativo si el lote ya está cerrado
-                if (lote.finalizado) {
-                    statusBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border border-transparent bg-orange-600 text-white shadow-sm shadow-orange-100';
-                } else {
-                    statusBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border bg-amber-100 text-amber-800 border-amber-200';
-                }
+            document.getElementById('active-lote-title').innerText = `Planilla: ${lote.nombre}`;
+            document.getElementById('active-lote-date').innerText = lote.timestamp;
+
+            const badge = document.getElementById('active-lote-status-badge');
+            if (lote.finalizado) {
+                badge.className = 'px-2.5 py-0.5 text-xs font-bold bg-slate-200 text-slate-800 rounded-full uppercase tracking-wider';
+                badge.innerText = 'Finalizado';
+            } else {
+                badge.className = 'px-2.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-800 rounded-full uppercase tracking-wider';
+                badge.innerText = 'Activo';
             }
 
-            // LÍNEA REPARADORA: Hace que el botón cambie de vista al formulario de trabajo
-            showView('form-despachos');
             cancelarEdicionDespacho();
             renderDespachosDeLoteActual();
             showView('form-despachos');
