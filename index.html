@@ -977,17 +977,22 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // --- 1. BASE DE DATOS ESTATICAS DE AUTOCOMPLETADO ---
+       // --- 1. BASE DE DATOS ESTATICAS DE AUTOCOMPLETADO ---
         const sellers = [
-            { nombre: "Juan Pérez", prefijo: "PE4-" },
-            { nombre: "Sofía Torres", prefijo: "PE5-" },
-            { nombre: "Carlos Solarte", prefijo: "PE1-" },
-            { nombre: "Martha Benavides", prefijo: "PE2-" },
-            { nombre: "Gabriela Rosero", prefijo: "PE3-" },
-            { nombre: "Miguel Arciniegas", prefijo: "PE6-" },
-            { nombre: "Juan Carlos Ortiz", prefijo: "PE7-" }
+            { nombre: "FS CAUCA FABIAN JIMENEZ" },
+            { nombre: "FS IPIALES KATHERINE" },
+            { nombre: "FS NOR OCCIDENTE ALEJANDRO MONROY" },
+            { nombre: "FS NORTE 1 EIMER" },
+            { nombre: "FS NORTE 2 DIEGO MARTINEZ" },
+            { nombre: "FS OCCIDENTE LILIANA ORDOÑEZ" },
+            { nombre: "FS PASTO 1 GLORIA VIVEROS" },
+            { nombre: "FS PASTO 2 ROLAND LOPEZ" },
+            { nombre: "FS PUTUMAYO 1 LUIS MIGUEL" },
+            { nombre: "FS PUTUMAYO 2 EDITH SANCHEZ" },
+            { nombre: "FS PUTUMAYO 3 EDINSON" },
+            { nombre: "FS SUR HAROLD MARTINEZ" },
+            { nombre: "FS VIA TUMACO CRISTINA BENAVIDES" }
         ];
-
         const towns = [
             "Pasto", "Ipiales", "Tumaco", "Túquerres", "La Unión",
             "Samaniego", "Sandoná", "El Tambo", "Buesaco", "Chachagüí"
