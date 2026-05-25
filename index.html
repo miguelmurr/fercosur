@@ -17,6 +17,7 @@
     <!-- FIREBASE COMPAT LIBRARIES -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-storage-compat.js"></script>
 
     <script>
         tailwind.config = {
@@ -320,9 +321,20 @@
                         <input type="text" id="gen-monto-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
                     </div>
 
-                    <div id="wrapper-monto-cobro" class="hidden">
+                   <div id="wrapper-monto-cobro" class="hidden">
                         <label for="gen-monto-cobro" class="block text-sm font-semibold text-slate-700">Cantidad Cobrada</label>
                         <input type="text" id="gen-monto-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700">Evidencia Fotográfica (Opcional)</label>
+                        <label for="gen-foto" class="mt-1.5 flex flex-col items-center justify-center w-full h-24 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition overflow-hidden">
+                            <div id="foto-preview-container" class="flex flex-col items-center justify-center pt-4 pb-4">
+                                <svg class="w-8 h-8 mb-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <p class="text-xs text-slate-500 font-bold" id="foto-text">Tocar para abrir cámara</p>
+                            </div>
+                            <input id="gen-foto" type="file" accept="image/*" capture="environment" class="hidden" onchange="comprimirYMostrarFoto(event)" />
+                        </label>
                     </div>
 
                     <div class="pt-4 flex space-x-3">
@@ -990,6 +1002,9 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // --- 1. BASE DE DATOS ESTATICAS DE AUTOCOMPLETADO ---
 
        // --- 1. BASE DE DATOS ESTATICAS DE AUTOCOMPLETADO ---
         const sellers = [
@@ -3735,11 +3750,44 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             dropdown.classList.add('hidden');
         }
 
-      function hideClientsDropdownGen() {
+     function hideClientsDropdownGen() {
             setTimeout(() => {
                 const dropdown = document.getElementById('gen-cliente-dropdown');
                 if (dropdown) dropdown.classList.add('hidden');
             }, 200);
+        }
+
+        // --- MOTOR DE CÁMARA Y COMPRESIÓN DE FOTOS ---
+        window.fotoComprimidaTemporal = null;
+
+        function comprimirYMostrarFoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('foto-text').innerText = "Procesando...";
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; // Resolución media-baja (no borrosa, pero de poco peso)
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // Comprimimos al 70% en JPG
+                    window.fotoComprimidaTemporal = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    // Mostramos la foto en pequeñito para que el vendedor vea que sí se tomó
+                    document.getElementById('foto-preview-container').innerHTML = `<img src="${window.fotoComprimidaTemporal}" class="h-20 object-contain rounded-lg shadow-sm"> <p class="text-[10px] text-emerald-600 font-bold mt-1">¡Foto lista!</p>`;
+                }
+            }
         }
 
         // --- INTERACCIONES INTELIGENTES Y FORMATEO DE DINERO ---
@@ -4639,10 +4687,9 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
      function submitGeneralForm(e) {
             e.preventDefault();
             
-            // Cambiamos el texto del botón temporalmente para que el vendedor sepa que está cargando el GPS
             const btnSubmit = e.target.querySelector('button[type="submit"]');
             const originalText = btnSubmit.innerText;
-            btnSubmit.innerText = "Obteniendo GPS...";
+            btnSubmit.innerText = "Obteniendo datos...";
             btnSubmit.disabled = true;
 
             const nombre = document.getElementById('gen-nombre').value.trim();
@@ -4651,46 +4698,64 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             const montoVenta = document.getElementById('gen-monto-venta').value || '$0';
             const montoCobro = document.getElementById('gen-monto-cobro').value || '$0';
 
-            // Función interna que se encarga de subir todo a la nube (con o sin GPS)
             const guardarEnNube = (ubicacionFinal) => {
-                db.collection("pedidos_generales").add({
-                    timestamp: formatTimestamp(),
-                    nombre: nombre,
-                    cliente: cliente,
-                    motivo: motivo,
-                    montoVenta: montoVenta,
-                    montoCobro: montoCobro,
-                    ubicacion: ubicacionFinal
-                }).then(() => {
-                    document.getElementById('form-pedidos-general').reset();
-                    toggleMotivoCampos(); 
-                    btnSubmit.innerText = originalText;
-                    btnSubmit.disabled = false;
-                    showToast('¡Registro Exitoso!', 'Visita y ubicación guardadas correctamente.', 'success');
-                    showView('menu');
-                }).catch((error) => {
-                    btnSubmit.innerText = originalText;
-                    btnSubmit.disabled = false;
-                    showToast('Error', 'No se pudo guardar el registro.', 'error');
-                    console.error(error);
-                });
+                const finalizarGuardado = (linkFotoFinal) => {
+                    db.collection("pedidos_generales").add({
+                        timestamp: formatTimestamp(),
+                        nombre: nombre,
+                        cliente: cliente,
+                        motivo: motivo,
+                        montoVenta: montoVenta,
+                        montoCobro: montoCobro,
+                        ubicacion: ubicacionFinal,
+                        foto: linkFotoFinal
+                    }).then(() => {
+                        document.getElementById('form-pedidos-general').reset();
+                        toggleMotivoCampos(); 
+                        
+                        // Reseteamos el cuadro de la cámara
+                        window.fotoComprimidaTemporal = null;
+                        document.getElementById('foto-preview-container').innerHTML = `<svg class="w-8 h-8 mb-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg><p class="text-xs text-slate-500 font-bold" id="foto-text">Tocar para abrir cámara</p>`;
+
+                        btnSubmit.innerText = originalText;
+                        btnSubmit.disabled = false;
+                        showToast('¡Registro Exitoso!', 'Visita y evidencias guardadas.', 'success');
+                        showView('menu');
+                    }).catch((error) => {
+                        btnSubmit.innerText = originalText;
+                        btnSubmit.disabled = false;
+                        showToast('Error', 'No se pudo guardar.', 'error');
+                        console.error(error);
+                    });
+                };
+
+                // Si se tomó una foto, la subimos a Firebase Storage primero
+                if (window.fotoComprimidaTemporal) {
+                    btnSubmit.innerText = "Subiendo foto...";
+                    const nombreArchivo = 'evidencia_' + Date.now() + '.jpg';
+                    const fotoRef = storage.ref().child('visitas/' + nombreArchivo);
+                    fotoRef.putString(window.fotoComprimidaTemporal, 'data_url').then((snapshot) => {
+                        snapshot.ref.getDownloadURL().then((urlDescarga) => {
+                            finalizarGuardado(urlDescarga);
+                        });
+                    }).catch(error => {
+                        finalizarGuardado("Error al subir foto");
+                    });
+                } else {
+                    finalizarGuardado("Sin foto");
+                }
             };
 
-            // Pedimos permiso al celular para usar la ubicación
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        // Si el vendedor acepta, creamos el link de Google Maps
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-                        const linkMapa = `https://www.google.com/maps?q=${lat},${lon}`;
+                        const linkMapa = `https://www.google.com/maps?q=$${lat},${lon}`;
                         guardarEnNube(linkMapa);
                     },
-                    (error) => {
-                        // Si lo rechaza o no tiene señal, guardamos la visita de todas formas
-                        guardarEnNube("No compartida");
-                    },
-                    { enableHighAccuracy: true, timeout: 10000 } // Forzamos alta precisión del GPS
+                    (error) => guardarEnNube("No compartida"),
+                    { enableHighAccuracy: true, timeout: 10000 }
                 );
             } else {
                 guardarEnNube("GPS no soportado");
@@ -4916,7 +4981,8 @@ dbGeneral.forEach(item => {
                     'Motivo de Visita': item.motivo || 'N/A',
                     'Monto Venta': parseInt((item.montoVenta || '0').replace(/\D/g, ''), 10) || 0,
                     'Monto Cobro': parseInt((item.montoCobro || '0').replace(/\D/g, ''), 10) || 0,
-                    'Link Ubicación': item.ubicacion || 'N/A'
+                    'Link Ubicación': item.ubicacion || 'N/A',
+                    'Fotografía': item.foto || 'N/A'
                 }));
             };
 
