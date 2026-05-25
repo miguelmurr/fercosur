@@ -3930,7 +3930,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             const cantRemisiones = lote.despachos ? lote.despachos.length : 0;
             const totalUnidadesPlanilla = lote.despachos ? lote.despachos.reduce((sum, d) => sum + (d.empaques.total || 0), 0) : 0;
             const badgeClass = lote.finalizado 
-                ? 'bg-slate-100 text-slate-700 border-slate-200' 
+                ? 'bg-orange-600 text-white border-transparent shadow-sm shadow-orange-100' 
                 : 'bg-amber-100 text-amber-800 border-amber-200';
             const badgeText = lote.finalizado ? 'Finalizado' : 'Activo';
 
