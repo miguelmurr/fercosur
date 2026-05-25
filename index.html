@@ -302,8 +302,27 @@
                     <div class="relative">
                         <label for="gen-cliente" class="block text-sm font-semibold text-slate-700">Cliente</label>
                         <input type="text" id="gen-cliente" required autocomplete="off" oninput="filterClientsGen()" onfocus="showClientsDropdownGen()" onblur="hideClientsDropdownGen()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un cliente...">
-                        <!-- Dropdown flotante clientes -->
                         <div id="gen-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
+                    </div>
+
+                    <div>
+                        <label for="gen-motivo" class="block text-sm font-semibold text-slate-700">Motivo de visita</label>
+                        <select id="gen-motivo" required onchange="toggleMotivoCampos()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm bg-white font-medium">
+                            <option value="" disabled selected>Seleccione un motivo...</option>
+                            <option value="Venta">Venta</option>
+                            <option value="Cobro">Cobro</option>
+                            <option value="Ambas">Ambas</option>
+                        </select>
+                    </div>
+
+                    <div id="wrapper-monto-venta" class="hidden">
+                        <label for="gen-monto-venta" class="block text-sm font-semibold text-slate-700">Cantidad Vendida</label>
+                        <input type="text" id="gen-monto-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
+                    </div>
+
+                    <div id="wrapper-monto-cobro" class="hidden">
+                        <label for="gen-monto-cobro" class="block text-sm font-semibold text-slate-700">Cantidad Cobrada</label>
+                        <input type="text" id="gen-monto-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
                     </div>
 
                     <div class="pt-4 flex space-x-3">
@@ -710,10 +729,13 @@
                  <!-- Tabla General -->
                     <table id="table-general-view" class="w-full text-left border-collapse">
                         <thead class="bg-slate-50 border-b border-slate-200">
-    <tr>
+  <tr>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Hora de Registro</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Nombre Completo</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cliente Destinatario</th>
+        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Motivo</th>
+        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Venta</th>
+        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cobro</th>
         <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Acciones</th>
     </tr>
 </thead>
@@ -3712,11 +3734,56 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             dropdown.classList.add('hidden');
         }
 
-        function hideClientsDropdownGen() {
+      function hideClientsDropdownGen() {
             setTimeout(() => {
                 const dropdown = document.getElementById('gen-cliente-dropdown');
                 if (dropdown) dropdown.classList.add('hidden');
             }, 200);
+        }
+
+        // --- INTERACCIONES INTELIGENTES Y FORMATEO DE DINERO ---
+        function toggleMotivoCampos() {
+            const motivo = document.getElementById('gen-motivo').value;
+            const wrapperVenta = document.getElementById('wrapper-monto-venta');
+            const wrapperCobro = document.getElementById('wrapper-monto-cobro');
+            const inputVenta = document.getElementById('gen-monto-venta');
+            const inputCobro = document.getElementById('gen-monto-cobro');
+
+            if (motivo === 'Venta') {
+                wrapperVenta.classList.remove('hidden');
+                wrapperCobro.classList.add('hidden');
+                inputVenta.required = true;
+                inputCobro.required = false;
+                inputCobro.value = '';
+            } else if (motivo === 'Cobro') {
+                wrapperVenta.classList.add('hidden');
+                wrapperCobro.classList.remove('hidden');
+                inputVenta.required = false;
+                inputCobro.required = true;
+                inputVenta.value = '';
+            } else if (motivo === 'Ambas') {
+                wrapperVenta.classList.remove('hidden');
+                wrapperCobro.classList.remove('hidden');
+                inputVenta.required = true;
+                inputCobro.required = true;
+            } else {
+                wrapperVenta.classList.add('hidden');
+                wrapperCobro.classList.add('hidden');
+                inputVenta.required = false;
+                inputCobro.required = false;
+            }
+        }
+
+        function formatCurrencyInput(input) {
+            // Quitamos todo lo que no sea un número limpio
+            let value = input.value.replace(/\D/g, "");
+            if (value === "") {
+                input.value = "";
+                return;
+            }
+            // Formateamos usando la separación oficial colombiana (Puntos para miles/millones)
+            let formatted = new Intl.NumberFormat('es-CO').format(value);
+            input.value = "$" + formatted;
         }
 
         // --- 5. AUTOCOMPLETADO DE POBLACIONES ---
@@ -4568,17 +4635,24 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         }
 
         // --- 12. FORMULARIOS DE REGISTRO ORIGINALES A FIREBASE ---
-      function submitGeneralForm(e) {
+     function submitGeneralForm(e) {
             e.preventDefault();
             const nombre = document.getElementById('gen-nombre').value.trim();
             const cliente = document.getElementById('gen-cliente').value.trim();
+            const motivo = document.getElementById('gen-motivo').value;
+            const montoVenta = document.getElementById('gen-monto-venta').value || '$0';
+            const montoCobro = document.getElementById('gen-monto-cobro').value || '$0';
 
             db.collection("pedidos_generales").add({
                 timestamp: formatTimestamp(),
                 nombre: nombre,
-                cliente: cliente
+                cliente: cliente,
+                motivo: motivo,
+                montoVenta: montoVenta,
+                montoCobro: montoCobro
             }).then(() => {
                 document.getElementById('form-pedidos-general').reset();
+                toggleMotivoCampos(); // Esto oculta de nuevo las casillas de dinero para el próximo registro
                 showToast('¡Registro Exitoso!', 'El registro ha sido almacenado en la nube.', 'success');
                 showView('menu');
             }).catch((error) => {
@@ -4702,12 +4776,15 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     emptyState.classList.remove('flex');
                     document.getElementById('table-general-view').classList.remove('hidden');
 
-					dbGeneral.forEach(item => {
+				dbGeneral.forEach(item => {
                         const tr = `
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
                                 <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
                                 <td class="px-6 py-4 text-slate-700 font-medium">${item.cliente || 'N/A'}</td>
+                                <td class="px-6 py-4 text-slate-600 font-semibold">${item.motivo || 'N/A'}</td>
+                                <td class="px-6 py-4 text-emerald-600 font-bold">${item.montoVenta || '$0'}</td>
+                                <td class="px-6 py-4 text-blue-600 font-bold">${item.montoCobro || '$0'}</td>
                                 <td class="px-6 py-4 text-center">
                                     <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4791,11 +4868,14 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 return;
             }
 
-        const format = (data, tipo) => {
+     const format = (data, tipo) => {
                 return data.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
                     'Cliente': item.cliente || 'N/A',
+                    'Motivo de Visita': item.motivo || 'N/A',
+                    'Monto Venta': item.montoVenta || '$0',
+                    'Monto Cobro': item.montoCobro || '$0',
                     'Tipo de Formulario': tipo
                 }));
             };
@@ -4821,10 +4901,13 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     return;
                 }
 
-                const dataToExport = dbGeneral.map(item => ({
+              const dataToExport = dbGeneral.map(item => ({
                     'Hora de Registro': item.timestamp,
                     'Nombre Completo': item.nombre,
-                    'Cliente': item.cliente || 'N/A'
+                    'Cliente': item.cliente || 'N/A',
+                    'Motivo de Visita': item.motivo || 'N/A',
+                    'Monto Venta': item.montoVenta || '$0',
+                    'Monto Cobro': item.montoCobro || '$0'
                 }));
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
