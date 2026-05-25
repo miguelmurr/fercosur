@@ -365,7 +365,7 @@
                     <span class="text-sm font-bold text-slate-600 uppercase tracking-wider">Volver al Portal Inicial</span>
                 </div>
 
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/80 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-sm">
+               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white/80 backdrop-blur-xl border border-orange-500/30 rounded-3xl p-6 shadow-sm">
                     <div>
                         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Planillas de Despachos</h2>
                         <p class="text-slate-500 mt-1">Configure lotes de despacho unificados para control logístico de remisiones.</p>
@@ -3907,9 +3907,12 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 : 'bg-amber-100 text-amber-800 border-amber-200';
             const badgeText = lote.finalizado ? 'Finalizado' : 'Activo';
 
-            const borderHoverClass = lote.finalizado
-                ? 'hover:border-slate-300 hover:shadow-md'
-                : 'hover:border-amber-400 hover:shadow-lg hover:shadow-amber-50';
+           const borderHoverClass = lote.finalizado
+                ? 'hover:border-slate-400 hover:shadow-md'
+                : 'hover:border-orange-500 hover:shadow-lg hover:shadow-orange-50';
+            const cardDiv = document.createElement('div');
+            // Añadimos border-orange-500/30 para el margen naranja delgado permanente
+            cardDiv.className = `bg-white border border-orange-500/30 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 ${borderHoverClass}`;
 
             const actionBtnText = lote.finalizado ? 'Ver / Modificar' : 'Continuar Registrando';
             const actionBtnColor = lote.finalizado 
