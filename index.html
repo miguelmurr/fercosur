@@ -4990,16 +4990,16 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                 telefono = '57' + telefono;
             }
 
-            let detalleEmpaques = '';
-            if (despacho.empaques.caja > 0) detalleEmpaques += `* ${despacho.empaques.caja} CAJA(S)\n`;
-            if (despacho.empaques.paquete > 0) detalleEmpaques += `* ${despacho.empaques.paquete} PAQUETE(S)\n`;
-            if (despacho.empaques.rollo > 0) detalleEmpaques += `* ${despacho.empaques.rollo} ROLLO(S)\n`;
-            if (despacho.empaques.atado > 0) detalleEmpaques += `* ${despacho.empaques.atado} ATADO(S)\n`;
-            if (despacho.empaques.saca > 0) detalleEmpaques += `* ${despacho.empaques.saca} SACA(S)\n`;
-            if (despacho.empaques.lio > 0) detalleEmpaques += `* ${despacho.empaques.lio} LÍO(S)\n`;
-            if (despacho.empaques.carreta > 0) detalleEmpaques += `* ${despacho.empaques.carreta} CARRETA(S)\n`;
-            if (despacho.empaques.cadena > 0) detalleEmpaques += `* ${despacho.empaques.cadena} CADENA(S)\n`;
-            if (despacho.empaques.otros > 0) detalleEmpaques += `* ${despacho.empaques.otros} OTROS\n`;
+           let detalleEmpaques = '';
+            if (despacho.empaques.caja > 0) detalleEmpaques += `* ${despacho.empaques.caja} ${despacho.empaques.caja > 1 ? 'CAJAS' : 'CAJA'}\n`;
+            if (despacho.empaques.paquete > 0) detalleEmpaques += `* ${despacho.empaques.paquete} ${despacho.empaques.paquete > 1 ? 'PAQUETES' : 'PAQUETE'}\n`;
+            if (despacho.empaques.rollo > 0) detalleEmpaques += `* ${despacho.empaques.rollo} ${despacho.empaques.rollo > 1 ? 'ROLLOS' : 'ROLLO'}\n`;
+            if (despacho.empaques.atado > 0) detalleEmpaques += `* ${despacho.empaques.atado} ${despacho.empaques.atado > 1 ? 'ATADOS' : 'ATADO'}\n`;
+            if (despacho.empaques.saca > 0) detalleEmpaques += `* ${despacho.empaques.saca} ${despacho.empaques.saca > 1 ? 'SACAS' : 'SACA'}\n`;
+            if (despacho.empaques.lio > 0) detalleEmpaques += `* ${despacho.empaques.lio} ${despacho.empaques.lio > 1 ? 'LÍOS' : 'LÍO'}\n`;
+            if (despacho.empaques.carreta > 0) detalleEmpaques += `* ${despacho.empaques.carreta} ${despacho.empaques.carreta > 1 ? 'CARRETAS' : 'CARRETA'}\n`;
+            if (despacho.empaques.cadena > 0) detalleEmpaques += `* ${despacho.empaques.cadena} ${despacho.empaques.cadena > 1 ? 'CADENAS' : 'CADENA'}\n`;
+            if (despacho.empaques.otros > 0) detalleEmpaques += `* ${despacho.empaques.otros} ${despacho.empaques.otros > 1 ? 'OTROS' : 'OTRO'}\n`;
 
             if (!detalleEmpaques) {
                 detalleEmpaques = '* Sin empaques registrados\n';
