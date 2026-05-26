@@ -4194,8 +4194,10 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
       function createLoteCardElement(lote, isInsideModal) {
     // Ordenamos de la más antigua a la más reciente para calcular el consecutivo real
     const planillasOrdenadas = [...dbLotes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-    const posicion = planillasOrdenadas.findIndex(l => l.id === lote.id);
-    const consecutivo = posicion !== -1 ? `D-${posicion + 1}` : '';
+            const posicion = planillasOrdenadas.findIndex(l => l.id === lote.id);
+            const numeroLote = posicion + 1;
+            const numeroFormateado = numeroLote < 10 ? '0' + numeroLote : numeroLote;
+            const consecutivo = posicion !== -1 ? `D-${numeroFormateado}` : '';
 
     const cantRemisiones = lote.despachos ? lote.despachos.length : 0;
     const totalUnidadesPlanilla = lote.despachos ? lote.despachos.reduce((sum, d) => sum + (d.empaques.total || 0), 0) : 0;
@@ -4325,7 +4327,9 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             if (query) {
                 filtered = filtered.filter(l => {
                     const posicion = planillasOrdenadas.findIndex(p => p.id === l.id);
-                    const consecutivo = posicion !== -1 ? `d-${posicion + 1}` : '';
+                    const numeroLote = posicion + 1;
+                    const numeroFormateado = numeroLote < 10 ? '0' + numeroLote : numeroLote;
+                    const consecutivo = posicion !== -1 ? `d-${numeroFormateado}` : '';
                     
                     // El sistema compara si el texto ingresado está en el nombre O en el consecutivo asignado
                     return l.nombre.toLowerCase().includes(query) || consecutivo.includes(query);
@@ -4362,7 +4366,9 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             // Calculamos el consecutivo para la cabecera activa
             const planillasOrdenadas = [...dbLotes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
             const posicion = planillasOrdenadas.findIndex(l => l.id === loteId);
-            const consecutivo = posicion !== -1 ? `D-${posicion + 1}` : '';
+            const numeroLote = posicion + 1;
+            const numeroFormateado = numeroLote < 10 ? '0' + numeroLote : numeroLote;
+            const consecutivo = posicion !== -1 ? `D-${numeroFormateado}` : '';
 
             document.getElementById('active-lote-title').innerText = `Planilla: ${lote.nombre} (${consecutivo})`;
             document.getElementById('active-lote-date').innerText = lote.timestamp;
@@ -4674,8 +4680,9 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             // Calculamos el consecutivo correspondiente antes de generar el documento
             const planillasOrdenadas = [...dbLotes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
             const posicion = planillasOrdenadas.findIndex(l => l.id === loteId);
-            const consecutivo = posicion !== -1 ? `D-${posicion + 1}` : '';
-
+            const numeroLote = posicion + 1;
+            const numeroFormateado = numeroLote < 10 ? '0' + numeroLote : numeroLote;
+            const consecutivo = posicion !== -1 ? `D-${numeroFormateado}` : '';
             let tableRows = '';
             (lote.despachos || []).forEach(d => {
                 const caja = d.empaques.caja > 0 ? d.empaques.caja : '';
