@@ -990,7 +990,7 @@
                     <!-- Caja de Filtros y Búsqueda -->
                     <div class="flex flex-col sm:flex-row gap-4 mb-6">
                         <div class="flex-1 relative">
-                            <input type="text" id="search-planillas-input" oninput="renderTodasPlanillasList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none sm:text-sm font-medium text-slate-900" placeholder="Buscar planilla por nombre o ruta...">
+                            <input type="text" id="search-planillas-input" oninput="renderTodasPlanillasList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none sm:text-sm font-medium text-slate-900" placeholder="Buscar por nombre, ruta o consecutivo (Ej. D-1)...">
                         </div>
                         <div class="sm:w-52">
                             <select id="sort-planillas-select" onchange="renderTodasPlanillasList()" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none sm:text-sm font-semibold text-slate-700 bg-white">
@@ -4308,7 +4308,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             document.getElementById('todas-planillas-modal').classList.add('hidden');
         }
 
-        function renderTodasPlanillasList() {
+       function renderTodasPlanillasList() {
             const queryInput = document.getElementById('search-planillas-input');
             const sortSelect = document.getElementById('sort-planillas-select');
             const container = document.getElementById('todas-planillas-grid-container');
@@ -4318,10 +4318,18 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             const query = queryInput ? queryInput.value.toLowerCase().trim() : '';
             const sortOrder = sortSelect ? sortSelect.value : 'desc';
 
-            let filtered = [...dbLotes];
+            // Creamos la regla cronológica para mapear los consecutivos correspondientes
+            const planillasOrdenadas = [...dbLotes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
+            let filtered = [...dbLotes];
             if (query) {
-                filtered = filtered.filter(l => l.nombre.toLowerCase().includes(query));
+                filtered = filtered.filter(l => {
+                    const posicion = planillasOrdenadas.findIndex(p => p.id === l.id);
+                    const consecutivo = posicion !== -1 ? `d-${posicion + 1}` : '';
+                    
+                    // El sistema compara si el texto ingresado está en el nombre O en el consecutivo asignado
+                    return l.nombre.toLowerCase().includes(query) || consecutivo.includes(query);
+                });
             }
 
             filtered.sort((a, b) => {
