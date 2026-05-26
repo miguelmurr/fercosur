@@ -361,66 +361,134 @@
                 <div class="absolute bottom-[10%] right-[-5%] w-[550px] h-[550px] bg-brand-200/25 rounded-full wave-glow" style="animation-delay: -3s;"></div>
             </div>
 
-            <div class="max-w-xl w-full bg-white border border-brand-700 rounded-3xl p-8 shadow-xl relative z-10">
+            <div class="max-w-2xl w-full bg-white border border-brand-700 rounded-3xl p-6 sm:p-8 shadow-xl relative z-10">
                 <div class="flex items-center space-x-3 mb-6">
-                    <button onclick="showView('menu')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
+                    <button onclick="showView('menu')" id="btn-regresar-ruta" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
                     </button>
                     <div>
-                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Registro de Visita</h2>
-                        <p class="text-sm text-slate-500 mt-1 font-medium">Ingrese los datos para procesar el registro.</p>
+                        <h2 id="titulo-modulo-ventas" class="text-2xl font-black text-slate-900 tracking-tight">Planificación de Jornada</h2>
+                        <p id="subtitulo-modulo-ventas" class="text-sm text-slate-500 mt-1 font-medium">Configure los clientes y las proyecciones de su ruta diaria.</p>
                     </div>
                 </div>
 
-             <form id="form-pedidos-general" onsubmit="submitGeneralForm(event)" class="space-y-6">
-                    <!-- Autocompletado Nombre Asesor -->
+                <div id="wrapper-planificacion" class="space-y-6">
                     <div class="relative">
-                        <label for="gen-nombre" class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
-                        <input type="text" id="gen-nombre" required autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un vendedor...">
-                        <!-- Dropdown flotante asesores -->
+                        <label for="gen-nombre" class="block text-sm font-semibold text-slate-700">Nombre Completo del Asesor</label>
+                        <input type="text" id="gen-nombre" required autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-medium" placeholder="Escriba o seleccione un vendedor...">
                         <div id="gen-nombre-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
                     </div>
 
-                    <!-- Autocompletado de Cliente para Registros -->
-                    <div class="relative">
-                        <label for="gen-cliente" class="block text-sm font-semibold text-slate-700">Cliente</label>
-                        <input type="text" id="gen-cliente" required autocomplete="off" oninput="filterClientsGen()" onfocus="showClientsDropdownGen()" onblur="hideClientsDropdownGen()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un cliente...">
-                        <div id="gen-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
+                    <div class="border-t border-slate-100 pt-5 space-y-4">
+                        <span class="block text-xs font-bold text-brand-600 uppercase tracking-widest">Añadir Punto de Parada</span>
+                        
+                        <div class="relative">
+                            <label for="gen-cliente" class="block text-sm font-semibold text-slate-700">Cliente Comercial</label>
+                            <input type="text" id="gen-cliente" autocomplete="off" oninput="filterClientsGen()" onfocus="showClientsDropdownGen()" onblur="hideClientsDropdownGen()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-medium" placeholder="Escriba para buscar en sus clientes asignados...">
+                            <div id="gen-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="plan-estimado-venta" class="block text-sm font-semibold text-slate-700">Estimado Venta</label>
+                                <input type="text" id="plan-estimado-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-semibold text-emerald-600" placeholder="$0">
+                            </div>
+                            <div>
+                                <label for="plan-estimado-cobro" class="block text-sm font-semibold text-slate-700">Estimado Cobro</label>
+                                <input type="text" id="plan-estimado-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-semibold text-blue-600" placeholder="$0">
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="agregarClienteALaPlanificacion()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 rounded-xl font-bold text-sm transition duration-150 flex items-center justify-center border border-slate-200">
+                            <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Agregar a mi Ruta
+                        </button>
                     </div>
 
-                    <div>
-                        <label for="gen-motivo" class="block text-sm font-semibold text-slate-700">Motivo de visita</label>
-                        <select id="gen-motivo" required onchange="toggleMotivoCampos()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm bg-white font-medium">
-                            <option value="" disabled selected>Seleccione un motivo...</option>
-                            <option value="Venta">Venta</option>
-                            <option value="Cobro">Cobro</option>
-                            <option value="Ambas">Ambas</option>
-                        </select>
+                    <div class="border-t border-slate-100 pt-5 space-y-2">
+                        <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest">Resumen de Agenda del Día</span>
+                        <div class="border border-slate-100 rounded-2xl overflow-hidden bg-slate-50">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead class="bg-slate-100 border-b border-slate-200 text-slate-600 font-bold">
+                                    <tr>
+                                        <th class="p-3">Cliente</th>
+                                        <th class="p-3 text-center">Proyecciones</th>
+                                        <th class="p-3 text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-tabla-planificacion" class="divide-y divide-slate-200 text-slate-700 font-medium">
+                                    <tr>
+                                        <td colspan="3" class="p-5 text-center text-slate-400 italic font-medium bg-white">No ha agendado ningún establecimiento todavía</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <div id="wrapper-monto-venta" class="hidden">
-                        <label for="gen-monto-venta" class="block text-sm font-semibold text-slate-700">Cantidad Vendida</label>
-                        <input type="text" id="gen-monto-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
+                    <div class="pt-2">
+                        <button type="button" onclick="congelarEIniciarJornada()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold text-sm transition duration-150 shadow-md shadow-brand-100">
+                            Iniciar mi Jornada
+                        </button>
+                    </div>
+                </div>
+
+                <div id="wrapper-jornada-activa" class="hidden space-y-6">
+                    <div class="bg-brand-50 border border-brand-100 rounded-2xl p-4 flex flex-col gap-2.5">
+                        <div class="flex justify-between items-center text-xs font-bold text-brand-900 uppercase tracking-wider">
+                            <span>Avance de Ruta</span>
+                            <span id="txt-progreso-visitas">0 / 0 Completados</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                            <div id="bar-progreso-visitas" class="bg-brand-600 h-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
                     </div>
 
-                    <div id="wrapper-monto-cobro" class="hidden">
-                        <label for="gen-monto-cobro" class="block text-sm font-semibold text-slate-700">Cantidad Cobrada</label>
-                        <input type="text" id="gen-monto-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
-                    </div>
+                    <div class="space-y-3.5" id="contenedor-lista-jornada"></div>
 
-                    <div class="pt-4 flex space-x-3">
-                        <button type="button" onclick="document.getElementById('form-pedidos-general').reset(); toggleMotivoCampos(); showView('menu');" class="flex-1 bg-white py-3 px-4 border border-slate-300 rounded-xl shadow-sm text-sm font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Cancelar</button>
-                        <button type="submit" class="flex-1 bg-brand-600 py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Enviar ubicación y registrar visita</button>
+                    <div id="formulario-visita-campo" class="hidden border-t border-slate-200 pt-6 space-y-5 fade-in">
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                            <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Punto de Atención Abierto</span>
+                            <span id="txt-cliente-activo-nombre" class="block text-lg font-black text-slate-900 mt-0.5 tracking-tight">---</span>
+                        </div>
+
+                        <form id="form-registro-campo" onsubmit="procesarEnvioVisitaOffline(event)" class="space-y-4">
+                            <div>
+                                <label for="gen-motivo-campo" class="block text-sm font-semibold text-slate-700">Motivo Real de la Visita</label>
+                                <select id="gen-motivo-campo" required onchange="toggleMotivoCamposCampo()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm bg-white font-semibold">
+                                    <option value="" disabled selected>Seleccione el resultado comercial...</option>
+                                    <option value="Venta">Venta</option>
+                                    <option value="Cobro">Cobro</option>
+                                    <option value="Ambas">Ambas</option>
+                                </select>
+                            </div>
+
+                            <div id="wrapper-campo-venta" class="hidden">
+                                <label for="gen-monto-venta-campo" class="block text-sm font-semibold text-slate-700">Monto Vendido Efectivo</label>
+                                <input type="text" id="gen-monto-venta-campo" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-bold text-emerald-600" placeholder="$0">
+                            </div>
+
+                            <div id="wrapper-campo-cobro" class="hidden">
+                                <label for="gen-monto-cobro-campo" class="block text-sm font-semibold text-slate-700">Monto Cobrado Efectivo</label>
+                                <input type="text" id="gen-monto-cobro-campo" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-bold text-blue-600" placeholder="$0">
+                            </div>
+
+                            <div class="pt-2">
+                                <button type="submit" id="btn-finalizar-visita-registro" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold text-sm transition duration-150 shadow-md shadow-emerald-100 flex items-center justify-center">
+                                    Finalizar Registro y Sellar Salida (GPS)
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </section>
 
        
-
-        <!-- NUEVA VISTA: MENÚ DE PLANILLAS / LOTES DE DESPACHOS -->
+             <!-- NUEVA VISTA: MENÚ DE PLANILLAS / LOTES DE DESPACHOS -->
       <section id="view-menu-despachos" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col py-8 px-4 relative overflow-hidden bg-white">
             
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
