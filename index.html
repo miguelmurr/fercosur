@@ -4223,6 +4223,55 @@ TIENDA
                 }
                 contenedor.appendChild(card);
             });
+
+            // SALIDA DE EMERGENCIA COMERCIAL: Si completó todo el recorrido, inyectamos el botón de finalización de jornada
+            if (completados === totalClientes && totalClientes > 0) {
+                const divBotonCierre = document.createElement('div');
+                divBotonCierre.className = "pt-4 fade-in";
+                divBotonCierre.innerHTML = `
+                    <button type="button" onclick="terminarJornadaCompleta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-xl font-black text-sm transition duration-150 shadow-lg shadow-emerald-100 text-center uppercase tracking-wider">
+                        🏁 Terminar mi Jornada de Hoy
+                    </button>
+                `;
+                contenedor.appendChild(divBotonCierre);
+            }
+        }
+
+        // Función Maestra encargada de romper el candado local y liberar la aplicación
+        function terminarJornadaCompleta() {
+            const vendedor = document.getElementById('gen-nombre').value.trim();
+            
+            // 1. Si hay señal, removemos de inmediato este asesor del monitor en vivo del supervisor
+            if (navigator.onLine && vendedor) {
+                db.collection("rutas_activas").doc(vendedor).delete().catch(e => console.error(e));
+            }
+
+            // 2. ROMPEMOS EL CANDADO: Borramos la jornada de la memoria interna para liberar el celular
+            localStorage.removeItem('fercosur_jornada_v2');
+
+            // 3. Devolvemos todas las variables globales a su estado de fábrica limpio
+            rutaPlanificada = [];
+            jornadaActiva = false;
+            indiceClienteActivo = null;
+
+            // 4. Dejamos las cajas de texto listas para el día de mañana
+            document.getElementById('gen-nombre').value = '';
+            document.getElementById('form-registro-campo').reset();
+            renderTablaPlanificacion();
+
+            // 5. Apagamos la interfaz de ruta y encendemos el planificador original
+            document.getElementById('wrapper-jornada-activa').classList.add('hidden');
+            document.getElementById('formulario-visita-campo').classList.add('hidden');
+            document.getElementById('wrapper-planificacion').classList.remove('hidden');
+            document.getElementById('btn-regresar-ruta').classList.remove('hidden');
+
+            document.getElementById('titulo-modulo-ventas').innerText = "Planificación de Jornada";
+            document.getElementById('subtitulo-modulo-ventas').innerText = "Configure los clientes y las proyecciones de su ruta diaria.";
+
+            showToast('Jornada Finalizada', 'Los datos están a salvo y tu teléfono ha sido liberado.', 'success');
+            
+            // Regresamos al menú de selección principal de la web de Fercosur
+            showView('menu');
         }
 
         // Control de Tiempos: Dispara la captura invisible de llegada y despliega el formulario real
