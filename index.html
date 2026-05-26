@@ -3980,7 +3980,7 @@ TIENDA
             }
         }
 
-        function selectClientGen(nombre) {
+       function selectClientGen(nombre) {
             const input = document.getElementById('gen-cliente');
             const dropdown = document.getElementById('gen-cliente-dropdown');
             
@@ -3988,11 +3988,273 @@ TIENDA
             dropdown.classList.add('hidden');
         }
 
-      function hideClientsDropdownGen() {
+        function hideClientsDropdownGen() {
             setTimeout(() => {
                 const dropdown = document.getElementById('gen-cliente-dropdown');
                 if (dropdown) dropdown.classList.add('hidden');
             }, 200);
+        }
+
+        // ==========================================
+        // MOTOR DE JORNADA OFFLINE Y CONTROL DE TIEMPOS (PASO 3)
+        // ==========================================
+        let rutaPlanificada = [];
+        let jornadaActiva = false;
+        let indiceClienteActivo = null;
+
+        // Guarda el estado actual en el almacenamiento interno del dispositivo
+        function guardarJornadaEnStorage() {
+            const estado = {
+                vendedor: document.getElementById('gen-nombre').value.trim(),
+                jornadaActiva: jornadaActiva,
+                indiceClienteActivo: indiceClienteActivo,
+                ruta: rutaPlanificada
+            };
+            localStorage.setItem('fercosur_jornada_v2', JSON.stringify(estado));
+        }
+
+        // Agrega clientes a la tabla de preparación matutina
+        function agregarClienteALaPlanificacion() {
+            const inputCliente = document.getElementById('gen-cliente');
+            const inputVenta = document.getElementById('plan-estimado-venta');
+            const inputCobro = document.getElementById('plan-estimado-cobro');
+
+            const clienteNom = inputCliente.value.trim();
+            const estVenta = inputVenta.value.trim() || '$0';
+            const estCobro = inputCobro.value.trim() || '$0';
+
+            if (!clienteNom) {
+                showToast('Faltan Datos', 'Por favor seleccione un cliente de la lista.', 'error');
+                return;
+            }
+
+            // Evitar duplicados en la misma ruta matutina
+            if (rutaPlanificada.some(c => c.nombre === clienteNom)) {
+                showToast('Ya Agregado', 'Este cliente ya forma parte de su ruta de hoy.', 'error');
+                return;
+            }
+
+            // Estructura de datos blindada para cada punto de la parada
+            rutaPlanificada.push({
+                nombre: clienteNom,
+                estimadoVenta: estVenta,
+                estimadoCobro: estCobro,
+                visitado: false,
+                horaEntrada: '',
+                gpsEntrada: '',
+                horaSalida: '',
+                gpsSalida: '',
+                motivoReal: '',
+                montoVentaReal: '',
+                montoCobroReal: ''
+            });
+
+            // Limpiar campos de inserción
+            inputCliente.value = '';
+            inputVenta.value = '';
+            inputCobro.value = '';
+
+            renderTablaPlanificacion();
+            showToast('Punto Añadido', 'Cliente integrado a la agenda.', 'success');
+        }
+
+        // Dibuja la tabla de preparación matutina
+        function renderTablaPlanificacion() {
+            const tbody = document.getElementById('tbody-tabla-planificacion');
+            tbody.innerHTML = '';
+
+            if (rutaPlanificada.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-slate-400 italic font-medium bg-white">No ha agendado ningún establecimiento todavía</td></tr>`;
+                return;
+            }
+
+            rutaPlanificada.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-900 max-w-[180px] truncate">${item.nombre}</td>
+                    <td class="p-3 text-center text-[11px]">
+                        <span class="text-emerald-600 font-bold block">V: ${item.estimadoVenta}</span>
+                        <span class="text-blue-600 font-bold block">C: ${item.estimadoCobro}</span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button type="button" onclick="eliminarClienteDePlanificacion(${index})" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition">
+                            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Permite remover un punto antes de congelar la ruta
+        function eliminarClienteDePlanificacion(index) {
+            rutaPlanificada.splice(index, 1);
+            renderTablaPlanificacion();
+        }
+
+        // Congela la ruta matutina y activa el panel de progreso en ruta
+        function congelarEIniciarJornada() {
+            const vendedor = document.getElementById('gen-nombre').value.trim();
+            if (!vendedor) {
+                showToast('Falta Asesor', 'Debe ingresar su nombre completo antes de iniciar.', 'error');
+                return;
+            }
+            if (rutaPlanificada.length === 0) {
+                showToast('Ruta Vacía', 'Debe añadir al menos un cliente a su agenda.', 'error');
+                return;
+            }
+
+            jornadaActiva = true;
+            guardarJornadaEnStorage();
+            activarInterfazJornadaReal();
+        }
+
+        // Muta la interfaz visual del planificador al panel de ruta en campo
+        function activarInterfazJornadaReal() {
+            document.getElementById('wrapper-planificacion').classList.add('hidden');
+            document.getElementById('btn-regresar-ruta').classList.add('hidden'); // Sin retorno hacia atrás
+            document.getElementById('wrapper-jornada-activa').classList.remove('hidden');
+
+            document.getElementById('titulo-modulo-ventas').innerText = "Ruta de Trabajo Activa";
+            document.getElementById('subtitulo-modulo-ventas').innerText = "Gestión secuencial en campo supervisada por GPS.";
+
+            renderListaJornada();
+        }
+
+        // Dibuja las tarjetas interactivas de ruta y calcula la barra de progreso
+        function renderListaJornada() {
+            const contenedor = document.getElementById('contenedor-lista-jornada');
+            contenedor.innerHTML = '';
+
+            const totalClientes = rutaPlanificada.length;
+            const completados = rutaPlanificada.filter(c => c.visitado).length;
+            const porcentaje = totalClientes > 0 ? (completados / totalClientes) * 100 : 0;
+
+            // Actualizar barra de progreso superior
+            document.getElementById('txt-progreso-visitas').innerText = `${completados} / ${totalClientes} Visitados`;
+            document.getElementById('bar-progreso-visitas').style.width = `${porcentaje}%`;
+
+            rutaPlanificada.forEach((item, index) => {
+                const card = document.createElement('div');
+                
+                if (item.visitado) {
+                    // Tarjeta Verde: Ya fue completada con éxito
+                    card.className = "bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300";
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <span class="text-sm font-black text-slate-900 tracking-tight">${item.nombre}</span>
+                                <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-800 rounded-full uppercase">Visitado</span>
+                            </div>
+                            <div class="mt-2 text-[11px] text-slate-500 font-medium space-y-0.5">
+                                <p>⏱️ Entrada: ${item.horaEntrada.split(' ')[1]} | Salida: ${item.horaSalida.split(' ')[1]}</p>
+                                <p class="text-emerald-700 font-bold">🎯 Real: ${item.motivoReal} (V: ${item.montoVentaReal} | C: ${item.montoCobroReal})</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (indiceClienteActivo === index) {
+                    // Tarjeta Azul: Es el cliente que está siendo atendido actualmente
+                    card.className = "bg-brand-50 border-2 border-brand-500 rounded-2xl p-4 shadow-sm transition-all duration-300";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-sm font-black text-slate-900 tracking-tight block">${item.nombre}</span>
+                                <span class="text-[11px] font-bold text-brand-600 block mt-0.5">📍 Recopilando gestión en sitio...</span>
+                            </div>
+                            <span class="px-2 py-0.5 text-[10px] font-bold bg-brand-600 text-white rounded-full uppercase animate-pulse">Abierto</span>
+                        </div>
+                    `;
+                } else {
+                    // Tarjetas Grises/Bloqueadas de la ruta secuencial
+                    const hayAlguienActivo = indiceClienteActivo !== null;
+                    card.className = `bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center transition-all duration-300 ${hayAlguienActivo ? 'opacity-50' : ''}`;
+                    card.innerHTML = `
+                        <div class="min-w-0 flex-1 pr-3">
+                            <span class="text-sm font-bold text-slate-900 block truncate">${item.nombre}</span>
+                            <span class="text-[10px] text-slate-400 font-medium block mt-0.5">Meta matutina: V: ${item.estimadoVenta} | C: ${item.estimadoCobro}</span>
+                        </div>
+                        <button type="button" onclick="iniciarVisitaCliente(${index})" ${hayAlguienActivo ? 'disabled' : ''} class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition whitespace-nowrap shadow-sm">
+                            Iniciar Visita
+                        </button>
+                    `;
+                }
+                contenedor.appendChild(card);
+            });
+        }
+
+        // Control de Tiempos: Dispara la captura invisible de llegada y despliega el formulario real
+        function iniciarVisitaCliente(index) {
+            indiceClienteActivo = index;
+            const cliente = rutaPlanificada[index];
+            cliente.horaEntrada = formatTimestamp();
+
+            // Desplegar bloqueo estético visual e informar que se usa el GPS
+            renderListaJornada();
+            
+            const formCampo = document.getElementById('formulario-visita-campo');
+            formCampo.classList.remove('hidden');
+            document.getElementById('txt-cliente-activo-nombre').innerText = cliente.nombre;
+            document.getElementById('btn-finalizar-visita-registro').innerText = "Obteniendo GPS de Entrada...";
+            document.getElementById('btn-finalizar-visita-registro').disabled = true;
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        cliente.gpsEntrada = `http://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+                        document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida (GPS)";
+                        document.getElementById('btn-finalizar-visita-registro').disabled = false;
+                        guardarJornadaEnStorage();
+                    },
+                    (error) => {
+                        cliente.gpsEntrada = "No compartida o sin señal";
+                        document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida (GPS)";
+                        document.getElementById('btn-finalizar-visita-registro').disabled = false;
+                        guardarJornadaEnStorage();
+                    },
+                    { enableHighAccuracy: true, timeout: 8000 }
+                );
+            } else {
+                cliente.gpsEntrada = "GPS No Soportado";
+                document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida (GPS)";
+                document.getElementById('btn-finalizar-visita-registro').disabled = false;
+                guardarJornadaEnStorage();
+            }
+        }
+
+        // Control de campos interactivos del subformulario en campo
+        function toggleMotivoCamposCampo() {
+            const motivo = document.getElementById('gen-motivo-campo').value;
+            const wrapperVenta = document.getElementById('wrapper-campo-venta');
+            const wrapperCobro = document.getElementById('wrapper-campo-cobro');
+            const inputVenta = document.getElementById('gen-monto-venta-campo');
+            const inputCobro = document.getElementById('gen-monto-cobro-campo');
+
+            if (motivo === 'Venta') {
+                wrapperVenta.classList.remove('hidden');
+                wrapperCobro.classList.add('hidden');
+                inputVenta.required = true;
+                inputCobro.required = false;
+                inputCobro.value = '';
+            } else if (motivo === 'Cobro') {
+                wrapperVenta.classList.add('hidden');
+                wrapperCobro.classList.remove('hidden');
+                inputVenta.required = false;
+                inputCobro.required = true;
+                inputVenta.value = '';
+            } else if (motivo === 'Ambas') {
+                wrapperVenta.classList.remove('hidden');
+                wrapperCobro.classList.remove('hidden');
+                inputVenta.required = true;
+                inputCobro.required = true;
+            } else {
+                wrapperVenta.classList.add('hidden');
+                wrapperCobro.classList.add('hidden');
+                inputVenta.required = false;
+                inputCobro.required = false;
+            }
         }
 
         // --- INTERACCIONES INTELIGENTES Y FORMATEO DE DINERO ---
@@ -5800,7 +6062,37 @@ dbGeneral.forEach(item => {
         }
        
         // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
+        // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA EN CAMPO ---
         window.onload = function() {
             showView('portal');
+
+            // Recuperación automática de Jornada en caso de apagón por batería
+            const sessionGuardada = localStorage.getItem('fercosur_jornada_v2');
+            if (sessionGuardada) {
+                const estado = JSON.parse(sessionGuardada);
+                if (estado && estado.jornadaActiva) {
+                    rutaPlanificada = estado.ruta || [];
+                    jornadaActiva = estado.jornadaActiva;
+                    indiceClienteActivo = estado.indiceClienteActivo;
+                    
+                    document.getElementById('gen-nombre').value = estado.vendedor;
+                    
+                    // Si el apagón ocurrió a mitad de una visita abierta, dejamos el formulario listo
+                    if (indiceClienteActivo !== null) {
+                        setTimeout(() => {
+                            showView('form-general');
+                            activarInterfazJornadaReal();
+                            document.getElementById('formulario-visita-campo').classList.remove('hidden');
+                            document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
+                            document.getElementById('btn-finalizar-visita-registro').disabled = false;
+                        }, 200);
+                    } else {
+                        setTimeout(() => {
+                            showView('form-general');
+                            activarInterfazJornadaReal();
+                        }, 200);
+                    }
+                }
+            }
         }
     </script>
