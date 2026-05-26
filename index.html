@@ -5161,11 +5161,7 @@ dbGeneral.forEach(item => {
                 }
             }
 
-            const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Pedidos Generales");
-                XLSX.writeFile(wb, "REPORTE_PEDIDOS_GENERALES.xlsx");
-                showToast('Descarga Exitosa', 'Tabla de pedidos generales exportada.', 'success');
-            } else if (currentActiveAdminTab === 'despachos') {
+           } else if (currentActiveAdminTab === 'despachos') {
                 let allDespachosFlat = [];
                 dbLotes.forEach(lote => {
                     if (lote.despachos) {
@@ -5179,7 +5175,6 @@ dbGeneral.forEach(item => {
                         });
                     }
                 });
-
                 if (allDespachosFlat.length === 0) {
                     showToast('Sin Datos', 'No hay registros en la Base de Datos de Despachos.', 'error');
                     return;
@@ -5196,7 +5191,8 @@ dbGeneral.forEach(item => {
                     if (item.empaques.carreta > 0) empList.push(`${item.empaques.carreta} Car`);
                     if (item.empaques.cadena > 0) empList.push(`${item.empaques.cadena} Cad`);
                     if (item.empaques.otros > 0) empList.push(`${item.empaques.otros} Otr`);
-                    const detalleEmpaques = empList.length > 0 ? empList.join(', ') + ` (Total: ${item.empaques.total})` : 'Sin empaques';
+                    const detalleEmpaques = empList.length > 0 ?
+                    empList.join(', ') + ` (Total: ${item.empaques.total})` : 'Sin empaques';
 
                     return {
                         'Hora de Registro': item.timestamp,
@@ -5212,6 +5208,56 @@ dbGeneral.forEach(item => {
                 });
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
+
+                // 1. ASIGNACIÓN DE COLUMNAS ANCHAS (Evita que se corte la información de Fercosur)
+                ws['!cols'] = [
+                    { wch: 22 }, // Hora de Registro
+                    { wch: 25 }, // Lote Planilla
+                    { wch: 18 }, // Número de Remisión
+                    { wch: 15 }, // Número FVE
+                    { wch: 45 }, // Cliente Destinatario (Espacio amplio para nombres largos)
+                    { wch: 15 }, // Teléfono
+                    { wch: 22 }, // Población / Ciudad
+                    { wch: 40 }, // Detalle Empaques
+                    { wch: 15 }  // Total Unidades
+                ];
+
+                // 2. DISEÑO DE ENCABEZADOS: AMBER/NARANJA CON LETRA BLANCA CENTRADA (A1 hasta I1)
+                const headersDespachos = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'I1'];
+                headersDespachos.forEach(cell => {
+                    if(ws[cell]) {
+                        ws[cell].s = {
+                            fill: { fgColor: { rgb: "EA580C" } }, // El naranja representativo de tus despachos
+                            font: { color: { rgb: "FFFFFF" }, bold: true, name: "Arial", sz: 11 },
+                            alignment: { horizontal: "center", vertical: "center" }
+                        };
+                    }
+                });
+
+                // 3. ESTILIZADO DE LAS FILAS DE DATOS (Alineación y Fuentes Limpias)
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = 1; R <= range.e.r; ++R) {
+                    for (let C = 0; C <= 8; ++C) {
+                        const cell = ws[XLSX.utils.encode_cell({c: C, r: R})];
+                        if (cell) {
+                            if (!cell.s) cell.s = {};
+                            cell.s.font = { name: "Arial", sz: 10 };
+                            
+                            // Alineación inteligente: Códigos y números al centro; nombres e información a la izquierda
+                            if ([0, 2, 3, 5, 8].includes(C)) {
+                                cell.s.alignment = { horizontal: "center", vertical: "center" };
+                            } else {
+                                cell.s.alignment = { horizontal: "left", vertical: "center" };
+                            }
+
+                            // Forzar que el total de unidades resalte en negrita
+                            if (C === 8) {
+                                cell.s.font.bold = true;
+                            }
+                        }
+                    }
+                }
+
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Despachos Logísticos");
                 XLSX.writeFile(wb, "REPORTE_DESPACHOS_LOGISTICA.xlsx");
