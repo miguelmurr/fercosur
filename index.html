@@ -3678,9 +3678,15 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         let currentActiveAdminTab = "general";
         let isAdminLoggedIn = false;
 
-        // --- LISTENERS EN TIEMPO REAL A FIREBASE ---
+       // --- LISTENERS EN TIEMPO REAL A FIREBASE ---
         db.collection("pedidos_generales").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
             dbGeneral = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            // Calculadora conectada directo a la vena de la base de datos
+            if (typeof renderTotalesMensuales === "function") {
+                renderTotalesMensuales(); 
+            }
+            
             if(isAdminLoggedIn) renderAdminPanel();
         });
 
@@ -5512,45 +5518,95 @@ dbGeneral.forEach(item => {
                 });
             }
         }
-		// --- 17. LÓGICA DE TOTALES FINANCIEROS MENSUALES ---
-      // --- 17. LÓGICA DE TOTALES FINANCIEROS MENSUALES (CORREGIDA) ---
+		// --- 17. LÓGICA DE TOTALES FINANCIEROS MENSUALES (BLINDADA) ---
         function renderTotalesMensuales() {
             const ventasMesEl = document.getElementById('suma-ventas-mes');
             const cobrosMesEl = document.getElementById('suma-cobros-mes');
             if (!ventasMesEl || !cobrosMesEl) return;
 
-            // 1. Identificar el mes y año en el que estamos parados HOY
             const now = new Date();
             const pad = (num) => String(num).padStart(2, '0');
             const mesActual = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`; // Ej: "2026-05"
 
-            // Diccionario para guardar y separar automáticamente todos los meses
             window.historialFinanciero = {};
 
-            // 2. Recorremos toda la base de datos de visitas para sumar
             dbGeneral.forEach(item => {
-                const mesRegistro = item.timestamp.substring(0, 7); // Extrae "YYYY-MM" del registro
+                if (!item.timestamp) return; // Si hay un registro dañado, lo ignora
+                const mesRegistro = String(item.timestamp).substring(0, 7); 
                 
-                // CORRECCIÓN AQUÍ: Usamos los nombres exactos de tu Firebase (montoVenta y montoCobro)
-                const ventaNum = parseInt((item.montoVenta || '0').replace(/\D/g, ''), 10) || 0;
-                const cobroNum = parseInt((item.montoCobro || '0').replace(/\D/g, ''), 10) || 0;
+                // ESCUDO ANTI-ERRORES: Forzamos a que todo sea texto antes de limpiarlo
+                const ventaText = String(item.montoVenta || '0');
+                const cobroText = String(item.montoCobro || '0');
 
-                // Si es el primer registro de un mes, creamos la alcancía de ese mes
+                // Ahora sí quitamos los signos de pesos sin que el sistema explote
+                const ventaNum = parseInt(ventaText.replace(/\D/g, ''), 10) || 0;
+                const cobroNum = parseInt(cobroText.replace(/\D/g, ''), 10) || 0;
+
                 if (!window.historialFinanciero[mesRegistro]) {
                     window.historialFinanciero[mesRegistro] = { ventas: 0, cobros: 0 };
                 }
 
-                // Sumamos a la alcancía correspondiente
                 window.historialFinanciero[mesRegistro].ventas += ventaNum;
                 window.historialFinanciero[mesRegistro].cobros += cobroNum;
             });
 
-            // 3. Pintar únicamente los totales del MES ACTUAL en el widget
+            // Pintar en pantalla el mes actual
             const dataActual = window.historialFinanciero[mesActual] || { ventas: 0, cobros: 0 };
             const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
             
             ventasMesEl.innerText = formatMoney(dataActual.ventas);
             cobrosMesEl.innerText = formatMoney(dataActual.cobros);
+        }
+
+        function abrirHistorialMensual() {
+            document.getElementById('historial-financiero-modal').classList.remove('hidden');
+            const container = document.getElementById('historial-meses-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
+            const mesesOrdenados = Object.keys(window.historialFinanciero || {}).sort().reverse();
+
+            if (mesesOrdenados.length === 0) {
+                container.innerHTML = `<div class="text-center p-6 text-slate-500 text-sm font-medium">No hay registros financieros todavía.</div>`;
+                return;
+            }
+
+            const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+            mesesOrdenados.forEach(mes => {
+                const parts = mes.split('-');
+                if(parts.length !== 2) return;
+                
+                const year = parts[0];
+                const monthNum = parseInt(parts[1], 10);
+                const nombreMes = nombresMeses[monthNum - 1];
+                const data = window.historialFinanciero[mes];
+
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 hover:bg-slate-100 transition shadow-sm";
+                div.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wide">${nombreMes} ${year}</h4>
+                    </div>
+                    <div class="flex space-x-6 text-right">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Ventas</span>
+                            <span class="font-black text-emerald-600">${formatMoney(data.ventas)}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Cobros</span>
+                            <span class="font-black text-blue-600">${formatMoney(data.cobros)}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function cerrarHistorialMensual() {
+            const modal = document.getElementById('historial-financiero-modal');
+            if (modal) modal.classList.add('hidden');
         }
 
         function abrirHistorialMensual() {
