@@ -4249,13 +4249,144 @@ TIENDA
                 wrapperCobro.classList.remove('hidden');
                 inputVenta.required = true;
                 inputCobro.required = true;
-            } else {
+           } else {
                 wrapperVenta.classList.add('hidden');
                 wrapperCobro.classList.add('hidden');
                 inputVenta.required = false;
                 inputCobro.required = false;
             }
         }
+
+        // ==========================================
+        // PROCESAMIENTO DE VISITAS Y COLA OFFLINE (PASO 4)
+        // ==========================================
+        let sincronizandoAhora = false;
+
+        function procesarEnvioVisitaOffline(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btn-finalizar-visita-registro');
+            btn.innerText = "Obteniendo GPS de Salida...";
+            btn.disabled = true;
+
+            const index = indiceClienteActivo;
+            if (index === null) return;
+
+            const cliente = rutaPlanificada[index];
+            cliente.horaSalida = formatTimestamp();
+            cliente.motivoReal = document.getElementById('gen-motivo-campo').value;
+            cliente.montoVentaReal = document.getElementById('gen-monto-venta-campo').value || '$0';
+            cliente.montoCobroReal = document.getElementById('gen-monto-cobro-campo').value || '$0';
+
+            // Función interna para empaquetar y guardar localmente el registro
+            const guardarRegistroLocalYContinuar = () => {
+                const nuevoRegistroOffline = {
+                    timestamp: cliente.horaSalida,
+                    nombre: document.getElementById('gen-nombre').value.trim(),
+                    cliente: cliente.nombre,
+                    motivo: cliente.motivoReal,
+                    montoVenta: cliente.montoVentaReal,
+                    montoCobro: cliente.montoCobroReal,
+                    // Parámetros de auditoría de tiempos y doble GPS
+                    horaEntrada: cliente.horaEntrada,
+                    gpsEntrada: cliente.gpsEntrada,
+                    horaSalida: cliente.horaSalida,
+                    gpsSalida: cliente.gpsSalida,
+                    idRutaFirebase: activeLoteId || '' // Conexión si pertenece a un lote
+                };
+
+                // Guardar en la cola interna persistente
+                let colaOffline = JSON.parse(localStorage.getItem('fercosur_cola_offline')) || [];
+                colaOffline.push(nuevoRegistroOffline);
+                localStorage.setItem('fercosur_cola_offline', JSON.stringify(colaOffline));
+
+                // Modificar estado del panel visual del asesor
+                cliente.visitado = true;
+                indiceClienteActivo = null;
+
+                // Limpiar por completo el subformulario de campo
+                document.getElementById('form-registro-campo').reset();
+                document.getElementById('formulario-visita-campo').classList.add('hidden');
+                document.getElementById('wrapper-campo-venta').classList.add('hidden');
+                document.getElementById('wrapper-campo-cobro').classList.add('hidden');
+
+                // Validar si la jornada completa ha terminado
+                const completados = rutaPlanificada.filter(c => c.visitado).length;
+                if (completados === rutaPlanificada.length) {
+                    showToast('¡Ruta Completada!', 'Ha finalizado con éxito todos los puntos de su agenda de hoy.', 'success');
+                } else {
+                    showToast('Registro Guardado', 'Gestión asegurada en la memoria local del teléfono.', 'success');
+                }
+
+                guardarJornadaEnStorage();
+                renderListaJornada();
+
+                // Intentar vaciar la cola inmediatamente en caso de tener señal
+                sincronizarColaOffline();
+            };
+
+            // Ejecución del rastreo satelital de salida
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        cliente.gpsSalida = `http://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+                        guardarRegistroLocalYContinuar();
+                    },
+                    (error) => {
+                        cliente.gpsSalida = "No compartida o sin señal";
+                        guardarRegistroLocalYContinuar();
+                    },
+                    { enableHighAccuracy: true, timeout: 8000 }
+                );
+            } else {
+                cliente.gpsSalida = "GPS No Soportado";
+                guardarRegistroLocalYContinuar();
+            }
+        }
+
+        // Motor de Sincronización Automática en Segundo Plano
+        function sincronizarColaOffline() {
+            // Regla de Oro: Si el teléfono no tiene internet o ya hay un envío ejecutándose, se frena
+            if (!navigator.onLine || sincronizandoAhora) return;
+
+            let colaOffline = JSON.parse(localStorage.getItem('fercosur_cola_offline')) || [];
+            if (colaOffline.length === 0) return;
+
+            sincronizandoAhora = true;
+
+            // Tomamos el primer registro de la cola (Garantiza el orden cronológico estricto)
+            const reg = colaOffline[0];
+
+            db.collection("pedidos_generales").add({
+                timestamp: reg.timestamp,
+                nombre: reg.nombre,
+                cliente: reg.cliente,
+                motivo: reg.motivo,
+                montoVenta: reg.montoVenta,
+                montoCobro: reg.montoCobro,
+                ubicacion: reg.gpsSalida, // Compatibilidad con el mapa nativo del administrador
+                auditoria: {
+                    horaEntrada: reg.horaEntrada,
+                    gpsEntrada: reg.gpsEntrada,
+                    horaSalida: reg.horaSalida,
+                    gpsSalida: reg.gpsSalida
+                }
+            }).then(() => {
+                // Si Firebase lo recibe con éxito, lo sacamos de la cola
+                colaOffline.shift();
+                localStorage.setItem('fercosur_cola_offline', JSON.stringify(colaOffline));
+                sincronizandoAhora = false;
+
+                // Llamada recursiva automática para procesar el siguiente elemento en cola
+                sincronizarColaOffline();
+            }).catch((error) => {
+                console.error("Error crítico de red en sincronización Fercosur:", error);
+                sincronizandoAhora = false; // Liberamos el bloqueo para reintentar al recuperar señal stable
+            });
+        }
+
+        // Escuchadores Inteligentes del Dispositivo Móvil
+        window.addEventListener('online', sincronizarColaOffline);
 
         // --- INTERACCIONES INTELIGENTES Y FORMATEO DE DINERO ---
         function toggleMotivoCampos() {
@@ -6094,5 +6225,7 @@ dbGeneral.forEach(item => {
                     }
                 }
             }
+			// Disparar la sincronización de datos pendientes al abrir la app
+            sincronizarColaOffline();
         }
     </script>
