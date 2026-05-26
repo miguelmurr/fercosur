@@ -4073,10 +4073,23 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             `;
            container.insertAdjacentHTML('beforeend', html);
 
-            // Cambiamos el temporizador para que borre la nota en 1 segundo (1000 milisegundos)
-            setTimeout(() => {
-                removeToast(toastId);
+            // Se queda 1 segundo firme y a los 1300ms se elimina por completo
+           setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.style.transition = "all 0.3s ease-out";
+                    toast.style.opacity = "0";
+                    toast.style.transform = "scale(0.95)";
+                }
             }, 1000);
+
+            // Temporizador 2: A los 1300ms (después de que terminó la animación), lo borra del mapa
+            setTimeout(() => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.remove();
+                }
+            }, 1300);
         }
 
         function removeToast(toastId) {
