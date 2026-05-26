@@ -275,8 +275,16 @@
 
 
         <!-- VISTA 2: FORMULARIO REGISTRO GENERAL -->
-        <section id="view-form-general" class="hidden fade-in max-w-xl mx-auto w-full py-8 px-4">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-lg">
+        <section id="view-form-general" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
+            
+            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <div class="absolute inset-0 bg-[#f0f6fc]"></div>
+                
+                <div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-300/20 rounded-full wave-glow"></div>
+                <div class="absolute bottom-[-5%] left-[-10%] w-[450px] h-[450px] bg-brand-200/25 rounded-full wave-glow" style="animation-delay: -4s;"></div>
+            </div>
+
+            <div class="max-w-xl w-full bg-white border border-slate-200 rounded-3xl p-8 shadow-xl relative z-10">
                 <div class="flex items-center space-x-3 mb-6">
                     <button onclick="showView('menu')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
