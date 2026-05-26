@@ -369,8 +369,8 @@
                         </svg>
                     </button>
                     <div>
-                        <h2 class="text-2xl font-extrabold text-slate-900">Registro de Pedido General</h2>
-                        <p class="text-sm text-slate-500 mt-1">Ingrese los datos para procesar el pedido.</p>
+                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Registro de Visita</h2>
+                        <p class="text-sm text-slate-500 mt-1 font-medium">Ingrese los datos para procesar el registro.</p>
                     </div>
                 </div>
 
@@ -411,7 +411,7 @@
                     </div>
 
                     <div class="pt-4 flex space-x-3">
-                        <button type="button" onclick="showView('menu')" class="flex-1 bg-white py-3 px-4 border border-slate-300 rounded-xl shadow-sm text-sm font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Cancelar</button>
+                        <button type="button" onclick="document.getElementById('form-pedidos-general').reset(); toggleMotivoCampos(); showView('menu');" class="flex-1 bg-white py-3 px-4 border border-slate-300 rounded-xl shadow-sm text-sm font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Cancelar</button>
                         <button type="submit" class="flex-1 bg-brand-600 py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Enviar ubicación y registrar visita</button>
                     </div>
                 </form>
