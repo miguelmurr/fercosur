@@ -765,7 +765,7 @@
                         </div>
                         <div>
                             <span class="block text-slate-500 text-sm font-medium uppercase tracking-wider">Base de Datos</span>
-                            <span class="text-xl font-bold text-slate-900 group-hover:text-brand-600 transition">Respuestas Generales</span>
+                            <span class="text-xl font-black text-slate-900 group-hover:text-brand-600 transition tracking-tight">Registros Visitas</span>
                         </div>
                     </div>
                     <div class="bg-brand-50 text-brand-700 px-4 py-2 rounded-2xl text-2xl font-black" id="counter-general">0</div>
@@ -793,10 +793,25 @@
             <!-- CONTENEDOR DE TABLAS DETALLADAS -->
             <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
                 <!-- CABECERA DE TABLA SELECCIONADA -->
-                <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900" id="table-title">Respuestas Generales</h3>
+               <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-black text-slate-900 tracking-tight" id="table-title">Registros Visitas</h3>
                         <p class="text-sm text-slate-500 mt-0.5">Mostrando registros guardados en tiempo real por orden de ingreso.</p>
+                        
+                        <div id="widget-totales-visitas" class="mt-4 flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-200 inline-flex shadow-sm">
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Ventas (Mes Actual)</span>
+                                <span class="text-xl font-black text-emerald-600" id="suma-ventas-mes">$0</span>
+                            </div>
+                            <div class="w-px h-8 bg-slate-200"></div>
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Cobros (Mes Actual)</span>
+                                <span class="text-xl font-black text-blue-600" id="suma-cobros-mes">$0</span>
+                            </div>
+                            <button onclick="abrirHistorialMensual()" class="ml-2 p-2 bg-white border border-slate-200 hover:bg-slate-100 hover:text-brand-600 rounded-xl text-slate-400 transition shadow-sm" title="Ver Historial de Meses">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <button id="btn-export-individual" onclick="exportActiveTable()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
@@ -1063,6 +1078,37 @@
                 </div>
                 <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse">
                     <button type="button" onclick="cerrarModalWhatsapp()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar Panel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+								<div id="historial-financiero-modal" class="hidden fixed inset-0 z-50 overflow-y-auto animate-fade-in" aria-labelledby="historial-modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="cerrarHistorialMensual()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+
+            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-200">
+                <div class="bg-white px-6 pt-6 pb-4 sm:p-8">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2.5 bg-brand-50 text-brand-600 rounded-xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-slate-950" id="historial-modal-title">Historial Mensual</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Ventas y cobros por mes.</p>
+                            </div>
+                        </div>
+                        <button onclick="cerrarHistorialMensual()" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="max-h-[50vh] overflow-y-auto pr-2" id="historial-meses-list">
+                        </div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse">
+                    <button type="button" onclick="cerrarHistorialMensual()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -4901,7 +4947,7 @@ guardarEnNube(linkMapa);
 
             if (tabType === 'general') {
                 if(tabGen) tabGen.className = "text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
-                document.getElementById('table-title').innerText = "Respuestas Generales";
+                document.getElementById('table-title').innerText = "Registros Visitas";
                 document.getElementById('table-general-view').classList.remove('hidden');
             } else if (tabType === 'despachos') {
                 if(tabDespachos) tabDespachos.className = "text-left w-full p-6 bg-white border-2 border-amber-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
@@ -5465,6 +5511,91 @@ dbGeneral.forEach(item => {
                     console.error("Error al borrar en Firebase:", error);
                 });
             }
+        }
+		// --- 17. LÓGICA DE TOTALES FINANCIEROS MENSUALES ---
+        function renderTotalesMensuales() {
+            const ventasMesEl = document.getElementById('suma-ventas-mes');
+            const cobrosMesEl = document.getElementById('suma-cobros-mes');
+            if (!ventasMesEl || !cobrosMesEl) return;
+
+            // 1. Identificar el mes y año en el que estamos parados HOY
+            const now = new Date();
+            const pad = (num) => String(num).padStart(2, '0');
+            const mesActual = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`; // Ej: "2026-05"
+
+            // Diccionario para guardar y separar automáticamente todos los meses
+            window.historialFinanciero = {};
+
+            // 2. Recorremos toda la base de datos de visitas para sumar
+            dbGeneral.forEach(item => {
+                const mesRegistro = item.timestamp.substring(0, 7); // Extrae "YYYY-MM" del registro
+                
+                // Limpiar el dinero (quitar $, puntos y letras) para poder sumarlo matemáticamente
+                const ventaNum = parseInt((item.montoVenta || '0').replace(/\D/g, ''), 10) || 0;
+                const cobroNum = parseInt((item.montoCobro || '0').replace(/\D/g, ''), 10) || 0;
+
+                // Si es el primer registro de un mes, creamos la alcancía de ese mes
+                if (!window.historialFinanciero[mesRegistro]) {
+                    window.historialFinanciero[mesRegistro] = { ventas: 0, cobros: 0 };
+                }
+
+                // Sumamos a la alcancía correspondiente
+                window.historialFinanciero[mesRegistro].ventas += ventaNum;
+                window.historialFinanciero[mesRegistro].cobros += cobroNum;
+            });
+
+            // 3. Pintar únicamente los totales del MES ACTUAL en el widget
+            const dataActual = window.historialFinanciero[mesActual] || { ventas: 0, cobros: 0 };
+            const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
+            
+            ventasMesEl.innerText = formatMoney(dataActual.ventas);
+            cobrosMesEl.innerText = formatMoney(dataActual.cobros);
+        }
+
+        function abrirHistorialMensual() {
+            document.getElementById('historial-financiero-modal').classList.remove('hidden');
+            const container = document.getElementById('historial-meses-list');
+            container.innerHTML = '';
+
+            const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
+            // Ordenar los meses para que el más reciente salga arriba
+            const mesesOrdenados = Object.keys(window.historialFinanciero || {}).sort().reverse();
+
+            if (mesesOrdenados.length === 0) {
+                container.innerHTML = `<div class="text-center p-6 text-slate-500 text-sm font-medium">No hay registros financieros todavía.</div>`;
+                return;
+            }
+
+            const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+            mesesOrdenados.forEach(mes => {
+                const [year, monthNum] = mes.split('-');
+                const nombreMes = nombresMeses[parseInt(monthNum, 10) - 1];
+                const data = window.historialFinanciero[mes];
+
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 hover:bg-slate-100 transition";
+                div.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wide">${nombreMes} ${year}</h4>
+                    </div>
+                    <div class="flex space-x-6 text-right">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase block">Ventas</span>
+                            <span class="font-black text-emerald-600">${formatMoney(data.ventas)}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase block">Cobros</span>
+                            <span class="font-black text-blue-600">${formatMoney(data.cobros)}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function cerrarHistorialMensual() {
+            document.getElementById('historial-financiero-modal').classList.add('hidden');
         }
        
         // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
