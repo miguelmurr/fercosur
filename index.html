@@ -4071,11 +4071,12 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                     </button>
                 </div>
             `;
-            container.insertAdjacentHTML('beforeend', html);
+           container.insertAdjacentHTML('beforeend', html);
 
+            // Cambiamos el temporizador para que borre la nota en 1 segundo (1000 milisegundos)
             setTimeout(() => {
                 removeToast(toastId);
-            }, 5000);
+            }, 1000);
         }
 
         function removeToast(toastId) {
