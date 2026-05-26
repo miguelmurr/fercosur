@@ -999,31 +999,36 @@
             </div>
         </div>
     </div>
+   <!-- MODAL: CREAR NUEVO LOTE DE DESPACHO CON ENVÍO POR ENTER HABILITADO -->
     <div id="lote-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="lote-modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="closeLoteModal()"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
             <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-200">
-                <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
-                    <div class="text-center">
-                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 mb-4">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-extrabold text-slate-950" id="lote-modal-title">Identificador de Planilla</h3>
-                        <p class="text-sm text-slate-500 mt-1 max-w-xs mx-auto">Escriba un nombre claro para este lote de despachos para agrupar las remisiones.</p>
-                        
-                        <div class="mt-4">
-                            <input type="text" id="lote-input-nombre" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none sm:text-sm text-center font-bold text-slate-900" placeholder="Ej. Ruta Ipiales - Mañana 20-Mayo">
+                <!-- Agregamos el formulario que escucha el Enter del teclado -->
+                <form onsubmit="event.preventDefault(); crearNuevoLoteLogistico();">
+                    <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
+                        <div class="text-center">
+                            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 mb-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-extrabold text-slate-950" id="lote-modal-title">Identificador de Planilla</h3>
+                            <p class="text-sm text-slate-500 mt-1 max-w-xs mx-auto">Escriba un nombre claro para este lote de despachos para agrupar las remisiones.</p>
+                            
+                            <div class="mt-4">
+                                <input type="text" id="lote-input-nombre" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:border-amber-500 focus:ring-1 focus:ring-amber-500 focus:outline-none sm:text-sm text-center font-bold text-slate-900" placeholder="Ej. Ruta Ipiales - Mañana 20-Mayo">
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3">
-                    <button type="button" onclick="crearNuevoLoteLogistico()" class="w-full sm:w-auto inline-flex justify-center rounded-xl shadow-sm px-5 py-2.5 bg-amber-600 text-sm font-bold text-white hover:bg-amber-700 transition">Crear y Empezar</button>
-                    <button type="button" onclick="closeLoteModal()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-5 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cancelar</button>
-                </div>
+                    <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3">
+                        <!-- Cambiamos el tipo de botón de "button" a "submit" para activar el formulario -->
+                        <button type="submit" class="w-full sm:w-auto inline-flex justify-center rounded-xl shadow-sm px-5 py-2.5 bg-amber-600 text-sm font-bold text-white hover:bg-amber-700 transition">Crear y Empezar</button>
+                        <button type="button" onclick="closeLoteModal()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-5 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cancelar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -4814,6 +4819,12 @@ guardarEnNube(linkMapa);
         }
 
         function handlePinInput(current, nextFieldId, prevFieldId) {
+            // Si el usuario presiona la tecla Enter y estamos en la última casilla, enviamos el PIN
+            if (event.key === 'Enter' && !nextFieldId) {
+                submitPin();
+                return;
+            }
+            
             if (current.value.length >= 1 && nextFieldId) {
                 document.getElementById(nextFieldId).focus();
             }
