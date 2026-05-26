@@ -5513,6 +5513,7 @@ dbGeneral.forEach(item => {
             }
         }
 		// --- 17. LÓGICA DE TOTALES FINANCIEROS MENSUALES ---
+      // --- 17. LÓGICA DE TOTALES FINANCIEROS MENSUALES (CORREGIDA) ---
         function renderTotalesMensuales() {
             const ventasMesEl = document.getElementById('suma-ventas-mes');
             const cobrosMesEl = document.getElementById('suma-cobros-mes');
@@ -5530,7 +5531,7 @@ dbGeneral.forEach(item => {
             dbGeneral.forEach(item => {
                 const mesRegistro = item.timestamp.substring(0, 7); // Extrae "YYYY-MM" del registro
                 
-                // Limpiar el dinero (quitar $, puntos y letras) para poder sumarlo matemáticamente
+                // CORRECCIÓN AQUÍ: Usamos los nombres exactos de tu Firebase (montoVenta y montoCobro)
                 const ventaNum = parseInt((item.montoVenta || '0').replace(/\D/g, ''), 10) || 0;
                 const cobroNum = parseInt((item.montoCobro || '0').replace(/\D/g, ''), 10) || 0;
 
