@@ -3745,6 +3745,312 @@ TIENDA
                 };
             })
             .filter(c => c.nombre !== '');
+		// ====================================================================
+        // --- NUEVAS FUNCIONES: PLANIFICADOR DE RUTAS COMERCIALES (FASE 2) ---
+        // ====================================================================
+
+        // 1. Variables de estado para la Ruta en curso
+        let vendedorActivoRuta = '';
+        let clientesEnRuta = [];
+
+        // 2. Funciones de Vendedores (Paso 1)
+        function obtenerVendedoresUnicos() {
+            const vendedores = clients.map(c => c.vendedor).filter(v => v);
+            return [...new Set(vendedores)].sort();
+        }
+
+        function filterSellers(prefix) {
+            const input = document.getElementById(prefix + '-nombre');
+            const dropdown = document.getElementById(prefix + '-nombre-dropdown');
+            const query = input.value.toUpperCase();
+            dropdown.innerHTML = '';
+            
+            if (query.length < 1) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+            
+            const vendedores = obtenerVendedoresUnicos();
+            const filtrados = vendedores.filter(v => v.includes(query)).slice(0, 10);
+            
+            if (filtrados.length === 0) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+            
+            filtrados.forEach(v => {
+                const div = document.createElement('div');
+                div.className = 'px-4 py-3 hover:bg-brand-50 cursor-pointer text-sm text-slate-700 transition font-medium';
+                div.innerText = v;
+                div.onmousedown = function() {
+                    input.value = v;
+                    dropdown.classList.add('hidden');
+                };
+                dropdown.appendChild(div);
+            });
+            dropdown.classList.remove('hidden');
+        }
+
+        function showSellersDropdown(prefix) {
+            if(document.getElementById(prefix + '-nombre').value.length > 0) {
+                document.getElementById(prefix + '-nombre-dropdown').classList.remove('hidden');
+            }
+        }
+
+        function hideSellersDropdown(prefix) {
+            setTimeout(() => {
+                const dropdown = document.getElementById(prefix + '-nombre-dropdown');
+                if(dropdown) dropdown.classList.add('hidden');
+            }, 200);
+        }
+
+        // 3. Control de la Interfaz (Pasos)
+        function iniciarCreacionRuta() {
+            const vendedor = document.getElementById('gen-nombre').value.trim();
+            if(!vendedor) {
+                alert('Fercosur: Por favor, seleccione su nombre de asesor antes de continuar.');
+                return;
+            }
+            
+            vendedorActivoRuta = vendedor;
+            clientesEnRuta = [];
+            
+            // Transición visual al Paso 2
+            document.getElementById('panel-ruta-paso1').classList.add('hidden');
+            document.getElementById('panel-ruta-paso2').classList.remove('hidden');
+            
+            // Actualizar Cabecera
+            document.getElementById('estado-ruta-badge').innerText = 'EN CREACIÓN';
+            document.getElementById('estado-ruta-badge').classList.replace('bg-brand-100', 'bg-emerald-100');
+            document.getElementById('estado-ruta-badge').classList.replace('text-brand-800', 'text-emerald-800');
+            document.getElementById('titulo-ruta-activa').innerText = `Ruta de ${vendedorActivoRuta}`;
+            
+            renderRutaTable();
+        }
+
+        function cancelarRutaActual() {
+            vendedorActivoRuta = '';
+            clientesEnRuta = [];
+            document.getElementById('gen-nombre').value = '';
+            
+            // Volver al Paso 1
+            document.getElementById('panel-ruta-paso1').classList.remove('hidden');
+            document.getElementById('panel-ruta-paso2').classList.add('hidden');
+            document.getElementById('panel-ruta-acciones').classList.add('hidden');
+            
+            // Restaurar Cabecera
+            document.getElementById('estado-ruta-badge').innerText = 'Esperando Asesor';
+            document.getElementById('estado-ruta-badge').classList.replace('bg-emerald-100', 'bg-brand-100');
+            document.getElementById('estado-ruta-badge').classList.replace('text-emerald-800', 'text-brand-800');
+            document.getElementById('titulo-ruta-activa').innerText = 'Planificación de Ruta Comercial';
+            
+            renderRutaTable();
+        }
+
+        // 4. Funciones de Clientes (Filtro EXCLUSIVO por Vendedor Activo)
+        function filterClientsGen() {
+            const input = document.getElementById('gen-cliente');
+            const dropdown = document.getElementById('gen-cliente-dropdown');
+            const query = input.value.toUpperCase();
+            dropdown.innerHTML = '';
+            
+            if (query.length < 2) {
+                dropdown.classList.add('hidden');
+                return;
+            }
+            
+            // FILTRO ESTRICTO: Solo clientes que coinciden con la palabra Y con el vendedor activo
+            const filtrados = clients.filter(c => 
+                c.vendedor === vendedorActivoRuta && 
+                (c.nombre.includes(query) || c.poblacion.includes(query) || c.nit.includes(query))
+            ).slice(0, 15);
+
+            if (filtrados.length === 0) {
+                const div = document.createElement('div');
+                div.className = 'px-4 py-3 text-sm text-slate-500 italic';
+                div.innerText = 'No se encontraron clientes en su base de datos con esa información.';
+                dropdown.appendChild(div);
+                dropdown.classList.remove('hidden');
+                return;
+            }
+
+            filtrados.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'px-4 py-3 hover:bg-brand-50 cursor-pointer transition';
+                div.innerHTML = `<div class="font-bold text-slate-800 text-sm">${c.nombre}</div>
+                                 <div class="text-xs text-slate-500 font-medium">NIT: ${c.nit} | ${c.poblacion}</div>`;
+                div.onmousedown = function() {
+                    input.value = c.nombre;
+                    input.setAttribute('data-poblacion', c.poblacion);
+                    dropdown.classList.add('hidden');
+                };
+                dropdown.appendChild(div);
+            });
+            dropdown.classList.remove('hidden');
+        }
+
+        function showClientsDropdownGen() {
+            if(document.getElementById('gen-cliente').value.length >= 2) {
+                document.getElementById('gen-cliente-dropdown').classList.remove('hidden');
+            }
+        }
+
+        function hideClientsDropdownGen() {
+            setTimeout(() => {
+                const dropdown = document.getElementById('gen-cliente-dropdown');
+                if(dropdown) dropdown.classList.add('hidden');
+            }, 200);
+        }
+
+        // 5. Utilidades Financieras
+        function formatCurrencyInput(input) {
+            let val = input.value.replace(/\\D/g, ''); // Elimina todo lo que no sea número
+            if(val === '') {
+                input.value = '';
+                return;
+            }
+            input.value = '$' + parseInt(val).toLocaleString('es-CO');
+        }
+
+        function parseCurrency(str) {
+            if(!str) return 0;
+            return parseInt(str.replace(/\\D/g, '')) || 0;
+        }
+
+        // 6. Administrador de la Tabla de Ruta
+        function agregarClienteARuta() {
+            const inputCliente = document.getElementById('gen-cliente');
+            const nombre = inputCliente.value.trim();
+            const poblacion = inputCliente.getAttribute('data-poblacion') || 'Sin ciudad';
+            
+            if(!nombre) {
+                alert('Fercosur: Seleccione un cliente de la lista primero.');
+                return;
+            }
+
+            const estVenta = parseCurrency(document.getElementById('ruta-est-venta').value);
+            const estCobro = parseCurrency(document.getElementById('ruta-est-cobro').value);
+
+            // Guardamos el cliente en la memoria temporal de la ruta
+            clientesEnRuta.push({
+                nombre: nombre,
+                poblacion: poblacion,
+                ventaEst: estVenta,
+                cobroEst: estCobro
+            });
+
+            // Limpiamos las cajas para el siguiente cliente
+            inputCliente.value = '';
+            inputCliente.removeAttribute('data-poblacion');
+            document.getElementById('ruta-est-venta').value = '';
+            document.getElementById('ruta-est-cobro').value = '';
+
+            renderRutaTable();
+        }
+
+        function eliminarClienteDeRuta(index) {
+            clientesEnRuta.splice(index, 1); // Lo elimina del arreglo
+            renderRutaTable();
+        }
+
+        function renderRutaTable() {
+            const tbody = document.getElementById('tbody-ruta-clientes');
+            const emptyState = document.getElementById('ruta-empty-state');
+            const actionsPanel = document.getElementById('panel-ruta-acciones');
+            
+            tbody.innerHTML = '';
+            
+            if(clientesEnRuta.length === 0) {
+                emptyState.classList.remove('hidden');
+                actionsPanel.classList.add('hidden');
+                document.getElementById('contador-clientes-ruta').innerText = '0 clientes agregados';
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            actionsPanel.classList.remove('hidden');
+            document.getElementById('contador-clientes-ruta').innerText = `${clientesEnRuta.length} cliente(s) agregados`;
+            
+            let totalVenta = 0;
+            let totalCobro = 0;
+
+            clientesEnRuta.forEach((c, index) => {
+                totalVenta += c.ventaEst;
+                totalCobro += c.cobroEst;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-50';
+                tr.innerHTML = `
+                    <td class="px-4 py-3">
+                        <div class="font-bold text-slate-800 text-sm">${c.nombre}</div>
+                        <div class="text-xs text-slate-500">${c.poblacion}</div>
+                    </td>
+                    <td class="px-4 py-3 font-semibold text-emerald-600">$${c.ventaEst.toLocaleString('es-CO')}</td>
+                    <td class="px-4 py-3 font-semibold text-blue-600">$${c.cobroEst.toLocaleString('es-CO')}</td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="eliminarClienteDeRuta(${index})" title="Eliminar de la ruta" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-lg transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Imprimimos los totales calculados
+            document.getElementById('ruta-total-venta').innerText = '$' + totalVenta.toLocaleString('es-CO');
+            document.getElementById('ruta-total-cobro').innerText = '$' + totalCobro.toLocaleString('es-CO');
+        }
+
+        // 7. Guardado Final en Nube con GPS
+        async function guardarRutaCompleta() {
+            if(clientesEnRuta.length === 0) {
+                alert('Agregue al menos un cliente a su ruta antes de guardar.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-final-ruta');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Obteniendo GPS y Registrando...';
+            btn.disabled = true;
+
+            try {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    const rutaData = {
+                        vendedor: vendedorActivoRuta,
+                        clientes: clientesEnRuta,
+                        fecha: new Date().toISOString(),
+                        ubicacion: { lat, lng },
+                        totalVentaEst: clientesEnRuta.reduce((sum, c) => sum + c.ventaEst, 0),
+                        totalCobroEst: clientesEnRuta.reduce((sum, c) => sum + c.cobroEst, 0),
+                        tipo: 'PlanificacionRuta' // Etiqueta clave para separarlo del formulario viejo
+                    };
+
+                    await db.collection('visitas').add(rutaData);
+                    
+                    alert('¡Excelente! La ruta comercial ha sido registrada y el GPS capturado con éxito.');
+                    
+                    cancelarRutaActual(); // Resetea y limpia todo el sistema
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    showView('menu'); // Devuelve al vendedor al menú inicial
+                    
+                }, (error) => {
+                    alert('Error: No se pudo obtener la ubicación GPS. Por favor verifique los permisos de su navegador e intente nuevamente.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, { enableHighAccuracy: true });
+                
+            } catch(error) {
+                console.error('Error guardando la ruta:', error);
+                alert('Hubo un error de conexión al guardar. Intente de nuevo.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        // ====================================================================
                                                                                                                              
 
         // --- 2. CONFIGURACIÓN DE BASE DE DATOS EN TIEMPO REAL (FIREBASE) ---
