@@ -3763,7 +3763,11 @@ TIENDA
             
             input.value = nombre;
             dropdown.classList.add('hidden');
-            // Ya no le enviamos el foco a la casilla de población porque la eliminamos
+            
+            // Regla de Negocio: Si cambia de vendedor, limpiamos el cliente seleccionado para evitar errores
+            if (formPrefix === 'gen') {
+                document.getElementById('gen-cliente').value = '';
+            }
         }
 
         function updatePrefix(formPrefix, prefijoValue) {
@@ -3861,25 +3865,43 @@ TIENDA
         }
 
         function filterClientsGen() {
-            const input = document.getElementById('gen-cliente');
+            const inputCliente = document.getElementById('gen-cliente');
             const dropdown = document.getElementById('gen-cliente-dropdown');
-            const query = input.value.toLowerCase().trim();
-
-            const matches = clients.filter(c => c.nombre.toLowerCase().includes(query));
+            // Capturamos el vendedor actual en mayúsculas para que coincida con la base de datos
+            const inputVendedor = document.getElementById('gen-nombre').value.trim().toUpperCase(); 
+            const query = inputCliente.value.toLowerCase().trim();
 
             dropdown.innerHTML = '';
 
+            // Regla de Negocio 1: Bloqueo si no hay vendedor seleccionado
+            if (!inputVendedor) {
+                dropdown.classList.remove('hidden');
+                dropdown.innerHTML = `<div class="px-4 py-3 text-xs text-red-600 font-bold bg-red-50 text-center border-b border-red-100">Seleccione su nombre de asesor primero</div>`;
+                return;
+            }
+
+            // Regla de Negocio 1: Filtro estricto por vendedor (Columna 5) y luego por búsqueda
+            const matches = clients.filter(c => 
+                c.vendedor === inputVendedor && 
+                c.nombre.toLowerCase().includes(query)
+            );
+
             if (matches.length === 0) {
                 const noResult = document.createElement('div');
-                noResult.className = 'px-4 py-3 text-xs text-slate-400 italic bg-slate-50';
-                noResult.innerText = 'Sin coincidencias (Escriba libremente)';
+                noResult.className = 'px-4 py-3 text-xs text-slate-400 italic bg-slate-50 text-center';
+                noResult.innerText = 'No se encontraron clientes en su ruta';
                 dropdown.appendChild(noResult);
             } else {
                 matches.forEach(client => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.className = 'w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-slate-100 font-semibold transition duration-150 flex justify-between items-center';
-                    btn.innerHTML = `<span>${client.nombre}</span>`;
+                    btn.className = 'w-full text-left px-4 py-3 text-sm text-slate-700 hover:bg-brand-50 font-semibold transition duration-150 flex justify-between items-center border-b border-slate-50 last:border-0';
+                    
+                    // Añadimos la ciudad al botón visual para ayudar al asesor a identificar mejor al cliente
+                    btn.innerHTML = `
+                        <span class="truncate pr-2">${client.nombre}</span>
+                        <span class="text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded-md whitespace-nowrap">${client.poblacion}</span>
+                    `;
                     
                     btn.onmousedown = (e) => {
                         e.preventDefault();
