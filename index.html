@@ -3945,7 +3945,16 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         
 
         function goToPortal() {
+            // Primero, cerramos la sesión del administrador por completo
+            isAdminLoggedIn = false;
+            
+            // Segundo, le decimos a los botones que se actualicen en la pantalla
+            document.getElementById('btn-admin-access').classList.remove('hidden');
+            document.getElementById('btn-admin-logout').classList.add('hidden');
+            
+            // Finalmente, mostramos el portal de bienvenida original
             showView('portal');
+        }
         }
 
         // --- 8. TOAST (MENSAJES FLOTANTES DE ÉXITO O ALERTA) ---
