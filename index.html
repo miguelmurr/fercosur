@@ -822,22 +822,55 @@
             </div>
 
             <!-- Contadores Rápidos & Selector -->
-           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Botón/Card Respuestas Generales -->
-                <button onclick="switchAdminTab('general')" id="tab-general" class="text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group">
-                    <div class="flex items-center space-x-4">
-                        <div class="p-3 bg-brand-50 text-brand-600 rounded-2xl">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <button onclick="switchAdminTab('general')" id="tab-general" class="text-left w-full p-5 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 bg-brand-50 text-brand-600 rounded-2xl">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </div>
                         <div>
-                            <span class="block text-slate-500 text-sm font-medium uppercase tracking-wider">Base de Datos</span>
-                            <span class="text-xl font-black text-slate-900 group-hover:text-brand-600 transition tracking-tight">Registros Visitas</span>
+                            <span class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider">Historial</span>
+                            <span class="text-base font-black text-slate-900 group-hover:text-brand-600 transition tracking-tight">Visitas Consolidadas</span>
                         </div>
                     </div>
-                    <div class="bg-brand-50 text-brand-700 px-4 py-2 rounded-2xl text-2xl font-black" id="counter-general">0</div>
+                    <div class="bg-brand-50 text-brand-700 px-3 py-1.5 rounded-xl text-xl font-black" id="counter-general">0</div>
                 </button>
+
+                <button onclick="switchAdminTab('despachos')" id="tab-despachos" class="text-left w-full p-5 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 bg-amber-50 text-amber-600 rounded-2xl">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10M13 16h6l3-3V9a1 1 0 00-1-1h-3M13 8h7"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider">Historial</span>
+                            <span class="text-base font-bold text-slate-900 group-hover:text-amber-600 transition tracking-tight">Despachos Totales</span>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 text-amber-700 px-3 py-1.5 rounded-xl text-xl font-black" id="counter-despachos">0</div>
+                </button>
+
+                <button onclick="switchAdminTab('rutas')" id="tab-rutas" class="text-left w-full p-5 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group relative overflow-hidden">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-2xl">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="block text-slate-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span> En Vivo
+                            </span>
+                            <span class="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition tracking-tight">Rutas de Asesores</span>
+                        </div>
+                    </div>
+                    <div class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl text-xl font-black" id="counter-rutas">0</div>
+                </button>
+        </div>
 
 
                 <!-- Botón/Card Despachos Logísticos -->
@@ -928,6 +961,11 @@
                             <!-- Inserción dinámica por JS -->
                         </tbody>
                     </table>
+
+                    <div id="table-rutas-view" class="hidden p-6 space-y-6 bg-slate-50">
+                        <div id="contenedor-rutas-admin" class="grid grid-cols-1 gap-6">
+                            </div>
+                    </div>
                 </div>
 
                 <!-- Empty State (Si no hay datos en la seleccionada) -->
@@ -3758,32 +3796,34 @@ TIENDA
             .filter(c => c.nombre !== '');
                                                                                                                              
 
-        // --- 2. CONFIGURACIÓN DE BASE DE DATOS EN TIEMPO REAL (FIREBASE) ---
+       // --- 2. CONFIGURACIÓN DE BASE DE DATOS EN TIEMPO REAL (FIREBASE) ---
         let dbGeneral = [];
         let dbLotes = [];
+        let dbRutas = []; // Nueva lista en memoria para las rutas de los asesores
 
         let activeLoteId = null; 
         let editingDespachoId = null; 
         let currentActiveAdminTab = "general";
         let isAdminLoggedIn = false;
 
-       // --- LISTENERS EN TIEMPO REAL A FIREBASE ---
+        // --- LISTENERS EN TIEMPO REAL A FIREBASE ---
         db.collection("pedidos_generales").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
             dbGeneral = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            
-            // Calculadora conectada directo a la vena de la base de datos
-            if (typeof renderTotalesMensuales === "function") {
-                renderTotalesMensuales(); 
-            }
-            
+            if (typeof renderTotalesMensuales === "function") { renderTotalesMensuales(); }
             if(isAdminLoggedIn) renderAdminPanel();
         });
 
         db.collection("lotes_despachos").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
             dbLotes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderLotesList();
-            renderTodasPlanillasList();
-            if(activeLoteId) renderDespachosDeLoteActual();
+            if(typeof renderLotesList === "function") renderLotesList();
+            if(typeof renderTodasPlanillasList === "function") renderTodasPlanillasList();
+            if(activeLoteId && typeof renderDespachosDeLoteActual === "function") renderDespachosDeLoteActual();
+            if(isAdminLoggedIn) renderAdminPanel();
+        });
+
+        // Escuchador en vivo para que el administrador vea los pasos de los asesores en el mapa
+        db.collection("rutas_activas").onSnapshot((snapshot) => {
+            dbRutas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             if(isAdminLoggedIn) renderAdminPanel();
         });
 
@@ -5467,12 +5507,12 @@ guardarEnNube(linkMapa);
         // --- 14. PANEL DE CONTROL DE ADMINISTRADOR ---
         function renderAdminPanel() {
             document.getElementById('counter-general').innerText = dbGeneral.length;
-
             let totalDespachosCount = 0;
             dbLotes.forEach(lote => {
                 if(lote.despachos) totalDespachosCount += lote.despachos.length;
             });
             document.getElementById('counter-despachos').innerText = totalDespachosCount;
+            document.getElementById('counter-rutas').innerText = dbRutas.length;
 
             renderTableData();
         }
@@ -5481,21 +5521,28 @@ guardarEnNube(linkMapa);
             currentActiveAdminTab = tabType;
             const tabGen = document.getElementById('tab-general');
             const tabDespachos = document.getElementById('tab-despachos');
+            const tabRutas = document.getElementById('tab-rutas');
 
-            if(tabGen) tabGen.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
-            if(tabDespachos) tabDespachos.className = "text-left w-full p-6 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+            if(tabGen) tabGen.className = "text-left w-full p-5 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+            if(tabDespachos) tabDespachos.className = "text-left w-full p-5 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+            if(tabRutas) tabRutas.className = "text-left w-full p-5 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
 
             document.getElementById('table-general-view').classList.add('hidden');
             document.getElementById('table-despachos-view').classList.add('hidden');
+            document.getElementById('table-rutas-view').classList.add('hidden');
 
             if (tabType === 'general') {
-                if(tabGen) tabGen.className = "text-left w-full p-6 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+                if(tabGen) tabGen.className = "text-left w-full p-5 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
                 document.getElementById('table-title').innerText = "Registros Visitas";
                 document.getElementById('table-general-view').classList.remove('hidden');
             } else if (tabType === 'despachos') {
-                if(tabDespachos) tabDespachos.className = "text-left w-full p-6 bg-white border-2 border-amber-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+                if(tabDespachos) tabDespachos.className = "text-left w-full p-5 bg-white border-2 border-amber-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
                 document.getElementById('table-title').innerText = "Despachos Logísticos Registrados";
                 document.getElementById('table-despachos-view').classList.remove('hidden');
+            } else if (tabType === 'rutas') {
+                if(tabRutas) tabRutas.className = "text-left w-full p-5 bg-white border-2 border-emerald-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
+                document.getElementById('table-title').innerText = "Monitoreo de Rutas en Campo";
+                document.getElementById('table-rutas-view').classList.remove('hidden');
             }
 
             renderTableData();
@@ -5518,7 +5565,7 @@ guardarEnNube(linkMapa);
                     emptyState.classList.add('hidden');
                     emptyState.classList.remove('flex');
                     document.getElementById('table-general-view').classList.remove('hidden');
-dbGeneral.forEach(item => {
+                    dbGeneral.forEach(item => {
                         const tr = `
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
@@ -5605,6 +5652,107 @@ dbGeneral.forEach(item => {
                         tbodyDespachos.insertAdjacentHTML('beforeend', tr);
                     });
                 }
+            } else if (currentActiveAdminTab === 'rutas') {
+                const containerRutas = document.getElementById('contenedor-rutas-admin');
+                if(!containerRutas) return;
+                containerRutas.innerHTML = '';
+
+                if (dbRutas.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    emptyState.classList.add('flex');
+                    document.getElementById('table-rutas-view').classList.add('hidden');
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+                document.getElementById('table-rutas-view').classList.remove('hidden');
+
+                dbRutas.forEach(docRuta => {
+                    const totalPuntos = docRuta.ruta ? docRuta.ruta.length : 0;
+                    const visitados = docRuta.ruta ? docRuta.ruta.filter(p => p.visitado).length : 0;
+                    const porcentaje = totalPuntos > 0 ? Math.round((visitados / totalPuntos) * 100) : 0;
+
+                    const cardAsesor = document.createElement('div');
+                    cardAsesor.className = "bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4 mb-4 text-left";
+                    
+                    let htmlHeader = `
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-100 pb-3">
+                            <div>
+                                <h4 class="text-base font-black text-slate-950 tracking-tight">${docRuta.vendedor}</h4>
+                                <span class="text-xs text-slate-400">Ruta del día activa</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">${visitados} / ${totalPuntos} Visitados (${porcentaje}%)</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full transition-all duration-500" style="width: ${porcentaje}%"></div>
+                        </div>
+                    `;
+
+                    let htmlClientes = `<div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">`;
+                    
+                    if(docRuta.ruta && docRuta.ruta.length > 0) {
+                        docRuta.ruta.forEach((punto, idx) => {
+                            if(punto.visitado) {
+                                htmlClientes += `
+                                    <div class="bg-emerald-50/40 border border-emerald-100 rounded-2xl p-3 flex flex-col justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <span class="text-xs font-bold text-slate-900 block truncate">${punto.nombre}</span>
+                                            <p class="text-[10px] text-emerald-700 font-bold mt-1">🎯 Gestión: ${punto.motivoReal} (V: ${punto.montoVentaReal} | C: ${punto.montoCobroReal})</p>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 pt-2 border-t border-emerald-100/30 text-[9px] font-bold text-slate-500">
+                                            <a href="${punto.gpsEntrada}" target="_blank" class="px-2 py-1 bg-white border border-slate-200 hover:text-brand-600 rounded-md transition whitespace-nowrap">📍 Ent: ${punto.horaEntrada.split(' ')[1]}</a>
+                                            <a href="${punto.gpsSalida}" target="_blank" class="px-2 py-1 bg-white border border-slate-200 hover:text-emerald-600 rounded-md transition whitespace-nowrap">📍 Sal: ${punto.horaSalida.split(' ')[1]}</a>
+                                        </div>
+                                    </div>
+                                `;
+                            } else {
+                                htmlClientes += `
+                                    <div class="bg-white border border-slate-200 rounded-2xl p-3 flex items-center justify-between gap-4">
+                                        <div class="min-w-0">
+                                            <span class="text-xs font-medium text-slate-700 block truncate">${punto.nombre}</span>
+                                            <span class="text-[10px] text-slate-400 block mt-0.5">Meta: V: ${punto.estimadoVenta} | C: ${punto.estimadoCobro}</span>
+                                        </div>
+                                        <button type="button" onclick="eliminarClienteDeRutaAdmin('${docRuta.id}', ${idx})" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition flex-shrink-0" title="Eliminar de la ruta">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                `;
+                            }
+                        });
+                    } else {
+                        htmlClientes += `<p class="text-xs text-slate-400 italic p-2">Sin clientes planificados.</p>`;
+                    }
+                    htmlClientes += `</div>`;
+
+                    cardAsesor.innerHTML = htmlHeader + htmlClientes;
+                    containerRutas.appendChild(cardAsesor);
+                });
+            }
+        }
+
+        function eliminarClienteDeRutaAdmin(docId, indexCliente) {
+            const docRuta = dbRutas.find(r => r.id === docId);
+            if (!docRuta) return;
+
+            const clienteNom = docRuta.ruta[indexCliente].nombre;
+            const confirmation = confirm(`¿Quitar a "${clienteNom}" de la ruta activa de este asesor? El cambio se verá reflejado inmediatamente en su teléfono.`);
+            
+            if (confirmation) {
+                let rutaActualizada = [...docRuta.ruta];
+                rutaActualizada.splice(indexCliente, 1);
+
+                db.collection("rutas_activas").doc(docId).update({
+                    ruta: rutaActualizada
+                }).then(() => {
+                    showToast('Punto Removido', 'El cliente fue eliminado de la jornada.', 'success');
+                }).catch((err) => {
+                    showToast('Error', 'No se pudo actualizar en la nube.', 'error');
+                });
             }
         }
 
