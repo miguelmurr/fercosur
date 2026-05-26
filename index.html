@@ -307,15 +307,13 @@
                 <div onclick="showView('form-general')" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 w-full max-w-md overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
                     <div>
-                       <div>
                         <div class="inline-flex p-4 rounded-2xl bg-brand-50 text-brand-600 mb-6 group-hover:scale-110 transition-transform duration-300">
-                            <!-- Nuevo icono de Ruta/Mapa -->
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">Registro Comercial</h3>
-                        <p class="mt-3 text-slate-600 leading-relaxed text-sm font-medium">Planifique su ruta diaria, asigne clientes y proyecte sus metas de ventas y cobros en campo.</p>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">Registro de Visitas</h3>
+                        <p class="mt-3 text-slate-600 leading-relaxed text-sm font-medium">Formulario estándar para el control, radicación y seguimiento de visitas en el flujo diario de Fercosur.</p>
                     </div>
                     <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm">
                         Comenzar registro 
@@ -329,8 +327,8 @@
         </section>
 
 
-       <!-- VISTA 2: PLANIFICADOR DE RUTAS COMERCIALES -->
-        <section id="view-form-general" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col py-8 px-4 relative overflow-hidden bg-white">
+        <!-- VISTA 2: FORMULARIO REGISTRO GENERAL -->
+       <section id="view-form-general" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
             
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div class="absolute inset-0 bg-[#f0f6fc]"></div>
@@ -347,131 +345,76 @@
                     </defs>
                 </svg>
                 
+                <svg class="absolute bottom-[-20px] left-0 w-full h-[70%] opacity-35 mix-blend-multiply" viewBox="0 0 1440 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,250 C300,100 800,320 1100,180 C1300,90 1380,220 1440,180 L1440,500 L0,500 Z" fill="url(#fercosurRegistrosLight)"/>
+                    <path d="M0,260 C300,110 800,330 1100,190 C1300,100 1380,230 1440,190" stroke="#7cc2fc" stroke-width="2" opacity="0.4"/>
+                    <defs>
+                        <linearGradient id="fercosurRegistrosLight" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#7cc2fc" stop-opacity="0.5"/>
+                            <stop offset="60%" stop-color="#b9ddfd" stop-opacity="0.3"/>
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+
                 <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-brand-400/20 rounded-full wave-glow"></div>
                 <div class="absolute bottom-[10%] right-[-5%] w-[550px] h-[550px] bg-brand-200/25 rounded-full wave-glow" style="animation-delay: -3s;"></div>
             </div>
 
-            <div class="max-w-6xl w-full mx-auto relative z-10 space-y-6">
-
-                <!-- Header de la vista -->
-                <div class="bg-white border border-brand-500/30 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div class="flex items-center space-x-4">
-                        <button onclick="showView('menu')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                        </button>
-                        <div>
-                            <div class="flex items-center space-x-2">
-                                <span class="px-2.5 py-0.5 text-xs font-bold bg-brand-100 text-brand-800 rounded-full uppercase tracking-wider" id="estado-ruta-badge">Esperando Asesor</span>
-                            </div>
-                            <h2 class="text-2xl font-black text-slate-900 mt-1" id="titulo-ruta-activa">Planificación de Ruta Comercial</h2>
-                        </div>
+            <div class="max-w-xl w-full bg-white border border-brand-700 rounded-3xl p-8 shadow-xl relative z-10">
+                <div class="flex items-center space-x-3 mb-6">
+                    <button onclick="showView('menu')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Registro de Visita</h2>
+                        <p class="text-sm text-slate-500 mt-1 font-medium">Ingrese los datos para procesar el registro.</p>
                     </div>
                 </div>
 
-                <!-- Panel Dividido (2 Columnas) -->
-                <div class="grid lg:grid-cols-12 gap-6 items-start">
-
-                    <!-- Columna Izquierda: Controles -->
-                    <div class="lg:col-span-5 space-y-6">
-
-                        <!-- Paso 1: Selección de Vendedor -->
-                        <div id="panel-ruta-paso1" class="bg-white border border-brand-500/30 rounded-3xl p-6 shadow-sm">
-                            <div class="border-b border-slate-100 pb-3 mb-4">
-                                <h3 class="text-lg font-bold text-slate-950">Paso 1: Identificación</h3>
-                                <p class="text-xs text-slate-400 mt-0.5">Seleccione su usuario para iniciar la ruta.</p>
-                            </div>
-                            <div class="relative">
-                                <label for="gen-nombre" class="block text-sm font-semibold text-slate-700">Nombre del Vendedor</label>
-                                <input type="text" id="gen-nombre" autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Seleccione su nombre...">
-                                <div id="gen-nombre-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
-                            </div>
-                            <button onclick="iniciarCreacionRuta()" class="mt-4 w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-200 transition text-sm">
-                                Crear Nueva Ruta
-                            </button>
-                        </div>
-
-                        <!-- Paso 2: Agregar Clientes (Oculto al inicio) -->
-                        <div id="panel-ruta-paso2" class="hidden bg-white border border-brand-500/30 rounded-3xl p-6 shadow-sm fade-in space-y-4">
-                            <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-950">Paso 2: Agregar Clientes</h3>
-                                    <p class="text-xs text-slate-400 mt-0.5">Proyecte sus metas para esta ruta.</p>
-                                </div>
-                                <button onclick="cancelarRutaActual()" class="text-xs font-bold text-red-500 hover:text-red-700 transition bg-red-50 px-2 py-1 rounded-lg">Cambiar Asesor</button>
-                            </div>
-
-                            <div class="relative">
-                                <label for="gen-cliente" class="block text-sm font-semibold text-slate-700">Seleccione un Cliente</label>
-                                <input type="text" id="gen-cliente" autocomplete="off" oninput="filterClientsGen()" onfocus="showClientsDropdownGen()" onblur="hideClientsDropdownGen()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Buscar en sus clientes...">
-                                <div id="gen-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="ruta-est-venta" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Est. Venta</label>
-                                    <input type="text" id="ruta-est-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
-                                </div>
-                                <div>
-                                    <label for="ruta-est-cobro" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Est. Cobro</label>
-                                    <input type="text" id="ruta-est-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
-                                </div>
-                            </div>
-
-                            <button onclick="agregarClienteARuta()" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md shadow-emerald-200 transition text-sm">
-                                Agregar a la Lista
-                            </button>
-                        </div>
+             <form id="form-pedidos-general" onsubmit="submitGeneralForm(event)" class="space-y-6">
+                    <!-- Autocompletado Nombre Asesor -->
+                    <div class="relative">
+                        <label for="gen-nombre" class="block text-sm font-semibold text-slate-700">Nombre Completo</label>
+                        <input type="text" id="gen-nombre" required autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un vendedor...">
+                        <!-- Dropdown flotante asesores -->
+                        <div id="gen-nombre-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
                     </div>
 
-                    <!-- Columna Derecha: Lista de Ruta -->
-                    <div class="bg-white border border-brand-500/30 rounded-3xl shadow-sm lg:col-span-7 overflow-hidden flex flex-col min-h-[450px]">
-                        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                            <div>
-                                <h3 class="font-black text-slate-950 text-lg">Clientes en Ruta</h3>
-                                <p class="text-xs text-slate-400 mt-0.5" id="contador-clientes-ruta">0 clientes agregados</p>
-                            </div>
-                        </div>
-
-                        <div class="overflow-x-auto flex-1">
-                            <table class="w-full text-left border-collapse text-sm">
-                                <thead class="bg-white border-b border-slate-200">
-                                    <tr>
-                                        <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Cliente</th>
-                                        <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Venta Est.</th>
-                                        <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Cobro Est.</th>
-                                        <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500 text-center">Remover</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-ruta-clientes" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Se inyectan los clientes dinámicamente -->
-                                </tbody>
-                            </table>
-
-                            <div id="ruta-empty-state" class="flex flex-col items-center justify-center p-12 text-center h-full">
-                                <div class="p-3 bg-slate-50 rounded-full text-slate-400 mb-3">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                </div>
-                                <h5 class="text-sm font-bold text-slate-900">Su ruta está vacía</h5>
-                                <p class="text-xs text-slate-400 mt-1 max-w-xs">Identifíquese y comience a agregar clientes a su planificación diaria.</p>
-                            </div>
-                        </div>
-
-                        <!-- Panel de Acción Final (Oculto al inicio) -->
-                        <div id="panel-ruta-acciones" class="hidden border-t border-slate-100 p-4 bg-brand-50">
-                            <div class="flex justify-between mb-4 px-2">
-                                <span class="font-bold text-slate-600 text-sm">Totales Proyectados:</span>
-                                <div class="text-right">
-                                    <span class="text-xs font-bold text-slate-400 mr-2">Venta: <span id="ruta-total-venta" class="text-emerald-600 text-sm">$0</span></span>
-                                    <span class="text-xs font-bold text-slate-400">Cobro: <span id="ruta-total-cobro" class="text-blue-600 text-sm">$0</span></span>
-                                </div>
-                            </div>
-                            <button onclick="guardarRutaCompleta()" id="btn-final-ruta" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-xl shadow-md shadow-brand-200 transition text-sm flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                                Enviar GPS y Registrar Ruta Completa
-                            </button>
-                        </div>
+                    <!-- Autocompletado de Cliente para Registros -->
+                    <div class="relative">
+                        <label for="gen-cliente" class="block text-sm font-semibold text-slate-700">Cliente</label>
+                        <input type="text" id="gen-cliente" required autocomplete="off" oninput="filterClientsGen()" onfocus="showClientsDropdownGen()" onblur="hideClientsDropdownGen()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Escriba o seleccione un cliente...">
+                        <div id="gen-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
                     </div>
-                </div>
+
+                    <div>
+                        <label for="gen-motivo" class="block text-sm font-semibold text-slate-700">Motivo de visita</label>
+                        <select id="gen-motivo" required onchange="toggleMotivoCampos()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm bg-white font-medium">
+                            <option value="" disabled selected>Seleccione un motivo...</option>
+                            <option value="Venta">Venta</option>
+                            <option value="Cobro">Cobro</option>
+                            <option value="Ambas">Ambas</option>
+                        </select>
+                    </div>
+
+                    <div id="wrapper-monto-venta" class="hidden">
+                        <label for="gen-monto-venta" class="block text-sm font-semibold text-slate-700">Cantidad Vendida</label>
+                        <input type="text" id="gen-monto-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
+                    </div>
+
+                    <div id="wrapper-monto-cobro" class="hidden">
+                        <label for="gen-monto-cobro" class="block text-sm font-semibold text-slate-700">Cantidad Cobrada</label>
+                        <input type="text" id="gen-monto-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
+                    </div>
+
+                    <div class="pt-4 flex space-x-3">
+                        <button type="button" onclick="document.getElementById('form-pedidos-general').reset(); toggleMotivoCampos(); showView('menu');" class="flex-1 bg-white py-3 px-4 border border-slate-300 rounded-xl shadow-sm text-sm font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Cancelar</button>
+                        <button type="submit" class="flex-1 bg-brand-600 py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-bold text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition-colors">Enviar ubicación y registrar visita</button>
+                    </div>
+                </form>
             </div>
         </section>
 
