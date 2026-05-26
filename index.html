@@ -235,7 +235,47 @@
         </section>
         
        <!-- SUB-VISTA: SELECCIÓN DE PLANILLAS DE REGISTRO (ORIGINAL MENU) -->
-        <section id="view-menu" class="hidden fade-in max-w-4xl mx-auto w-full py-8 px-4">
+        <section id="view-menu" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
+            
+            <!-- CAPA DE ONDAS Y RESPLANDOR AZUL CLARITO (ESTILO CORPORATIVO SUAVE) -->
+            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <!-- Fondo base azul hielo muy tenue -->
+                <div class="absolute inset-0 bg-[#f0f6fc]"></div>
+                
+                <!-- ONDA SUPERIOR: Ondas de Luz SVG de Alta Intensidad (Ajustadas a Tonos Celestes Claros) -->
+                <svg class="absolute bottom-0 left-0 w-full h-[85%] opacity-40 mix-blend-multiply" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,150 C400,280 600,50 1000,220 C1200,290 1320,180 1440,100 L1440,600 L0,600 Z" fill="url(#fercosurMenuRegistrosBlue)"/>
+                    <!-- Rayas estructurales decorativas de color Azul Marca Suave -->
+                    <path d="M0,160 C400,290 600,60 1000,230 C1200,300 1320,190 1440,110" stroke="#36a3fa" stroke-width="3" stroke-dasharray="8 4" opacity="0.5"/>
+                    <defs>
+                        <linearGradient id="fercosurMenuRegistrosBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0c87eb" stop-opacity="0.6"/>
+                            <stop offset="50%" stop-color="#7cc2fc" stop-opacity="0.5"/>
+                            <stop offset="100%" stop-color="#b9ddfd" stop-opacity="0.3"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                
+                <!-- ONDA INFERIOR: Segunda curva cruzada para dar profundidad de ruta -->
+                <svg class="absolute bottom-[-20px] left-0 w-full h-[70%] opacity-35 mix-blend-multiply" viewBox="0 0 1440 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                    <path d="M0,250 C300,100 800,320 1100,180 C1300,90 1380,220 1440,180 L1440,500 L0,500 Z" fill="url(#fercosurMenuRegistrosLight)"/>
+                    <path d="M0,260 C300,110 800,330 1100,190 C1300,100 1380,230 1440,190" stroke="#7cc2fc" stroke-width="2" opacity="0.4"/>
+                    <defs>
+                        <linearGradient id="fercosurMenuRegistrosLight" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#7cc2fc" stop-opacity="0.5"/>
+                            <stop offset="60%" stop-color="#b9ddfd" stop-opacity="0.3"/>
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+
+                <!-- Resplandores Nebulosos Vivos -->
+                <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-brand-400/20 rounded-full wave-glow"></div>
+                <div class="absolute bottom-[10%] right-[-5%] w-[550px] h-[550px] bg-brand-200/25 rounded-full wave-glow" style="animation-delay: -3s("></div style="animation-delay: -3s;"></div>
+            </div>
+
+            <!-- Contenedor de contenido alineado y flotante por encima del fondo -->
+            <div class="max-w-4xl w-full mx-auto relative z-10 flex flex-col items-center justify-center">
             <div class="flex items-center space-x-3 mb-6">
                 <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -271,6 +311,7 @@
                     </div>
                 </div>
             </div>
+			</div>
         </section>
 
 
