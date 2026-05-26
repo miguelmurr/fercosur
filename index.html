@@ -4192,32 +4192,38 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         }
 
       function createLoteCardElement(lote, isInsideModal) {
-            const cantRemisiones = lote.despachos ? lote.despachos.length : 0;
-            const totalUnidadesPlanilla = lote.despachos ? lote.despachos.reduce((sum, d) => sum + (d.empaques.total || 0), 0) : 0;
-            const badgeClass = lote.finalizado 
-                ? 'bg-orange-50 text-orange-700 border-orange-200 shadow-sm shadow-orange-50/50' 
-                : 'bg-amber-100 text-amber-800 border-amber-200';
-            const badgeText = lote.finalizado ? 'Finalizado' : 'Activo';
+    // Ordenamos de la más antigua a la más reciente para calcular el consecutivo real
+    const planillasOrdenadas = [...dbLotes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    const posicion = planillasOrdenadas.findIndex(l => l.id === lote.id);
+    const consecutivo = posicion !== -1 ? `D-${posicion + 1}` : '';
 
-            const borderHoverClass = lote.finalizado
-                ? 'hover:border-slate-400 hover:shadow-md'
-                : 'hover:border-orange-500 hover:shadow-lg hover:shadow-orange-50';
-            
-           const actionBtnText = lote.finalizado ? 'Ver / Modificar' : 'Continuar Registrando';
-            const actionBtnColor = lote.finalizado 
-                ? 'bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200/60' 
-                : 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm';
+    const cantRemisiones = lote.despachos ? lote.despachos.length : 0;
+    const totalUnidadesPlanilla = lote.despachos ? lote.despachos.reduce((sum, d) => sum + (d.empaques.total || 0), 0) : 0;
+    const badgeClass = lote.finalizado 
+        ? 'bg-orange-50 text-orange-700 border-orange-200 shadow-sm shadow-orange-50/50' 
+        : 'bg-amber-100 text-amber-800 border-amber-200';
+    const badgeText = lote.finalizado ? 'Finalizado' : 'Activo';
 
-            const cardDiv = document.createElement('div');
-            cardDiv.className = `bg-white border border-orange-500/30 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 ${borderHoverClass}`;
-            cardDiv.innerHTML = `
-                <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeClass}">
-                            ${badgeText}
-                        </span>
-                        <span class="text-xs text-slate-400 font-mono font-medium">${lote.timestamp}</span>
-                    </div>
+    const borderHoverClass = lote.finalizado
+        ? 'hover:border-slate-400 hover:shadow-md'
+        : 'hover:border-orange-500 hover:shadow-lg hover:shadow-orange-50';
+    const actionBtnText = lote.finalizado ? 'Ver / Modificar' : 'Continuar Registrando';
+    const actionBtnColor = lote.finalizado 
+        ? 'bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200/60' 
+        : 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm';
+    const cardDiv = document.createElement('div');
+    cardDiv.className = `bg-white border border-orange-500/30 rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 ${borderHoverClass}`;
+    cardDiv.innerHTML = `
+        <div>
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeClass}">
+                        ${badgeText}
+                    </span>
+                    <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-mono">${consecutivo}</span>
+                </div>
+                <span class="text-xs text-slate-400 font-mono font-medium">${lote.timestamp}</span>
+            </div>
                     <h4 class="text-lg font-black text-slate-900 leading-tight">${lote.nombre}</h4>
                     
                     <div class="mt-4 flex flex-col gap-1.5 text-slate-500 text-sm">
@@ -4345,7 +4351,12 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             activeLoteId = loteId;
             editingDespachoId = null;
 
-            document.getElementById('active-lote-title').innerText = `Planilla: ${lote.nombre}`;
+            // Calculamos el consecutivo para la cabecera activa
+            const planillasOrdenadas = [...dbLotes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const posicion = planillasOrdenadas.findIndex(l => l.id === loteId);
+            const consecutivo = posicion !== -1 ? `D-${posicion + 1}` : '';
+
+            document.getElementById('active-lote-title').innerText = `Planilla: ${lote.nombre} (${consecutivo})`;
             document.getElementById('active-lote-date').innerText = lote.timestamp;
 
             const badge = document.getElementById('active-lote-status-badge');
@@ -4647,9 +4658,15 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
         }
 
         // --- 11. GENERADOR DE WORD EN FORMATO HORIZONTAL ---
+        // --- 11. GENERADOR DE WORD EN FORMATO HORIZONTAL ---
         function exportLoteToWord(loteId) {
             const lote = dbLotes.find(l => l.id === loteId);
             if (!lote) return;
+
+            // Calculamos el consecutivo correspondiente antes de generar el documento
+            const planillasOrdenadas = [...dbLotes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const posicion = planillasOrdenadas.findIndex(l => l.id === loteId);
+            const consecutivo = posicion !== -1 ? `D-${posicion + 1}` : '';
 
             let tableRows = '';
             (lote.despachos || []).forEach(d => {
@@ -4724,6 +4741,7 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
                             <td style="border: none; width: 35%; text-align: right; vertical-align: middle;">
                                 <p style="font-family: Arial; font-size: 8pt; margin: 0;"><strong>Fecha:</strong> ${formatTimestamp()}</p>
                                 <p style="font-family: Arial; font-size: 8pt; margin: 2px 0 0 0;"><strong>Lote:</strong> ${lote.nombre}</p>
+                                <p style="font-family: Arial; font-size: 7pt; margin: 2px 0 0 0; color: #4b5563;"><strong>Consecutivo:</strong> ${consecutivo}</p>
                             </td>
                         </tr>
                     </table>
