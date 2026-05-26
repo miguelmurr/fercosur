@@ -329,12 +329,11 @@
         </section>
 
 
-       <!-- VISTA 2: PLANIFICADOR DE RUTAS COMERCIALES -->
-        <section id="view-form-general" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col py-8 px-4 relative overflow-hidden bg-white">
+       <!-- VISTA 2: ASISTENTE DE RUTA COMERCIAL EN VIVO -->
+        <section id="view-form-general" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col py-8 px-4 relative overflow-hidden bg-slate-50">
             
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div class="absolute inset-0 bg-[#f0f6fc]"></div>
-                
                 <svg class="absolute bottom-0 left-0 w-full h-[85%] opacity-40 mix-blend-multiply" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                     <path d="M0,150 C400,280 600,50 1000,220 C1200,290 1320,180 1440,100 L1440,600 L0,600 Z" fill="url(#fercosurRegistrosBlue)"/>
                     <path d="M0,160 C400,290 600,60 1000,230 C1200,300 1320,190 1440,110" stroke="#36a3fa" stroke-width="3" stroke-dasharray="8 4" opacity="0.5"/>
@@ -346,14 +345,12 @@
                         </linearGradient>
                     </defs>
                 </svg>
-                
                 <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-brand-400/20 rounded-full wave-glow"></div>
                 <div class="absolute bottom-[10%] right-[-5%] w-[550px] h-[550px] bg-brand-200/25 rounded-full wave-glow" style="animation-delay: -3s;"></div>
             </div>
 
             <div class="max-w-6xl w-full mx-auto relative z-10 space-y-6">
-
-                <!-- Header de la vista -->
+                <!-- Encabezado -->
                 <div class="bg-white border border-brand-500/30 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div class="flex items-center space-x-4">
                         <button onclick="showView('menu')" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition">
@@ -361,118 +358,139 @@
                         </button>
                         <div>
                             <div class="flex items-center space-x-2">
-                                <span class="px-2.5 py-0.5 text-xs font-bold bg-brand-100 text-brand-800 rounded-full uppercase tracking-wider" id="estado-ruta-badge">Esperando Asesor</span>
+                                <span class="px-2.5 py-0.5 text-xs font-bold bg-slate-200 text-slate-600 rounded-full uppercase tracking-wider" id="estado-ruta-badge">Esperando Asesor</span>
                             </div>
-                            <h2 class="text-2xl font-black text-slate-900 mt-1" id="titulo-ruta-activa">Planificación de Ruta Comercial</h2>
+                            <h2 class="text-2xl font-black text-slate-900 mt-1" id="titulo-ruta-activa">Asistente de Ruta Comercial</h2>
                         </div>
+                    </div>
+                    <!-- Botón de Fuera de Ruta (Aparece cuando la ruta está activa) -->
+                    <div class="hidden" id="btn-fuera-ruta-container">
+                        <button onclick="iniciarVisitaFueraRuta()" class="px-4 py-2.5 text-sm font-bold text-orange-600 bg-orange-50 hover:bg-orange-100 rounded-xl transition border border-orange-200 shadow-sm flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            Registrar Fuera de Ruta
+                        </button>
                     </div>
                 </div>
 
-                <!-- Panel Dividido (2 Columnas) -->
+                <!-- Panel de 2 Columnas -->
                 <div class="grid lg:grid-cols-12 gap-6 items-start">
-
-                    <!-- Columna Izquierda: Controles -->
-                    <div class="lg:col-span-5 space-y-6">
-
-                        <!-- Paso 1: Selección de Vendedor -->
+                    <!-- Columna Izquierda: Configuración -->
+                    <div class="lg:col-span-4 space-y-6">
+                        <!-- Paso 1: Configuración Asesor -->
                         <div id="panel-ruta-paso1" class="bg-white border border-brand-500/30 rounded-3xl p-6 shadow-sm">
-                            <div class="border-b border-slate-100 pb-3 mb-4">
-                                <h3 class="text-lg font-bold text-slate-950">Paso 1: Identificación</h3>
-                                <p class="text-xs text-slate-400 mt-0.5">Seleccione su usuario para iniciar la ruta.</p>
-                            </div>
+                            <label for="gen-nombre" class="block text-sm font-bold text-slate-950 mb-1">1. Identificación</label>
+                            <p class="text-xs text-slate-500 mb-3">Seleccione su usuario exclusivo.</p>
                             <div class="relative">
-                                <label for="gen-nombre" class="block text-sm font-semibold text-slate-700">Nombre del Vendedor</label>
-                                <input type="text" id="gen-nombre" autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Seleccione su nombre...">
+                                <input type="text" id="gen-nombre" autocomplete="off" oninput="filterSellers('gen')" onfocus="showSellersDropdown('gen')" onblur="hideSellersDropdown('gen')" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 sm:text-sm font-medium bg-slate-50" placeholder="Buscar mi nombre...">
                                 <div id="gen-nombre-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-slate-100"></div>
                             </div>
-                            <button onclick="iniciarCreacionRuta()" class="mt-4 w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-200 transition text-sm">
-                                Crear Nueva Ruta
+                            <button onclick="iniciarCreacionRuta()" class="mt-4 w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                                Iniciar mi Jornada
                             </button>
                         </div>
 
                         <!-- Paso 2: Agregar Clientes (Oculto al inicio) -->
-                        <div id="panel-ruta-paso2" class="hidden bg-white border border-brand-500/30 rounded-3xl p-6 shadow-sm fade-in space-y-4">
-                            <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-lg font-bold text-slate-950">Paso 2: Agregar Clientes</h3>
-                                    <p class="text-xs text-slate-400 mt-0.5">Proyecte sus metas para esta ruta.</p>
-                                </div>
-                                <button onclick="cancelarRutaActual()" class="text-xs font-bold text-red-500 hover:text-red-700 transition bg-red-50 px-2 py-1 rounded-lg">Cambiar Asesor</button>
+                        <div id="panel-ruta-paso2" class="hidden bg-white border border-emerald-500/30 rounded-3xl p-6 shadow-sm space-y-4">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-sm font-bold text-slate-950">2. Planificar Visitas</label>
                             </div>
-
+                            
                             <div class="relative">
-                                <label for="gen-cliente" class="block text-sm font-semibold text-slate-700">Seleccione un Cliente</label>
-                                <input type="text" id="gen-cliente" autocomplete="off" oninput="filterClientsGen()" onfocus="showClientsDropdownGen()" onblur="hideClientsDropdownGen()" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="Buscar en sus clientes...">
+                                <input type="text" id="gen-cliente" autocomplete="off" oninput="filterClientsGen()" onfocus="showClientsDropdownGen()" onblur="hideClientsDropdownGen()" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 sm:text-sm font-medium bg-slate-50" placeholder="Buscar cliente asignado...">
                                 <div id="gen-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label for="ruta-est-venta" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Est. Venta</label>
-                                    <input type="text" id="ruta-est-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
+                                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Est. Venta</span>
+                                    <input type="text" id="ruta-est-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 text-sm font-bold" placeholder="$0">
                                 </div>
                                 <div>
-                                    <label for="ruta-est-cobro" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Est. Cobro</label>
-                                    <input type="text" id="ruta-est-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm" placeholder="$0">
+                                    <span class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Est. Cobro</span>
+                                    <input type="text" id="ruta-est-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900 text-sm font-bold" placeholder="$0">
                                 </div>
                             </div>
 
-                            <button onclick="agregarClienteARuta()" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md shadow-emerald-200 transition text-sm">
-                                Agregar a la Lista
+                            <button onclick="agregarClienteARuta()" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition text-sm flex items-center justify-center">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Añadir a mi progreso
                             </button>
                         </div>
                     </div>
 
-                    <!-- Columna Derecha: Lista de Ruta -->
-                    <div class="bg-white border border-brand-500/30 rounded-3xl shadow-sm lg:col-span-7 overflow-hidden flex flex-col min-h-[450px]">
+                    <!-- Columna Derecha: Panel de Progreso en Vivo -->
+                    <div class="lg:col-span-8 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden flex flex-col min-h-[550px]">
                         <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                             <div>
-                                <h3 class="font-black text-slate-950 text-lg">Clientes en Ruta</h3>
-                                <p class="text-xs text-slate-400 mt-0.5" id="contador-clientes-ruta">0 clientes agregados</p>
+                                <h3 class="font-black text-slate-950 text-lg">Progreso de la Jornada</h3>
+                                <p class="text-xs text-slate-500 mt-0.5" id="contador-progreso-ruta">Aún no hay clientes planificados.</p>
                             </div>
                         </div>
 
-                        <div class="overflow-x-auto flex-1">
-                            <table class="w-full text-left border-collapse text-sm">
-                                <thead class="bg-white border-b border-slate-200">
-                                    <tr>
-                                        <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Cliente</th>
-                                        <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Venta Est.</th>
-                                        <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500">Cobro Est.</th>
-                                        <th class="px-4 py-3 text-xs font-bold uppercase text-slate-500 text-center">Remover</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-ruta-clientes" class="divide-y divide-slate-100 text-slate-700">
-                                    <!-- Se inyectan los clientes dinámicamente -->
-                                </tbody>
-                            </table>
-
-                            <div id="ruta-empty-state" class="flex flex-col items-center justify-center p-12 text-center h-full">
-                                <div class="p-3 bg-slate-50 rounded-full text-slate-400 mb-3">
-                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        <!-- Lista de Clientes (Tarjetas) -->
+                        <div class="flex-1 p-4 bg-slate-50/50 overflow-y-auto max-h-[600px] space-y-3" id="contenedor-progreso-clientes">
+                            <!-- Empty State -->
+                            <div id="ruta-empty-state" class="flex flex-col items-center justify-center h-full text-center p-8">
+                                <div class="p-4 bg-white rounded-full text-slate-300 mb-4 shadow-sm">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
                                 </div>
-                                <h5 class="text-sm font-bold text-slate-900">Su ruta está vacía</h5>
-                                <p class="text-xs text-slate-400 mt-1 max-w-xs">Identifíquese y comience a agregar clientes a su planificación diaria.</p>
+                                <h4 class="text-slate-900 font-bold">Su panel de progreso está vacío</h4>
+                                <p class="text-sm text-slate-500 mt-1 max-w-sm">Identifíquese en el panel izquierdo y agregue los clientes que visitará el día de hoy.</p>
                             </div>
-                        </div>
-
-                        <!-- Panel de Acción Final (Oculto al inicio) -->
-                        <div id="panel-ruta-acciones" class="hidden border-t border-slate-100 p-4 bg-brand-50">
-                            <div class="flex justify-between mb-4 px-2">
-                                <span class="font-bold text-slate-600 text-sm">Totales Proyectados:</span>
-                                <div class="text-right">
-                                    <span class="text-xs font-bold text-slate-400 mr-2">Venta: <span id="ruta-total-venta" class="text-emerald-600 text-sm">$0</span></span>
-                                    <span class="text-xs font-bold text-slate-400">Cobro: <span id="ruta-total-cobro" class="text-blue-600 text-sm">$0</span></span>
-                                </div>
-                            </div>
-                            <button onclick="guardarRutaCompleta()" id="btn-final-ruta" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-xl shadow-md shadow-brand-200 transition text-sm flex items-center justify-center">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                                Enviar GPS y Registrar Ruta Completa
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- MODAL: FORMULARIO DE VISITA CLÁSICO (Bloqueado por seguridad) -->
+        <div id="modal-visita-activa" class="hidden fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-md w-full border border-slate-200">
+                    <div class="bg-brand-600 px-6 py-4 flex justify-between items-center">
+                        <h3 class="text-lg font-black text-white flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            Gestión de Visita
+                        </h3>
+                        <button id="btn-cerrar-modal-visita" onclick="cerrarModalVisitaFueraRuta()" class="hidden text-white/70 hover:text-white transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                    </div>
+                    <div class="px-6 py-6 space-y-5">
+                        <!-- El nombre del cliente vendrá amarrado y bloqueado aquí -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Cliente Actual</label>
+                            <input type="text" id="visita-cliente-bloqueado" readonly class="w-full bg-slate-100 border border-slate-200 text-slate-800 font-bold rounded-xl px-4 py-3 cursor-not-allowed">
+                        </div>
+                        
+                        <div>
+                            <label for="visita-motivo" class="block text-sm font-bold text-slate-900 mb-1">Motivo / Resultado</label>
+                            <select id="visita-motivo" onchange="toggleVisitaCamposActiva()" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 sm:text-sm font-medium bg-white">
+                                <option value="" disabled selected>Seleccione el resultado...</option>
+                                <option value="Venta">Solo Venta</option>
+                                <option value="Cobro">Solo Cobro</option>
+                                <option value="Ambas">Venta y Cobro</option>
+                            </select>
+                        </div>
+
+                        <div id="visita-wrapper-venta" class="hidden">
+                            <label for="visita-monto-venta" class="block text-sm font-bold text-slate-900 mb-1">Monto de Venta</label>
+                            <input type="text" id="visita-monto-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 font-bold focus:border-brand-500 focus:ring-1 focus:ring-brand-500" placeholder="$0">
+                        </div>
+
+                        <div id="visita-wrapper-cobro" class="hidden">
+                            <label for="visita-monto-cobro" class="block text-sm font-bold text-slate-900 mb-1">Monto de Cobro</label>
+                            <input type="text" id="visita-monto-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 font-bold focus:border-brand-500 focus:ring-1 focus:ring-brand-500" placeholder="$0">
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 px-6 py-4 flex justify-end">
+                        <button id="btn-finalizar-visita" onclick="finalizarVisitaYGuardar()" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-xl shadow-md shadow-brand-200 transition text-sm">
+                            Marcar Salida GPS y Finalizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         </section>
 
        
