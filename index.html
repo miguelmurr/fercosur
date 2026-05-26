@@ -4680,11 +4680,11 @@ HIDALGO BUCHELI MARIA FERNANDA                                                  
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        // Si el vendedor acepta, creamos el link de Google Maps
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        const linkMapa = `https://www.google.com/maps?q=${lat},${lon}`;
-                        guardarEnNube(linkMapa);
+                      // Si el vendedor acepta, creamos el link de Google Maps
+const lat = position.coords.latitude;
+const lon = position.coords.longitude;
+const linkMapa = `https://www.google.com/maps?q=${lat},${lon}`;
+guardarEnNube(linkMapa);
                     },
                     (error) => {
                         // Si lo rechaza o no tiene señal, guardamos la visita de todas formas
