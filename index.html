@@ -572,6 +572,7 @@
             
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div class="absolute inset-0 bg-white"></div>
+                <svg class="absolute bottom-0 left-0 w-full h-[85%] opacity-25 mix-blend-multiply" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                     <path d="M0,150 C400,280 600,50 1000,220 C1200,290 1320,180 1440,100 L1440,600 L0,600 Z" fill="url(#fercosurGradientOrange)"/>
                     <path d="M0,160 C400,290 600,60 1000,230 C1200,300 1320,190 1440,110" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 4" opacity="0.3"/>
                     <defs>
@@ -6085,9 +6086,8 @@ guardarEnNube(linkMapa);
                     emptyState.classList.add('hidden');
                     emptyState.classList.remove('flex');
                     document.getElementById('table-general-view').classList.remove('hidden');
-                    dbGeneral.forEach(item => {
-                        const tr = `
-                           // Condicional de diseño para la insignia del método de cobro
+                  dbGeneral.forEach(item => {
+                        // Condicional de diseño para la insignia del método de cobro
                         const badgeCobro = item.montoCobro && item.montoCobro !== '$0' ? 
                             (item.metodoCobro === 'Consignacion' 
                                 ? `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-700 rounded border border-blue-200 uppercase">🏦 Consig.</span>` 
