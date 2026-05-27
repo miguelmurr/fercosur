@@ -540,9 +540,15 @@
                                 <input type="text" id="gen-monto-venta-campo" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-bold text-emerald-600" placeholder="$0">
                             </div>
 
-                            <div id="wrapper-campo-cobro" class="hidden">
-                                <label for="gen-monto-cobro-campo" class="block text-sm font-semibold text-slate-700">Monto Cobrado Efectivo</label>
-                                <input type="text" id="gen-monto-cobro-campo" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-bold text-blue-600" placeholder="$0">
+                           <div id="wrapper-campo-cobro" class="hidden">
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <label for="gen-monto-cobro-campo" class="block text-sm font-semibold text-slate-700">Monto Cobrado</label>
+                                    <label class="flex items-center space-x-2 cursor-pointer select-none">
+                                        <input type="checkbox" id="gen-cobro-efectivo-campo" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded cursor-pointer">
+                                        <span class="text-[11px] font-black text-slate-600 uppercase tracking-wider">Cobro en Efectivo</span>
+                                    </label>
+                                </div>
+                                <input type="text" id="gen-monto-cobro-campo" inputmode="numeric" oninput="formatCurrencyInput(this)" class="block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm font-bold text-blue-600" placeholder="$0">
                             </div>
 
                             <div class="pt-2">
@@ -930,19 +936,30 @@
                             <h3 class="text-xl font-black text-slate-900 tracking-tight" id="table-title">Registros Visitas</h3>
                             <p class="text-sm text-slate-500 mt-0.5">Mostrando registros guardados en tiempo real por orden de ingreso.</p>
                              
-                            <div id="widget-totales-visitas" class="mt-4 flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-200 inline-flex shadow-sm">
-                                <div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Ventas (Mes Actual)</span>
-                                    <span class="text-xl font-black text-emerald-600" id="suma-ventas-mes">$0</span>
+                           <div id="widget-totales-visitas" class="mt-4 flex flex-col gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 inline-flex shadow-sm min-w-[340px]">
+                                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Filtro Financiero:</span>
+                                    <select id="filtro-periodo-financiero" onchange="renderTotalesMensuales()" class="text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2 py-1 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
+                                        <option value="hoy">Hoy</option>
+                                        <option value="semana">Últimos 7 Días</option>
+                                        <option value="mes" selected>Mes Actual</option>
+                                    </select>
                                 </div>
-                                <div class="w-px h-8 bg-slate-200"></div>
-                                <div>
-                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Cobros (Mes Actual)</span>
-                                    <span class="text-xl font-black text-blue-600" id="suma-cobros-mes">$0</span>
+                                <div class="flex items-start gap-5">
+                                    <div class="flex-1">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Ventas</span>
+                                        <span class="text-2xl font-black text-emerald-600 block mt-1" id="suma-ventas-mes">$0</span>
+                                    </div>
+                                    <div class="w-px h-16 bg-slate-200"></div>
+                                    <div class="flex-1">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Cobros</span>
+                                        <span class="text-2xl font-black text-blue-600 leading-none block mb-2 mt-1" id="suma-cobros-mes">$0</span>
+                                        <div class="flex flex-col gap-1 text-[10px] font-bold bg-white p-1.5 rounded-lg border border-slate-100">
+                                            <span class="text-slate-500 flex justify-between"><span>💵 Efectivo:</span> <span id="suma-cobros-efectivo" class="text-emerald-600">$0</span></span>
+                                            <span class="text-slate-500 flex justify-between"><span>🏦 Consig:</span> <span id="suma-cobros-consig" class="text-blue-600">$0</span></span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button onclick="abrirHistorialMensual()" class="ml-2 p-2 bg-white border border-slate-200 hover:bg-slate-100 hover:text-brand-600 rounded-xl text-slate-400 transition shadow-sm" title="Ver Historial de Meses">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </button>
                             </div>
                         </div>
                         <div>
@@ -4626,6 +4643,7 @@ TIENDA
             cliente.motivoReal = document.getElementById('gen-motivo-campo').value;
             cliente.montoVentaReal = document.getElementById('gen-monto-venta-campo').value || '$0';
             cliente.montoCobroReal = document.getElementById('gen-monto-cobro-campo').value || '$0';
+            cliente.metodoCobro = document.getElementById('gen-cobro-efectivo-campo').checked ? 'Efectivo' : 'Consignacion';
 
             // Función interna para empaquetar y guardar localmente el registro
             const guardarRegistroLocalYContinuar = () => {
@@ -4636,6 +4654,7 @@ TIENDA
                     motivo: cliente.motivoReal,
                     montoVenta: cliente.montoVentaReal,
                     montoCobro: cliente.montoCobroReal,
+                    metodoCobro: cliente.metodoCobro,
                     // Parámetros de auditoría de tiempos y doble GPS
                     horaEntrada: cliente.horaEntrada,
                     gpsEntrada: cliente.gpsEntrada,
@@ -4706,13 +4725,14 @@ TIENDA
             // Tomamos el primer registro de la cola (Garantiza el orden cronológico estricto)
             const reg = colaOffline[0];
 
-            db.collection("pedidos_generales").add({
+           db.collection("pedidos_generales").add({
                 timestamp: reg.timestamp,
                 nombre: reg.nombre,
                 cliente: reg.cliente,
                 motivo: reg.motivo,
                 montoVenta: reg.montoVenta,
                 montoCobro: reg.montoCobro,
+                metodoCobro: reg.metodoCobro || 'Efectivo', // Seguro antierrores
                 ubicacion: reg.gpsSalida, // Compatibilidad con el mapa nativo del administrador
                 fechaExpiracion: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // TTL: Borrado automático en 60 días
                 auditoria: {
@@ -6067,13 +6087,24 @@ guardarEnNube(linkMapa);
                     document.getElementById('table-general-view').classList.remove('hidden');
                     dbGeneral.forEach(item => {
                         const tr = `
+                           // Condicional de diseño para la insignia del método de cobro
+                        const badgeCobro = item.montoCobro && item.montoCobro !== '$0' ? 
+                            (item.metodoCobro === 'Consignacion' 
+                                ? `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-700 rounded border border-blue-200 uppercase">🏦 Consig.</span>` 
+                                : `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-bold bg-emerald-50 text-emerald-700 rounded border border-emerald-200 uppercase">💵 Efectivo</span>`)
+                            : '';
+
+                        const tr = `
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
                                 <td class="px-6 py-4 font-semibold text-slate-900">${item.nombre}</td>
                                 <td class="px-6 py-4 text-slate-700 font-medium">${item.cliente || 'N/A'}</td>
                                 <td class="px-6 py-4 text-slate-600 font-semibold">${item.motivo || 'N/A'}</td>
                                 <td class="px-6 py-4 text-emerald-600 font-bold">${item.montoVenta || '$0'}</td>
-                                <td class="px-6 py-4 text-blue-600 font-bold">${item.montoCobro || '$0'}</td>
+                                <td class="px-6 py-4 text-blue-600 font-bold leading-tight">
+                                    <span>${item.montoCobro || '$0'}</span>
+                                    ${badgeCobro}
+                                </td>
                                 <td class="px-6 py-4 text-xs">
                                     ${item.ubicacion && item.ubicacion.startsWith('http') 
                                         
@@ -6864,44 +6895,73 @@ guardarEnNube(linkMapa);
                 });
             }
         }
-		// --- 17. LÓGICA DE TOTALES FINANCIEROS MENSUALES (BLINDADA) ---
+	  // --- 17. LÓGICA DE TOTALES FINANCIEROS Y FILTROS (BLINDADA) ---
         function renderTotalesMensuales() {
             const ventasMesEl = document.getElementById('suma-ventas-mes');
             const cobrosMesEl = document.getElementById('suma-cobros-mes');
+            const efectivoEl = document.getElementById('suma-cobros-efectivo');
+            const consigEl = document.getElementById('suma-cobros-consig');
+            const filtroEl = document.getElementById('filtro-periodo-financiero');
+            
             if (!ventasMesEl || !cobrosMesEl) return;
 
-            const now = new Date();
-            const pad = (num) => String(num).padStart(2, '0');
-            const mesActual = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`; // Ej: "2026-05"
-
-            window.historialFinanciero = {};
+            const periodo = filtroEl ? filtroEl.value : 'mes';
+            const hoy = new Date();
+            
+            let totalVentas = 0;
+            let totalCobros = 0;
+            let totalEfectivo = 0;
+            let totalConsig = 0;
 
             dbGeneral.forEach(item => {
-                if (!item.timestamp) return; // Si hay un registro dañado, lo ignora
-                const mesRegistro = String(item.timestamp).substring(0, 7); 
+                if (!item.timestamp) return; 
                 
-                // ESCUDO ANTI-ERRORES: Forzamos a que todo sea texto antes de limpiarlo
-                const ventaText = String(item.montoVenta || '0');
-                const cobroText = String(item.montoCobro || '0');
+                // Extraer y procesar la fecha de forma nativa
+                const fechaString = String(item.timestamp).split(' ')[0];
+                const partes = fechaString.split('-');
+                if (partes.length !== 3) return;
+                
+                const fechaRegistro = new Date(partes[0], partes[1] - 1, partes[2]);
+                let entraEnFiltro = false;
 
-                // Ahora sí quitamos los signos de pesos sin que el sistema explote
-                const ventaNum = parseInt(ventaText.replace(/\D/g, ''), 10) || 0;
-                const cobroNum = parseInt(cobroText.replace(/\D/g, ''), 10) || 0;
-
-                if (!window.historialFinanciero[mesRegistro]) {
-                    window.historialFinanciero[mesRegistro] = { ventas: 0, cobros: 0 };
+                // Evaluador de Rangos Dinámicos
+                if (periodo === 'hoy') {
+                    if (fechaRegistro.toDateString() === hoy.toDateString()) entraEnFiltro = true;
+                } else if (periodo === 'semana') {
+                    const hace7Dias = new Date(hoy);
+                    hace7Dias.setDate(hoy.getDate() - 7);
+                    hace7Dias.setHours(0,0,0,0);
+                    fechaRegistro.setHours(0,0,0,0);
+                    const hoyLimpiado = new Date(hoy);
+                    hoyLimpiado.setHours(0,0,0,0);
+                    if (fechaRegistro >= hace7Dias && fechaRegistro <= hoyLimpiado) entraEnFiltro = true;
+                } else if (periodo === 'mes') {
+                    if (fechaRegistro.getMonth() === hoy.getMonth() && fechaRegistro.getFullYear() === hoy.getFullYear()) entraEnFiltro = true;
                 }
 
-                window.historialFinanciero[mesRegistro].ventas += ventaNum;
-                window.historialFinanciero[mesRegistro].cobros += cobroNum;
+                if (entraEnFiltro) {
+                    const ventaNum = parseInt(String(item.montoVenta || '0').replace(/\D/g, ''), 10) || 0;
+                    const cobroNum = parseInt(String(item.montoCobro || '0').replace(/\D/g, ''), 10) || 0;
+                    const esEfectivo = item.metodoCobro === 'Efectivo';
+
+                    totalVentas += ventaNum;
+                    totalCobros += cobroNum;
+                    
+                    if (esEfectivo) {
+                        totalEfectivo += cobroNum;
+                    } else {
+                        totalConsig += cobroNum;
+                    }
+                }
             });
 
-            // Pintar en pantalla el mes actual
-            const dataActual = window.historialFinanciero[mesActual] || { ventas: 0, cobros: 0 };
+            // Dar formato a los números usando el punto separador oficial de Colombia
             const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
             
-            ventasMesEl.innerText = formatMoney(dataActual.ventas);
-            cobrosMesEl.innerText = formatMoney(dataActual.cobros);
+            ventasMesEl.innerText = formatMoney(totalVentas);
+            cobrosMesEl.innerText = formatMoney(totalCobros);
+            if (efectivoEl) efectivoEl.innerText = formatMoney(totalEfectivo);
+            if (consigEl) consigEl.innerText = formatMoney(totalConsig);
         }
 
           // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA EN CAMPO ---
