@@ -188,7 +188,7 @@
               <!-- Tarjetas de Selección Originales Blancas sobre el Nuevo Fondo de Color -->
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                     <!-- Tarjeta Módulo Registros -->
-                    <div onclick="showView('menu')" class="group relative bg-white border border-slate-200/80 rounded-3xl p-8 shadow-md hover:shadow-xl hover:border-brand-500 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1.5">
+                    <div onclick="checkVentasAuth()" class="group relative bg-white border border-slate-200/80 rounded-3xl p-8 shadow-md hover:shadow-xl hover:border-brand-500 cursor-pointer transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1.5">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-bl-full -z-10 group-hover:bg-brand-500/10 transition-colors duration-300"></div>
                         <div>
                             <div class="inline-flex p-4 rounded-2xl bg-brand-600 text-white mb-6 group-hover:scale-110 transition-transform duration-300 shadow-md shadow-brand-100">
@@ -232,10 +232,63 @@
                         </div>
                     </div>
                 </div>
+
+		</section>
+
+        <section id="view-login-ventas" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
+            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <div class="absolute inset-0 bg-[#f4f7fa]"></div>
+                <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-brand-500/10 rounded-full wave-glow"></div>
+            </div>
+            
+            <div class="max-w-md w-full bg-white border border-brand-700/30 rounded-3xl p-6 sm:p-8 shadow-xl relative z-10 space-y-6">
+                <div class="text-center">
+                    <span class="px-3 py-1 text-xs font-bold bg-brand-50 text-brand-700 rounded-full uppercase tracking-widest">Módulo de Ventas</span>
+                    <h2 class="text-2xl font-black text-slate-900 mt-3 tracking-tight">Acceso de Asesores</h2>
+                    <p class="text-xs text-slate-500 mt-1">Seleccione su perfil individual para gestionar su ruta y agenda del día.</p>
+                </div>
+
+                <form id="form-login-ventas" onsubmit="submitLoginVentas(event)" class="space-y-4">
+                    <div>
+                        <label for="login-vendedor-select" class="block text-sm font-semibold text-slate-700">Nombre del Asesor</label>
+                        <select id="login-vendedor-select" required class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 bg-white font-semibold focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm">
+                            <option value="" disabled selected>Seleccione su perfil...</option>
+                            <option value="FS CAUCA FABIAN JIMENEZ">FS CAUCA FABIAN JIMENEZ</option>
+                            <option value="FS IPIALES KATHERINE">FS IPIALES KATHERINE</option>
+                            <option value="FS NOR OCCIDENTE ALEJANDRO MONROY">FS NOR OCCIDENTE ALEJANDRO MONROY</option>
+                            <option value="FS NORTE 1 EIMER">FS NORTE 1 EIMER</option>
+                            <option value="FS NORTE 2 DIEGO MARTINEZ">FS NORTE 2 DIEGO MARTINEZ</option>
+                            <option value="FS OCCIDENTE LILIANA ORDOÑEZ">FS OCCIDENTE LILIANA ORDOÑEZ</option>
+                            <option value="FS PASTO 1 GLORIA VIVEROS">FS PASTO 1 GLORIA VIVEROS</option>
+                            <option value="FS PASTO 2 ROLAND LOPEZ">FS PASTO 2 ROLAND LOPEZ</option>
+                            <option value="FS PUTUMAYO 1 LUIS MIGUEL">FS PUTUMAYO 1 LUIS MIGUEL</option>
+                            <option value="FS PUTUMAYO 2 EDITH SANCHEZ">FS PUTUMAYO 2 EDITH SANCHEZ</option>
+                            <option value="FS PUTUMAYO 3 EDINSON">FS PUTUMAYO 3 EDINSON</option>
+                            <option value="FS SUR HAROLD MARTINEZ">FS SUR HAROLD MARTINEZ</option>
+                            <option value="FS VIA TUMACO CRISTINA BENAVIDES">FS VIA TUMACO CRISTINA BENAVIDES</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="login-vendedor-pin" class="block text-sm font-semibold text-slate-700">PIN de Seguridad (4 Dígitos)</label>
+                        <input type="password" id="login-vendedor-pin" required maxlength="4" inputmode="numeric" placeholder="••••" class="mt-1.5 block w-full text-center text-xl font-black tracking-widest rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm bg-slate-50">
+                    </div>
+
+                    <p id="login-ventas-error-msg" class="hidden text-xs text-red-600 font-bold text-center">Contraseña o PIN incorrecto. Inténtelo nuevamente.</p>
+
+                    <div class="pt-2 flex gap-3">
+                        <button type="button" onclick="goToPortal()" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition text-sm text-center">
+                            Atrás
+                        </button>
+                        <button type="submit" class="flex-1 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-100 transition text-sm">
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+            </div>
         </section>
         
-       <!-- SUB-VISTA: SELECCIÓN DE PLANILLAS DE REGISTRO (ORIGINAL MENU) -->
-        <section id="view-menu" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
+		<section id="view-menu" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
             
             <!-- CAPA DE ONDAS Y RESPLANDOR AZUL CLARITO (ESTILO CORPORATIVO SUAVE) -->
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
