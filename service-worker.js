@@ -8,6 +8,7 @@ const ASSETS_TO_CACHE = [
   './favicon.png',
   './nuevo_logo.png',
   './nuevo_logoplanilla.png'
+  './logo_app.png'
 ];
 
 // 1. Instalación: Guarda la base inicial en el disco duro del celular
