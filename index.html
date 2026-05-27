@@ -288,34 +288,74 @@
             </div>
         </section>
         
-		<section id="view-menu" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
-            <div class="w-full max-w-md flex justify-between items-center mb-6 p-4 bg-slate-50 border border-slate-200 rounded-2xl z-10 animate-pulse-once">
-               <div class="text-xs text-slate-600 font-semibold">Asesor: <span id="txt-active-seller-name" class="font-black text-brand-700"></span></div>
-               <button onclick="logoutVentas()" class="text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl transition shadow-sm">
-                Cerrar Sesión
-                </button>
-           </div>
-            
-            <!-- CAPA DE ONDAS Y RESPLANDOR AZUL CLARITO (ESTILO CORPORATIVO SUAVE) -->
+		<section id="view-login-ventas" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <!-- Fondo base azul hielo muy tenue -->
+                <div class="absolute inset-0 bg-[#f4f7fa]"></div>
+                <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-brand-500/10 rounded-full wave-glow"></div>
+            </div>
+            
+            <div class="max-w-md w-full bg-white border border-brand-700/30 rounded-3xl p-6 sm:p-8 shadow-xl relative z-10 space-y-6">
+                <div class="text-center">
+                    <span class="px-3 py-1 text-xs font-bold bg-brand-50 text-brand-700 rounded-full uppercase tracking-widest">Módulo de Ventas</span>
+                    <h2 class="text-2xl font-black text-slate-900 mt-3 tracking-tight">Acceso de Asesores</h2>
+                    <p class="text-xs text-slate-500 mt-1">Seleccione su perfil individual para gestionar su ruta y agenda del día.</p>
+                </div>
+
+                <form id="form-login-ventas" onsubmit="submitLoginVentas(event)" class="space-y-4">
+                    <div>
+                        <label for="login-vendedor-select" class="block text-sm font-semibold text-slate-700">Nombre del Asesor</label>
+                        <select id="login-vendedor-select" required class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 bg-white font-semibold focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm">
+                            <option value="" disabled selected>Seleccione su perfil...</option>
+                            <option value="FS CAUCA FABIAN JIMENEZ">FS CAUCA FABIAN JIMENEZ</option>
+                            <option value="FS IPIALES KATHERINE">FS IPIALES KATHERINE</option>
+                            <option value="FS NOR OCCIDENTE ALEJANDRO MONROY">FS NOR OCCIDENTE ALEJANDRO MONROY</option>
+                            <option value="FS NORTE 1 EIMER">FS NORTE 1 EIMER</option>
+                            <option value="FS NORTE 2 DIEGO MARTINEZ">FS NORTE 2 DIEGO MARTINEZ</option>
+                            <option value="FS OCCIDENTE LILIANA ORDOÑEZ">FS OCCIDENTE LILIANA ORDOÑEZ</option>
+                            <option value="FS PASTO 1 GLORIA VIVEROS">FS PASTO 1 GLORIA VIVEROS</option>
+                            <option value="FS PASTO 2 ROLAND LOPEZ">FS PASTO 2 ROLAND LOPEZ</option>
+                            <option value="FS PUTUMAYO 1 LUIS MIGUEL">FS PUTUMAYO 1 LUIS MIGUEL</option>
+                            <option value="FS PUTUMAYO 2 EDITH SANCHEZ">FS PUTUMAYO 2 EDITH SANCHEZ</option>
+                            <option value="FS PUTUMAYO 3 EDINSON">FS PUTUMAYO 3 EDINSON</option>
+                            <option value="FS SUR HAROLD MARTINEZ">FS SUR HAROLD MARTINEZ</option>
+                            <option value="FS VIA TUMACO CRISTINA BENAVIDES">FS VIA TUMACO CRISTINA BENAVIDES</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="login-vendedor-pin" class="block text-sm font-semibold text-slate-700">PIN de Seguridad (4 Dígitos)</label>
+                        <input type="password" id="login-vendedor-pin" required maxlength="4" inputmode="numeric" placeholder="••••" class="mt-1.5 block w-full text-center text-xl font-black tracking-widest rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm bg-slate-50">
+                    </div>
+
+                    <p id="login-ventas-error-msg" class="hidden text-xs text-red-600 font-bold text-center">Contraseña o PIN incorrecto. Inténtelo nuevamente.</p>
+
+                    <div class="pt-2 flex gap-3">
+                        <button type="button" onclick="goToPortal()" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition text-sm text-center">
+                            Atrás
+                        </button>
+                        <button type="submit" class="flex-1 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-100 transition text-sm">
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        
+       <section id="view-menu" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
+            
+            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div class="absolute inset-0 bg-[#f0f6fc]"></div>
-                
-                <!-- ONDA SUPERIOR: Ondas de Luz SVG de Alta Intensidad (Ajustadas a Tonos Celestes Claros) -->
                 <svg class="absolute bottom-0 left-0 w-full h-[85%] opacity-40 mix-blend-multiply" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                     <path d="M0,150 C400,280 600,50 1000,220 C1200,290 1320,180 1440,100 L1440,600 L0,600 Z" fill="url(#fercosurMenuRegistrosBlue)"/>
-                    <!-- Rayas estructurales decorativas de color Azul Marca Suave -->
                     <path d="M0,160 C400,290 600,60 1000,230 C1200,300 1320,190 1440,110" stroke="#36a3fa" stroke-width="3" stroke-dasharray="8 4" opacity="0.5"/>
                     <defs>
-                        <linearGradient id="fercosurMenuRegistrosBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                         <linearGradient id="fercosurMenuRegistrosBlue" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" stop-color="#0c87eb" stop-opacity="0.6"/>
                             <stop offset="50%" stop-color="#7cc2fc" stop-opacity="0.5"/>
                             <stop offset="100%" stop-color="#b9ddfd" stop-opacity="0.3"/>
                         </linearGradient>
                     </defs>
                 </svg>
-                
-                <!-- ONDA INFERIOR: Segunda curva cruzada para dar profundidad de ruta -->
                 <svg class="absolute bottom-[-20px] left-0 w-full h-[70%] opacity-35 mix-blend-multiply" viewBox="0 0 1440 500" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                     <path d="M0,250 C300,100 800,320 1100,180 C1300,90 1380,220 1440,180 L1440,500 L0,500 Z" fill="url(#fercosurMenuRegistrosLight)"/>
                     <path d="M0,260 C300,110 800,330 1100,190 C1300,100 1380,230 1440,190" stroke="#7cc2fc" stroke-width="2" opacity="0.4"/>
@@ -327,62 +367,61 @@
                         </linearGradient>
                     </defs>
                 </svg>
-
-                <!-- Resplandores Nebulosos Vivos -->
                 <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-brand-400/20 rounded-full wave-glow"></div>
-                <div class="absolute bottom-[10%] right-[-5%] w-[550px] h-[550px] bg-brand-200/25 rounded-full wave-glow" style="animation-delay: -3s("></div style="animation-delay: -3s;"></div>
+                <div class="absolute bottom-[10%] right-[-5%] w-[550px] h-[550px] bg-brand-200/25 rounded-full wave-glow" style="animation-delay: -3s;"></div>
             </div>
 
-            <!-- Contenedor de contenido alineado y flotante por encima del fondo -->
             <div class="max-w-4xl w-full mx-auto relative z-10 flex flex-col items-center justify-center">
-            <div class="flex items-center space-x-3 mb-6">
-                <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                </button>
-                <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">Volver al Portal Inicial</span>
-            </div>
+                <div class="flex items-center space-x-3 mb-6">
+                    <button onclick="goToPortal()" class="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">Volver al Portal Inicial</span>
+                </div>
 
-           <!-- ENCABEZADO MEJORADO CON CAJA EXTRA ANCHA PARA UN SOLO RENGLÓN -->
-            <div class="text-center mb-12 max-w-5xl w-full mx-auto bg-white/40 backdrop-blur-md border border-brand-700 rounded-3xl p-8 shadow-lg relative z-10 transform transition-all duration-300 hover:scale-[1.01]">
-                
-                <!-- Título Gigante en un Solo Renglón Libre -->
-                <h1 class="text-xl sm:text-3xl lg:text-5xl font-black bg-gradient-to-r from-brand-900 via-brand-700 to-brand-500 bg-clip-text text-transparent tracking-tight leading-none text-center whitespace-nowrap">
-                    Bienvenido al Módulo de Ventas
-                </h1>
+                <div class="text-center mb-12 max-w-5xl w-full mx-auto bg-white/40 backdrop-blur-md border border-brand-700 rounded-3xl p-8 shadow-lg relative z-10 transform transition-all duration-300 hover:scale-[1.01]">
+                    <h1 id="txt-bienvenida-modulo" class="text-xl sm:text-3xl lg:text-5xl font-black bg-gradient-to-r from-brand-900 via-brand-700 to-brand-500 bg-clip-text text-transparent tracking-tight leading-none text-center whitespace-nowrap">
+                        Bienvenido al Módulo de Ventas
+                    </h1>
+                    
+                    <div id="txt-vendedor-modulo-subtitle" class="text-sm sm:text-lg font-black text-brand-900 mt-2 tracking-wide uppercase text-center hidden"></div>
 
-                <!-- Separador Fino de Diseño -->
-                <div class="w-24 h-1 bg-gradient-to-r from-brand-600 to-brand-400 mx-auto rounded-full my-4 opacity-80"></div>
+                    <div class="w-24 h-1 bg-gradient-to-r from-brand-600 to-brand-400 mx-auto rounded-full my-4 opacity-80"></div>
 
-                <!-- Subtítulo Enfatizado -->
-                <p class="text-sm sm:text-base text-slate-700 max-w-2xl mx-auto font-bold leading-relaxed text-center">
-                    Por favor, elija la acción que desea realizar para iniciar su gestión en campo.
-                </p>
-            </div>
+                    <p class="text-sm sm:text-base text-slate-700 max-w-2xl mx-auto font-bold leading-relaxed text-center">
+                        Por favor, elija la acción que desea realizar para iniciar su gestión en campo.
+                    </p>
+                </div>
 
-            <div class="flex justify-center">
-                <!-- Tarjeta Registro Pedidos General -->
-                <div onclick="showView('form-general')" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 w-full max-w-md overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
-                    <div>
-                        <div class="inline-flex p-4 rounded-2xl bg-brand-50 text-brand-600 mb-6 group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                <div class="flex justify-center">
+                    <div onclick="showView('form-general')" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 w-full max-w-md overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
+                        <div>
+                            <div class="inline-flex p-4 rounded-2xl bg-brand-50 text-brand-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-black text-slate-900 tracking-tight">Registro de Visitas</h3>
+                            <p class="mt-3 text-slate-600 leading-relaxed text-sm font-medium">Formulario estándar para el control, radicación y seguimiento de visitas en el flujo diario de Fercosur.</p>
+                        </div>
+                        <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm">
+                            Comenzar registro 
+                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">Registro de Visitas</h3>
-                        <p class="mt-3 text-slate-600 leading-relaxed text-sm font-medium">Formulario estándar para el control, radicación y seguimiento de visitas en el flujo diario de Fercosur.</p>
-                    </div>
-                    <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm">
-                        Comenzar registro 
-                        <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
                     </div>
                 </div>
             </div>
-			</div>
+            
+            <div class="absolute bottom-4 right-4 z-10">
+                <button onclick="logoutVentas()" class="text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition shadow-sm border border-red-200/40">
+                    Cerrar Sesión Asesor
+                </button>
+            </div>
         </section>
 
 
@@ -4102,7 +4141,7 @@ TIENDA
         let indiceClienteActivo = null;
 
         // Guarda el estado actual en el almacenamiento interno del dispositivo de forma individual
-        function guardarJornadaEnStorage() {
+       function guardarJornadaEnStorage() {
             if (!activeSeller) return;
             const estado = {
                 vendedor: activeSeller,
@@ -4840,13 +4879,208 @@ TIENDA
             goToPortal();
         }
 
+        let activeSeller = null;
+
+        // Diccionario estricto para extraer nombre limpio en MAYÚSCULAS y detectar género
+        function obtenerInfoVendedorVisual(codigoCompleto) {
+            if (!codigoCompleto) return { nombreVisual: "", esFemenino: false };
+            const normalized = codigoCompleto.trim().toUpperCase();
+            let nombreVisual = "";
+            let esFemenino = false;
+
+            switch(normalized) {
+                case "FS CAUCA FABIAN JIMENEZ":
+                    nombreVisual = "FABIAN JIMENEZ";
+                    esFemenino = false;
+                    break;
+                case "FS IPIALES KATHERINE":
+                    nombreVisual = "KATHERINE";
+                    esFemenino = true;
+                    break;
+                case "FS NOR OCCIDENTE ALEJANDRO MONROY":
+                    nombreVisual = "ALEJANDRO MONROY";
+                    esFemenino = false;
+                    break;
+                case "FS NORTE 1 EIMER":
+                    nombreVisual = "EIMER";
+                    esFemenino = false;
+                    break;
+                case "FS NORTE 2 DIEGO MARTINEZ":
+                    nombreVisual = "DIEGO MARTINEZ";
+                    esFemenino = false;
+                    break;
+                case "FS OCCIDENTE LILIANA ORDOÑEZ":
+                    nombreVisual = "LILIANA ORDOÑEZ";
+                    esFemenino = true;
+                    break;
+                case "FS PASTO 1 GLORIA VIVEROS":
+                    nombreVisual = "GLORIA VIVEROS";
+                    esFemenino = true;
+                    break;
+                case "FS PASTO 2 ROLAND LOPEZ":
+                    nombreVisual = "ROLAND LOPEZ";
+                    esFemenino = false;
+                    break;
+                case "FS PUTUMAYO 1 LUIS MIGUEL":
+                    nombreVisual = "LUIS MIGUEL";
+                    esFemenino = false;
+                    break;
+                case "FS PUTUMAYO 2 EDITH SANCHEZ":
+                    nombreVisual = "EDITH SANCHEZ";
+                    esFemenino = true;
+                    break;
+                case "FS PUTUMAYO 3 EDINSON":
+                    nombreVisual = "EDINSON";
+                    esFemenino = false;
+                    break;
+                case "FS SUR HAROLD MARTINEZ":
+                    nombreVisual = "HAROLD MARTINEZ";
+                    esFemenino = false;
+                    break;
+                case "FS VIA TUMACO CRISTINA BENAVIDES":
+                    nombreVisual = "CRISTINA BENAVIDES";
+                    esFemenino = true;
+                    break;
+                default:
+                    nombreVisual = normalized;
+                    esFemenino = false;
+            }
+            return { nombreVisual, esFemenino };
+        }
+
+        function checkVentasAuth() {
+            const session = localStorage.getItem('fercosur_seller_session');
+            if (session) {
+                activeSeller = session;
+                
+                const nameInput = document.getElementById('gen-nombre');
+                if (nameInput) {
+                    nameInput.value = activeSeller;
+                    nameInput.setAttribute('readonly', 'readonly');
+                    nameInput.classList.add('bg-slate-100', 'text-slate-400');
+                }
+                
+                // Aplicar adaptaciones visuales al título principal
+                const info = obtenerInfoVendedorVisual(activeSeller);
+                const tituloBienvenida = document.getElementById('txt-bienvenida-modulo');
+                if (tituloBienvenida) {
+                    tituloBienvenida.innerText = info.esFemenino ? "Bienvenida al Módulo de Ventas" : "Bienvenido al Módulo de Ventas";
+                }
+                
+                const subtituloNombre = document.getElementById('txt-vendedor-modulo-subtitle');
+                if (subtituloNombre) {
+                    subtituloNombre.innerText = info.nombreVisual;
+                    subtituloNombre.classList.remove('hidden');
+                }
+                
+                // Cargar estado de jornada individual guardada de este asesor
+                const sessionGuardada = localStorage.getItem('fercosur_jornada_' + activeSeller);
+                if (sessionGuardada) {
+                    const estado = JSON.parse(sessionGuardada);
+                    if (estado && estado.jornadaActiva) {
+                        rutaPlanificada = estado.ruta || [];
+                        jornadaActiva = estado.jornadaActiva;
+                        indiceClienteActivo = estado.indiceClienteActivo;
+                        
+                        if (indiceClienteActivo !== null) {
+                            showView('form-general');
+                            activarInterfazJornadaReal();
+                            document.getElementById('formulario-visita-campo').classList.remove('hidden');
+                            document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
+                            document.getElementById('btn-finalizar-visita-registro').disabled = false;
+                            return;
+                        } else {
+                            showView('form-general');
+                            activarInterfazJornadaReal();
+                            return;
+                        }
+                    }
+                }
+                
+                rutaPlanificada = [];
+                jornadaActiva = false;
+                indiceClienteActivo = null;
+                showView('menu');
+            } else {
+                showView('login-ventas');
+            }
+        }
+
+        function submitLoginVentas(e) {
+            e.preventDefault();
+            const seller = document.getElementById('login-vendedor-select').value;
+            const pin = document.getElementById('login-vendedor-pin').value;
+            const errorMsg = document.getElementById('login-ventas-error-msg');
+
+            if (pin === '4545') {
+                errorMsg.classList.add('hidden');
+                localStorage.setItem('fercosur_seller_session', seller);
+                activeSeller = seller;
+
+                const nameInput = document.getElementById('gen-nombre');
+                if (nameInput) {
+                    nameInput.value = seller;
+                    nameInput.setAttribute('readonly', 'readonly');
+                    nameInput.classList.add('bg-slate-100', 'text-slate-400');
+                }
+
+                // Inyectar nombre limpio y género en el letrero principal
+                const info = obtenerInfoVendedorVisual(seller);
+                const tituloBienvenida = document.getElementById('txt-bienvenida-modulo');
+                if (tituloBienvenida) {
+                    tituloBienvenida.innerText = info.esFemenino ? "Bienvenida al Módulo de Ventas" : "Bienvenido al Módulo de Ventas";
+                }
+                
+                const subtituloNombre = document.getElementById('txt-vendedor-modulo-subtitle');
+                if (subtituloNombre) {
+                    subtituloNombre.innerText = info.nombreVisual;
+                    subtituloNombre.classList.remove('hidden');
+                }
+
+                document.getElementById('form-login-ventas').reset();
+                showToast('Inicio de Sesión', `Bienvenido, ${info.nombreVisual}`, 'success');
+                showView('menu');
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('login-vendedor-pin').value = '';
+                document.getElementById('login-vendedor-pin').focus();
+            }
+        }
+
+        function logoutVentas() {
+            localStorage.removeItem('fercosur_seller_session');
+            activeSeller = null;
+            
+            const nameInput = document.getElementById('gen-nombre');
+            if (nameInput) {
+                nameInput.value = '';
+                nameInput.removeAttribute('readonly');
+                nameInput.classList.remove('bg-slate-100', 'text-slate-400');
+            }
+            
+            // Reestablecer los componentes estáticos del título principal
+            const subtituloNombre = document.getElementById('txt-vendedor-modulo-subtitle');
+            if (subtituloNombre) {
+                subtituloNombre.innerText = '';
+                subtituloNombre.classList.add('hidden');
+            }
+            const tituloBienvenida = document.getElementById('txt-bienvenida-modulo');
+            if (tituloBienvenida) {
+                tituloBienvenida.innerText = "Bienvenido al Módulo de Ventas";
+            }
+            
+            showToast('Sesión Cerrada', 'Se ha cerrado la sesión del asesor correctamente.', 'success');
+            goToPortal();
+        }
+
         function goToPortal() {
             isAdminLoggedIn = false;
             document.getElementById('btn-admin-access').classList.remove('hidden');
             document.getElementById('btn-admin-logout').classList.add('hidden');
             showView('portal');
         }
-        // --- 8. TOAST (MENSAJES FLOTANTES DE ÉXITO O ALERTA) ---
+        
+		// --- 8. TOAST (MENSAJES FLOTANTES DE ÉXITO O ALERTA) ---
         function showToast(title, message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toastId = 'toast-' + Date.now();
