@@ -1,0 +1,24 @@
+{
+  "short_name": "Fercosur",
+  "name": "Fercosur Portal Operativo",
+  "description": "Sistema de gestión offline y tiempo real para asesores y logística de Fercosur.",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "nuevo_logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#0054a0",
+  "theme_color": "#0054a0",
+  "display": "standalone",
+  "orientation": "portrait"
+}
