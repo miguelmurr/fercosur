@@ -896,33 +896,37 @@
                 </div>
 
                 <!-- CONTENEDOR DE TABLAS DETALLADAS ORIGINAL INTACTO -->
-                <div class="flex-1 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden w-full">
-                        <p class="text-sm text-slate-500 mt-0.5">Mostrando registros guardados en tiempo real por orden de ingreso.</p>
-                        
-                        <div id="widget-totales-visitas" class="mt-4 flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-200 inline-flex shadow-sm">
-                            <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Ventas (Mes Actual)</span>
-                                <span class="text-xl font-black text-emerald-600" id="suma-ventas-mes">$0</span>
+               <div class="flex-1 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden w-full">
+                    
+                    <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight" id="table-title">Registros Visitas</h3>
+                            <p class="text-sm text-slate-500 mt-0.5">Mostrando registros guardados en tiempo real por orden de ingreso.</p>
+                             
+                            <div id="widget-totales-visitas" class="mt-4 flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-200 inline-flex shadow-sm">
+                                <div>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Ventas (Mes Actual)</span>
+                                    <span class="text-xl font-black text-emerald-600" id="suma-ventas-mes">$0</span>
+                                </div>
+                                <div class="w-px h-8 bg-slate-200"></div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Cobros (Mes Actual)</span>
+                                    <span class="text-xl font-black text-blue-600" id="suma-cobros-mes">$0</span>
+                                </div>
+                                <button onclick="abrirHistorialMensual()" class="ml-2 p-2 bg-white border border-slate-200 hover:bg-slate-100 hover:text-brand-600 rounded-xl text-slate-400 transition shadow-sm" title="Ver Historial de Meses">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </button>
                             </div>
-                            <div class="w-px h-8 bg-slate-200"></div>
-                            <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Cobros (Mes Actual)</span>
-                                <span class="text-xl font-black text-blue-600" id="suma-cobros-mes">$0</span>
-                            </div>
-                            <button onclick="abrirHistorialMensual()" class="ml-2 p-2 bg-white border border-slate-200 hover:bg-slate-100 hover:text-brand-600 rounded-xl text-slate-400 transition shadow-sm" title="Ver Historial de Meses">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <button id="btn-export-individual" onclick="exportActiveTable()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                                Exportar Excel Individual (.xlsx)
                             </button>
                         </div>
                     </div>
-                    <div>
-                        <button id="btn-export-individual" onclick="exportActiveTable()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                            </svg>
-                            Exportar Excel Individual (.xlsx)
-                        </button>
-                    </div>
-                </div>
 
                 <!-- TABLAS -->
                <div class="overflow-auto max-h-[560px] relative">
