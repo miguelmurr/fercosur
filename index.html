@@ -990,10 +990,28 @@
                     </table>
 
                     <div id="table-rutas-view" class="hidden p-6 space-y-6 bg-slate-50">
-                        <div id="contenedor-rutas-admin" class="grid grid-cols-1 gap-6">
-                            </div>
+                        <div class="space-y-3">
+                            <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest tracking-wide">Rutas en Ejecución</span>
+                            <div id="contenedor-rutas-admin-activas" class="grid grid-cols-1 xl:grid-cols-2 gap-4 text-left"></div>
+                        </div>
+                        
+                        <div class="border-t border-slate-200 pt-6 space-y-4">
+                            <button type="button" onclick="toggleHistoricoRutas()" class="inline-flex items-center justify-between w-full px-5 py-3.5 bg-slate-100 hover:bg-slate-200 border border-slate-300/60 text-sm font-bold text-slate-700 rounded-2xl shadow-sm transition">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>Histórico de rutas</span>
+                                    <span id="badge-total-historico-rutas" class="bg-slate-300 text-slate-800 text-xs px-2.5 py-0.5 rounded-full font-black ml-2">0</span>
+                                </div>
+                                <svg id="arrow-historico-rutas" class="w-4 h-4 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                            
+                            <div id="wrapper-historico-rutas" class="hidden grid grid-cols-1 xl:grid-cols-2 gap-4 text-left pt-2"></div>
+                        </div>
                     </div>
-                </div>
 
                 <!-- Empty State (Si no hay datos en la seleccionada) -->
                 <div id="table-empty-state" class="hidden flex-col items-center justify-center p-12 text-center">
@@ -5800,6 +5818,20 @@ guardarEnNube(linkMapa);
             renderTableData();
         }
 
+        function toggleHistoricoRutas() {
+            const wrapper = document.getElementById('wrapper-historico-rutas');
+            const arrow = document.getElementById('arrow-historico-rutas');
+            if (wrapper && arrow) {
+                if (wrapper.classList.contains('hidden')) {
+                    wrapper.classList.remove('hidden');
+                    arrow.classList.add('rotate-180');
+                } else {
+                    wrapper.classList.add('hidden');
+                    arrow.classList.remove('rotate-180');
+                }
+            }
+        }
+
         function renderTableData() {
             const emptyState = document.getElementById('table-empty-state');
             if(!emptyState) return;
@@ -5905,12 +5937,14 @@ guardarEnNube(linkMapa);
                     });
                 }
            } else if (currentActiveAdminTab === 'rutas') {
-                const containerRutas = document.getElementById('contenedor-rutas-admin');
-                if(!containerRutas) return;
+                const containerActivas = document.getElementById('contenedor-rutas-admin-activas');
+                const containerHistorico = document.getElementById('wrapper-historico-rutas');
+                const badgeHistorico = document.getElementById('badge-total-historico-rutas');
                 
-                // Forzar el contenedor principal a un diseño de rejilla adaptativo de 2 columnas
-                containerRutas.className = "grid grid-cols-1 xl:grid-cols-2 gap-4 text-left animate-fade-in";
-                containerRutas.innerHTML = '';
+                if (!containerActivas || !containerHistorico) return;
+                
+                containerActivas.innerHTML = '';
+                containerHistorico.innerHTML = '';
 
                 if (dbRutas.length === 0) {
                     emptyState.classList.remove('hidden');
@@ -5922,6 +5956,9 @@ guardarEnNube(linkMapa);
                 emptyState.classList.add('hidden');
                 emptyState.classList.remove('flex');
                 document.getElementById('table-rutas-view').classList.remove('hidden');
+
+                let totalHistorico = 0;
+                let totalActivas = 0;
 
                 dbRutas.forEach(docRuta => {
                     const totalPuntos = docRuta.ruta ? docRuta.ruta.length : 0;
@@ -5956,7 +5993,6 @@ guardarEnNube(linkMapa);
                         </div>
                     `;
 
-                    // Contenedor compacto en forma de lista de datos unificada
                     let htmlClientes = `<div class="border border-slate-100 rounded-xl overflow-hidden divide-y divide-slate-100 bg-slate-50/40">`;
                     
                     if(docRuta.ruta && docRuta.ruta.length > 0) {
@@ -5996,8 +6032,22 @@ guardarEnNube(linkMapa);
                     htmlClientes += `</div>`;
 
                     cardAsesor.innerHTML = htmlHeader + htmlClientes;
-                    containerRutas.appendChild(cardAsesor);
+
+                    // Desvío condicional de destino de la tarjeta de ruta
+                    if (esRutaFinalizada) {
+                        containerHistorico.appendChild(cardAsesor);
+                        totalHistorico++;
+                    } else {
+                        containerActivas.appendChild(cardAsesor);
+                        totalActivas++;
+                    }
                 });
+
+                if (badgeHistorico) badgeHistorico.innerText = totalHistorico;
+
+                if (totalActivas === 0) {
+                    containerActivas.innerHTML = `<p class="col-span-full text-xs text-slate-400 italic p-4 text-center bg-white border border-slate-100 rounded-2xl shadow-sm">No hay ninguna ruta operando en vivo en este momento.</p>`;
+                }
             }
         }
 
