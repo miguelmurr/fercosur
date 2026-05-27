@@ -5763,12 +5763,11 @@ guardarEnNube(linkMapa);
             renderTableData();
         }
 
-        function switchAdminTab(tabType) {
+       function switchAdminTab(tabType) {
             currentActiveAdminTab = tabType;
             const tabGen = document.getElementById('tab-general');
             const tabDespachos = document.getElementById('tab-despachos');
             const tabRutas = document.getElementById('tab-rutas');
-
             if(tabGen) tabGen.className = "text-left w-full p-5 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
             if(tabDespachos) tabDespachos.className = "text-left w-full p-5 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
             if(tabRutas) tabRutas.className = "text-left w-full p-5 bg-white border border-slate-200 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
@@ -5776,11 +5775,18 @@ guardarEnNube(linkMapa);
             document.getElementById('table-general-view').classList.add('hidden');
             document.getElementById('table-despachos-view').classList.add('hidden');
             document.getElementById('table-rutas-view').classList.add('hidden');
+            
+            // Ocultar el widget de ventas y cobros del mes por defecto al cambiar de pestaña
+            const widgetTotales = document.getElementById('widget-totales-visitas');
+            if (widgetTotales) widgetTotales.classList.add('hidden');
 
             if (tabType === 'general') {
                 if(tabGen) tabGen.className = "text-left w-full p-5 bg-white border-2 border-brand-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
                 document.getElementById('table-title').innerText = "Registros Visitas";
                 document.getElementById('table-general-view').classList.remove('hidden');
+                
+                // Mostrar el widget financiero únicamente en la vista de visitas consolidadas
+                if (widgetTotales) widgetTotales.classList.remove('hidden');
             } else if (tabType === 'despachos') {
                 if(tabDespachos) tabDespachos.className = "text-left w-full p-5 bg-white border-2 border-amber-500 rounded-3xl shadow-sm transition hover:shadow-md flex items-center justify-between group";
                 document.getElementById('table-title').innerText = "Despachos Logísticos Registrados";
