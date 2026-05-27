@@ -867,38 +867,36 @@
                 </div>
             </div>
 
-           <!-- CONTENEDOR DE TABLAS DETALLADAS DE MÁXIMO ESPACIO -->
-            <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
-                <!-- CABECERA DE TABLA SELECCIONADA -->
-               <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                    <div class="flex items-start gap-4 flex-1 min-w-0">
-                        <!-- Cuadros pequeños laterales de cambio de sección con logos integrados -->
-                        <div class="flex gap-2 flex-shrink-0 mt-0.5">
-                            <button onclick="switchAdminTab('general')" id="tab-general" class="w-11 h-11 relative flex items-center justify-center rounded-xl border-2 border-brand-500 bg-brand-50 text-brand-600 transition shadow-sm" title="Visitas Consolidadas">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                <span id="counter-general" class="absolute -top-1.5 -right-1.5 bg-brand-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center border border-white shadow-sm">0</span>
-                            </button>
-                            
-                            <button onclick="switchAdminTab('despachos')" id="tab-despachos" class="w-11 h-11 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm" title="Despachos Totales">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10M13 16h6l3-3V9a1 1 0 00-1-1h-3M13 8h7"/>
-                                </svg>
-                                <span id="counter-despachos" class="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center border border-white shadow-sm">0</span>
-                            </button>
-                            
-                            <button onclick="switchAdminTab('rutas')" id="tab-rutas" class="w-11 h-11 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm" title="Rutas de Asesores">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                                </svg>
-                                <span id="counter-rutas" class="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center border border-white shadow-sm">0</span>
-                            </button>
-                        </div>
+           <!-- DISTRIBUCIÓN DEL PANEL CON NAVEGACIÓN LATERAL VERTICAL -->
+            <div class="flex flex-col lg:flex-row gap-4 items-start w-full">
+                
+                <!-- Micro-cuadros de cambio de sección ordenados VERTICALMENTE -->
+                <div class="flex flex-row lg:flex-col gap-2 flex-shrink-0 w-full lg:w-auto bg-slate-100 p-2 rounded-2xl border border-slate-200/60 shadow-inner">
+                    <button onclick="switchAdminTab('general')" id="tab-general" class="w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-brand-500 bg-brand-50 text-brand-600 transition shadow-sm" title="Visitas Consolidadas">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span id="counter-general" class="absolute -top-1.5 -right-1.5 bg-brand-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center border border-white shadow-sm">0</span>
+                    </button>
+                    
+                    <button onclick="switchAdminTab('despachos')" id="tab-despachos" class="w-12 h-12 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm" title="Despachos Totales">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10M13 16h6l3-3V9a1 1 0 00-1-1h-3M13 8h7"/>
+                        </svg>
+                        <span id="counter-despachos" class="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center border border-white shadow-sm">0</span>
+                    </button>
+                    
+                    <button onclick="switchAdminTab('rutas')" id="tab-rutas" class="w-12 h-12 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm" title="Rutas de Asesores">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                        </svg>
+                        <span id="counter-rutas" class="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center border border-white shadow-sm">0</span>
+                    </button>
+                </div>
 
-                        <div class="min-w-0 flex-1">
-                            <h3 class="text-xl font-black text-slate-900 tracking-tight truncate" id="table-title">Registros Visitas</h3>
+                <!-- CONTENEDOR DE TABLAS DETALLADAS ORIGINAL INTACTO -->
+                <div class="flex-1 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden w-full">
                         <p class="text-sm text-slate-500 mt-0.5">Mostrando registros guardados en tiempo real por orden de ingreso.</p>
                         
                         <div id="widget-totales-visitas" class="mt-4 flex items-center gap-4 bg-slate-50 p-3 rounded-2xl border border-slate-200 inline-flex shadow-sm">
@@ -999,6 +997,7 @@
                     <p class="text-sm text-slate-400 mt-1 max-w-sm">Los nuevos envíos se listarán aquí en orden cronológico inverso tan pronto como se realicen.</p>
                 </div>
             </div>
+            </div> <!-- Cierre obligatorio del contenedor de alineación lateral horizontal -->
         </section>
     </main>
 
@@ -5762,8 +5761,8 @@ guardarEnNube(linkMapa);
             const tabDespachos = document.getElementById('tab-despachos');
             const tabRutas = document.getElementById('tab-rutas');
 
-            // Restablecer estilos de los cuadros pequeños a su estado inactivo por defecto
-            const claseInactiva = "w-11 h-11 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm";
+            // Restablecer estilos de los micro-cuadros verticales a su estado inactivo
+            const claseInactiva = "w-12 h-12 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm";
             if(tabGen) tabGen.className = claseInactiva;
             if(tabDespachos) tabDespachos.className = claseInactiva;
             if(tabRutas) tabRutas.className = claseInactiva;
@@ -5776,16 +5775,16 @@ guardarEnNube(linkMapa);
             if (widgetTotales) widgetTotales.classList.add('hidden');
 
             if (tabType === 'general') {
-                if(tabGen) tabGen.className = "w-11 h-11 relative flex items-center justify-center rounded-xl border-2 border-brand-500 bg-brand-50 text-brand-600 transition shadow-sm";
+                if(tabGen) tabGen.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-brand-500 bg-brand-50 text-brand-600 transition shadow-sm";
                 document.getElementById('table-title').innerText = "Registros Visitas";
                 document.getElementById('table-general-view').classList.remove('hidden');
                 if (widgetTotales) widgetTotales.classList.remove('hidden');
             } else if (tabType === 'despachos') {
-                if(tabDespachos) tabDespachos.className = "w-11 h-11 relative flex items-center justify-center rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-600 transition shadow-sm";
+                if(tabDespachos) tabDespachos.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-600 transition shadow-sm";
                 document.getElementById('table-title').innerText = "Despachos Logísticos Registrados";
                 document.getElementById('table-despachos-view').classList.remove('hidden');
             } else if (tabType === 'rutas') {
-                if(tabRutas) tabRutas.className = "w-11 h-11 relative flex items-center justify-center rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600 transition shadow-sm";
+                if(tabRutas) tabRutas.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600 transition shadow-sm";
                 document.getElementById('table-title').innerText = "Monitoreo de Rutas en Campo";
                 document.getElementById('table-rutas-view').classList.remove('hidden');
             }
