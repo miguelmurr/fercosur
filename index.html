@@ -1254,9 +1254,48 @@
 
                     <div class="max-h-[50vh] overflow-y-auto pr-2" id="historial-meses-list">
                         </div>
-                </div>
+       
+          </div>
                 <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse">
                     <button type="button" onclick="cerrarHistorialMensual()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar</button>
+                </div>
+            </div>
+     
+    </div>
+    </div>
+
+    <div id="ruta-detalle-modal" class="hidden fixed inset-0 z-50 overflow-y-auto animate-fade-in" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="window.cerrarDetalleRutaAdmin()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+
+            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-200">
+                <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                        <div class="flex items-center space-x-3 min-w-0">
+                            <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <h3 class="text-lg font-black text-slate-950 truncate uppercase" id="ruta-modal-asesor">Asesor Comercial</h3>
+                                <div class="flex items-center space-x-2 mt-0.5 text-xs text-slate-500 font-medium font-mono">
+                                    <span id="ruta-modal-consecutivo" class="bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-bold">R-00</span>
+                                    <span id="ruta-modal-fecha">---</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="window.cerrarDetalleRutaAdmin()" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+
+                    <div id="ruta-modal-totales-box" class="mb-4"></div>
+
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Puntos de atención agendados</span>
+                    <div class="max-h-[45vh] overflow-y-auto pr-1 space-y-2" id="ruta-modal-clientes-list"></div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse">
+                    <button type="button" onclick="window.cerrarDetalleRutaAdmin()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar Reporte</button>
                 </div>
             </div>
         </div>
@@ -5991,8 +6030,23 @@ guardarEnNube(linkMapa);
                         return; // Omite este registro en el histórico si no coincide
                     }
 
+                    // Calcular acumulaciones financieras totales de venta y cobro real para la minitarjeta
+                    let acumuladoVentaRuta = 0;
+                    let acumuladoCobroRuta = 0;
+                    if (docRuta.ruta) {
+                        docRuta.ruta.forEach(p => {
+                            if (p.visitado) {
+                                acumuladoVentaRuta += parseInt(String(p.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0;
+                                acumuladoCobroRuta += parseInt(String(p.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0;
+                            }
+                        });
+                    }
+                    const formatDineroResumen = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
+
                     const cardAsesor = document.createElement('div');
-                    cardAsesor.className = "bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col justify-between";
+                    cardAsesor.className = "bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md hover:border-brand-400 cursor-pointer transition-all duration-200 flex flex-col justify-between transform active:scale-[0.99]";
+                    // Al hacer clic abre la ventana emergente con la ruta completa detallada
+                    cardAsesor.setAttribute('onclick', `window.abrirDetalleRutaAdmin('${docRuta.id}')`);
                     
                     const estadoTextoBadge = esRutaFinalizada ? "Finalizada" : "En Vivo";
                     const estadoClaseBadge = esRutaFinalizada 
@@ -6000,67 +6054,43 @@ guardarEnNube(linkMapa);
                         : "text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100";
                     const descripcionEstadoRuta = esRutaFinalizada ? "Jornada archivada" : "Ruta en desarrollo";
 
-                    let htmlHeader = `
-                        <div class="space-y-2 mb-3">
+                    cardAsesor.innerHTML = `
+                        <div class="space-y-3">
                             <div class="flex justify-between items-start gap-2">
-                                <div class="min-w-0">
-                                    <div class="flex items-center space-x-1.5">
-                                        <h4 class="text-sm font-black text-slate-900 tracking-tight truncate uppercase">${docRuta.vendedor}</h4>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-sm font-black text-slate-900 tracking-tight truncate uppercase">${docRuta.vendedor}</h4>
+                                    <div class="flex items-center space-x-2 mt-1 flex-wrap gap-y-1">
                                         <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono">${consecutivoRuta}</span>
                                         <span class="text-[10px] text-slate-400 font-mono font-medium">${docRuta.timestamp || ''}</span>
                                     </div>
-                                    <span class="text-[10px] text-slate-400 font-medium block mt-0.5">${descripcionEstadoRuta}</span>
                                 </div>
                                 <div class="flex flex-col items-end gap-1 flex-shrink-0">
                                     <span class="${estadoClaseBadge}">${estadoTextoBadge}</span>
-                                    <span class="text-[10px] font-black text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-100">${visitados}/${totalPuntos} Visitas (${porcentaje}%)</span>
+                                    <span class="text-[10px] font-black text-brand-700 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-100">${visitados}/${totalPuntos} Visitas</span>
                                 </div>
                             </div>
+                            
+                            <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-xs">
+                                <div>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Ventas</span>
+                                    <span class="font-bold text-emerald-600">${formatDineroResumen(acumuladoVentaRuta)}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Cobros</span>
+                                    <span class="font-bold text-blue-600">${formatDineroResumen(acumuladoCobroRuta)}</span>
+                                </div>
+                            </div>
+
                             <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                                 <div class="bg-emerald-500 h-full transition-all duration-500" style="width: ${porcentaje}%"></div>
                             </div>
+                            
+                            <div class="text-[11px] text-brand-600 font-bold text-right flex items-center justify-end space-x-1">
+                                <span>Ver reporte completo</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </div>
                         </div>
                     `;
-
-                    let htmlClientes = `<div class="border border-slate-100 rounded-xl overflow-hidden divide-y divide-slate-100 bg-slate-50/40">`;
-                    
-                    if(docRuta.ruta && docRuta.ruta.length > 0) {
-                        docRuta.ruta.forEach((punto, idx) => {
-                            if(punto.visitado) {
-                                htmlClientes += `
-                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2 gap-2 bg-emerald-50/20 text-xs border-l-4 border-emerald-500">
-                                        <div class="min-w-0 flex-1">
-                                            <span class="font-bold text-slate-800 block truncate uppercase text-[11px]">${punto.nombre}</span>
-                                            <p class="text-[10px] text-emerald-700 font-bold mt-0.5">🎯 ${punto.motivoReal}: V: ${punto.montoVentaReal} | C: ${punto.montoCobroReal}</p>
-                                        </div>
-                                        <div class="flex items-center gap-1 text-[9px] font-bold self-start sm:self-center flex-shrink-0">
-                                            <a href="${punto.gpsEntrada}" target="_blank" class="px-2 py-1 bg-white border border-slate-200 text-slate-500 hover:text-brand-600 rounded-md transition whitespace-nowrap">📍 Ent: ${punto.horaEntrada.split(' ')[1]}</a>
-                                            <a href="${punto.gpsSalida}" target="_blank" class="px-2 py-1 bg-white border border-slate-200 text-slate-500 hover:text-emerald-600 rounded-md transition whitespace-nowrap">📍 Sal: ${punto.horaSalida.split(' ')[1]}</a>
-                                        </div>
-                                    </div>
-                                `;
-                            } else {
-                                htmlClientes += `
-                                    <div class="flex items-center justify-between p-2 text-xs bg-white border-l-4 border-slate-200">
-                                        <div class="min-w-0 flex-1 pr-2">
-                                            <span class="font-medium text-slate-600 block truncate text-[11px] uppercase">${punto.nombre}</span>
-                                            <span class="text-[10px] text-slate-400 block mt-0.5">Meta: V: ${punto.estimadoVenta} | C: ${punto.estimadoCobro}</span>
-                                        </div>
-                                        <button type="button" onclick="eliminarClienteDeRutaAdmin('${docRuta.id}', ${idx})" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition flex-shrink-0" title="Quitar de la ruta">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                `;
-                            }
-                        });
-                    } else {
-                        htmlClientes += `<p class="text-[11px] text-slate-400 italic p-3 text-center bg-white">Sin clientes planificados en la agenda.</p>`;
-                    }
-                    htmlClientes += `</div>`;
-
-                    cardAsesor.innerHTML = htmlHeader + htmlClientes;
 
                     // Desvío condicional de destino de la tarjeta de ruta
                     if (esRutaFinalizada) {
@@ -6529,6 +6559,115 @@ guardarEnNube(linkMapa);
                 document.getElementById('despachos-pin-input').focus();
             }
         }
+		// --- INTERMITENCIA Y CONSTRUCCIÓN DINÁMICA DEL REPORTE MODAL DE RUTAS (NUEVO) ---
+        window.abrirDetalleRutaAdmin = function(docId) {
+            const docRuta = dbRutas.find(r => r.id === docId);
+            if (!docRuta) return;
+
+            // Inyectar datos base en cabecera del modal
+            document.getElementById('ruta-modal-asesor').innerText = docRuta.vendedor;
+            document.getElementById('ruta-modal-fecha').innerText = docRuta.timestamp || 'N/A';
+            
+            // Re-calcular el consecutivo correspondiente
+            const rutasDelVendedor = dbRutas
+                .filter(r => r.vendedor === docRuta.vendedor)
+                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const posRuta = rutasDelVendedor.findIndex(r => r.id === docRuta.id);
+            const numRuta = posRuta + 1;
+            const numFormateado = numRuta < 10 ? '0' + numRuta : numRuta;
+            const consecutivoRuta = posRuta !== -1 ? `R-${numFormateado}` : 'R-00';
+            document.getElementById('ruta-modal-consecutivo').innerText = consecutivoRuta;
+
+            let sumaVentaReal = 0;
+            let sumaCobroReal = 0;
+            let sumaVentaEst = 0;
+            let sumaCobroEst = 0;
+
+            const container = document.getElementById('ruta-modal-clientes-list');
+            container.innerHTML = '';
+
+            if (docRuta.ruta && docRuta.ruta.length > 0) {
+                docRuta.ruta.forEach((punto, idx) => {
+                    const estV = parseInt(String(punto.estimadoVenta || '0').replace(/\D/g, ''), 10) || 0;
+                    const estC = parseInt(String(punto.estimadoCobro || '0').replace(/\D/g, ''), 10) || 0;
+                    sumaVentaEst += estV;
+                    sumaCobroEst += estC;
+
+                    let bloqueGestionInterna = '';
+                    let claseEstiloBorde = 'border-slate-200 bg-white';
+
+                    if (punto.visitado) {
+                        const vR = parseInt(String(punto.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0;
+                        const cR = parseInt(String(punto.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0;
+                        sumaVentaReal += vR;
+                        sumaCobroReal += cR;
+
+                        claseEstiloBorde = 'border-emerald-500 bg-emerald-50/10 border-l-4 shadow-sm';
+                        bloqueGestionInterna = `
+                            <div class="mt-2 grid grid-cols-2 gap-2 text-xs bg-emerald-50/40 p-2.5 rounded-xl border border-emerald-100">
+                                <div><span class="text-slate-400 block font-medium">Venta Efectuada:</span> <strong class="text-emerald-700 font-bold">${punto.montoVentaReal}</strong></div>
+                                <div><span class="text-slate-400 block font-medium">Cobro Efectuado:</span> <strong class="text-blue-700 font-bold">${punto.montoCobroReal}</strong></div>
+                            </div>
+                            <div class="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
+                                <a href="${punto.gpsEntrada}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-500 hover:text-brand-600 hover:border-brand-300 rounded-lg transition whitespace-nowrap">📍 Ent: ${punto.horaEntrada.split(' ')[1] || ''} (Mapa GPS)</a>
+                                <a href="${punto.gpsSalida}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-300 rounded-lg transition whitespace-nowrap">📍 Sal: ${punto.horaSalida.split(' ')[1] || ''} (Mapa GPS)</a>
+                            </div>
+                        `;
+                    } else {
+                        claseEstiloBorde = 'border-slate-200 bg-white border-l-4';
+                        // El botón de quitar cliente solo aparece si la ruta está activa (en desarrollo)
+                        const botonQuitarPunto = !docRuta.finalizada ? `
+                            <button type="button" onclick="event.stopPropagation(); eliminarClienteDeRutaAdmin('${docRuta.id}', ${idx}); window.cerrarDetalleRutaAdmin();" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition flex-shrink-0" title="Quitar punto de la ruta">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        ` : '';
+
+                        bloqueGestionInterna = `
+                            <div class="flex justify-between items-center mt-1 text-xs text-slate-400 italic font-medium">
+                                <span>Establecimiento pendiente en la agenda</span>
+                                ${botonQuitarPunto}
+                            </div>
+                        `;
+                    }
+
+                    const cardFilaCliente = document.createElement('div');
+                    cardFilaCliente.className = `p-4 rounded-2xl border ${claseEstiloBorde} text-left`;
+                    cardFilaCliente.innerHTML = `
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="min-w-0 flex-1">
+                                <span class="font-extrabold text-slate-900 block truncate text-sm uppercase tracking-wide">${punto.nombre}</span>
+                                <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-500 mt-0.5 font-medium">
+                                    <div>Meta Venta: <strong class="text-slate-700">${punto.estimadoVenta}</strong></div>
+                                    <div>Meta Cobro: <strong class="text-slate-700">${punto.estimadoCobro}</strong></div>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-0.5 text-[9px] font-black rounded-full uppercase flex-shrink-0 ${punto.visitado ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-slate-100 text-slate-500'}">${punto.visitado ? (punto.motivoReal || 'Visita') : 'No visitado'}</span>
+                        </div>
+                        ${bloqueGestionInterna}
+                    `;
+                    container.appendChild(cardFilaCliente);
+                });
+            } else {
+                container.innerHTML = `<p class="text-xs text-slate-400 italic py-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">Esta agenda no cuenta con clientes programados.</p>`;
+            }
+
+            // Formatear e inyectar el bloque de totales generales consolidados dentro del Modal
+            const fmt = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
+            document.getElementById('ruta-modal-totales-box').innerHTML = `
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-brand-50/50 p-3 rounded-2xl border border-brand-100 text-xs">
+                    <div><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Venta</span><span class="font-bold text-slate-700">${fmt(sumaVentaEst)}</span></div>
+                    <div><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Cobro</span><span class="font-bold text-slate-700">${fmt(sumaCobroEst)}</span></div>
+                    <div><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Venta Real</span><span class="font-black text-emerald-600 text-sm">${fmt(sumaVentaReal)}</span></div>
+                    <div><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Cobro Real</span><span class="font-black text-blue-600 text-sm">${fmt(sumaCobroReal)}</span></div>
+                </div>
+            `;
+
+            document.getElementById('ruta-detalle-modal').classList.remove('hidden');
+        };
+
+        window.cerrarDetalleRutaAdmin = function() {
+            document.getElementById('ruta-detalle-modal').classList.add('hidden');
+        };
 
         // --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL CORREGIDA Y REFORZADA ---
         function eliminarPedidoGeneral(id) {
