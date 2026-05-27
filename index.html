@@ -4317,21 +4317,24 @@ TIENDA
             rutaPlanificada.forEach((item, index) => {
                 const card = document.createElement('div');
                 
-                // Construcción inteligente de la etiqueta del cliente
+                // Construcción limpia de la insignia (con margen derecho para separarse de otros textos)
                 let badgeDistintivo = '';
                 if (item.esRollover) {
-                    badgeDistintivo = `<span class="inline-block ml-2 px-1.5 py-0.5 text-[9px] font-bold bg-purple-100 text-purple-800 rounded uppercase">⏱️ De Ayer</span>`;
+                    badgeDistintivo = `<span class="inline-block mr-2 px-1.5 py-0.5 text-[9px] font-bold bg-purple-100 text-purple-800 rounded uppercase whitespace-nowrap">⏱️ De Ayer</span>`;
                 } else if (item.esExtra) {
-                    badgeDistintivo = `<span class="inline-block ml-2 px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded uppercase">✨ Extra</span>`;
+                    badgeDistintivo = `<span class="inline-block mr-2 px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded uppercase whitespace-nowrap">✨ Extra</span>`;
                 }
 
                 if (item.visitado) {
                     card.className = "bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300";
                     card.innerHTML = `
                         <div>
-                            <div class="flex justify-between items-start">
-                                <span class="text-sm font-black text-slate-900 tracking-tight uppercase">${item.nombre} ${badgeDistintivo}</span>
-                                <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-800 rounded-full uppercase">Visitado</span>
+                            <div class="flex justify-between items-start gap-2">
+                                <div class="min-w-0 flex-1">
+                                    <span class="text-sm font-black text-slate-900 tracking-tight uppercase block truncate">${item.nombre}</span>
+                                    <div class="mt-1 flex flex-wrap items-center">${badgeDistintivo}</div>
+                                </div>
+                                <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-800 rounded-full uppercase flex-shrink-0">Visitado</span>
                             </div>
                             <div class="mt-2 text-[11px] text-slate-500 font-medium space-y-0.5">
                                 <p>⏱️ Entrada: ${item.horaEntrada.split(' ')[1]} | Salida: ${item.horaSalida.split(' ')[1]}</p>
@@ -4342,23 +4345,29 @@ TIENDA
                 } else if (indiceClienteActivo === index) {
                     card.className = "bg-brand-50 border-2 border-brand-500 rounded-2xl p-4 shadow-sm transition-all duration-300";
                     card.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-sm font-black text-slate-900 tracking-tight block uppercase">${item.nombre} ${badgeDistintivo}</span>
-                                <span class="text-[11px] font-bold text-brand-600 block mt-0.5">📍 Recopilando gestión en sitio...</span>
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="min-w-0 flex-1">
+                                <span class="text-sm font-black text-slate-900 tracking-tight block uppercase truncate">${item.nombre}</span>
+                                <div class="mt-1 flex flex-wrap items-center gap-y-1">
+                                    ${badgeDistintivo}
+                                    <span class="text-[11px] font-bold text-brand-600 block">📍 Recopilando gestión en sitio...</span>
+                                </div>
                             </div>
-                            <span class="px-2 py-0.5 text-[10px] font-bold bg-brand-600 text-white rounded-full uppercase animate-pulse">Abierto</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold bg-brand-600 text-white rounded-full uppercase animate-pulse flex-shrink-0">Abierto</span>
                         </div>
                     `;
                 } else {
                     const hayAlguienActivo = indiceClienteActivo !== null;
-                    card.className = `bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center transition-all duration-300 ${hayAlguienActivo ? 'opacity-50' : ''}`;
+                    card.className = `bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center gap-2 transition-all duration-300 ${hayAlguienActivo ? 'opacity-50' : ''}`;
                     card.innerHTML = `
-                        <div class="min-w-0 flex-1 pr-3">
-                            <span class="text-sm font-bold text-slate-900 block truncate uppercase">${item.nombre} ${badgeDistintivo}</span>
-                            <span class="text-[10px] text-slate-400 font-medium block mt-0.5">Meta: V: ${item.estimadoVenta} | C: ${item.estimadoCobro}</span>
+                        <div class="min-w-0 flex-1 pr-1">
+                            <span class="text-sm font-bold text-slate-900 block truncate uppercase">${item.nombre}</span>
+                            <div class="mt-1 flex flex-wrap items-center gap-y-1">
+                                ${badgeDistintivo}
+                                <span class="text-[10px] text-slate-400 font-medium block">Meta: V: ${item.estimadoVenta} | C: ${item.estimadoCobro}</span>
+                            </div>
                         </div>
-                        <button type="button" onclick="iniciarVisitaCliente(${index})" ${hayAlguienActivo ? 'disabled' : ''} class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition whitespace-nowrap shadow-sm">
+                        <button type="button" onclick="iniciarVisitaCliente(${index})" ${hayAlguienActivo ? 'disabled' : ''} class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition whitespace-nowrap shadow-sm flex-shrink-0">
                             Iniciar Visita
                         </button>
                     `;
@@ -4366,7 +4375,7 @@ TIENDA
                 contenedor.appendChild(card);
             });
 
-            // EL BOTÓN SIEMPRE ESTARÁ DISPONIBLE SI HAY CLIENTES EN LA LISTA
+            // EL BOTÓN SIEMPRE ESTARÁ DISPOLIBLE SI HAY CLIENTES EN LA LISTA
             if (totalClientes > 0) {
                 const divBotonCierre = document.createElement('div');
                 divBotonCierre.className = "pt-4 fade-in";
