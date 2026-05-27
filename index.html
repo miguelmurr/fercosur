@@ -524,7 +524,11 @@
                             </div>
 
                             <div class="pt-2">
+                                <div class="pt-2">
                                 <button type="submit" id="btn-finalizar-visita-registro" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold text-sm transition duration-150 shadow-md shadow-emerald-100 flex items-center justify-center">
+                                    Finalizar Registro y Sellar Salida
+                                </button>
+                            </div>
                                     Finalizar Registro y Sellar Salida (GPS)
                                 </button>
                             </div>
@@ -941,9 +945,8 @@
                                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Motivo</th>
                                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Venta</th>
                                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cobro</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Ubicación</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Verificación</th>
                                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Acciones</th>
-                            </tr>
                         </thead>
                         <tbody id="tbody-general" class="divide-y divide-slate-100 text-sm text-slate-700">
                             </tbody>
@@ -4258,9 +4261,8 @@ TIENDA
             document.getElementById('wrapper-planificacion').classList.add('hidden');
             document.getElementById('btn-regresar-ruta').classList.add('hidden'); // Sin retorno hacia atrás
             document.getElementById('wrapper-jornada-activa').classList.remove('hidden');
-
             document.getElementById('titulo-modulo-ventas').innerText = "Ruta de Trabajo Activa";
-            document.getElementById('subtitulo-modulo-ventas').innerText = "Gestión secuencial en campo supervisada por GPS.";
+            document.getElementById('subtitulo-modulo-ventas').innerText = "Gestión secuencial en campo para el flujo diario.";
 
             renderListaJornada();
         }
@@ -4394,28 +4396,27 @@ TIENDA
             const formCampo = document.getElementById('formulario-visita-campo');
             formCampo.classList.remove('hidden');
             document.getElementById('txt-cliente-activo-nombre').innerText = cliente.nombre;
-            document.getElementById('btn-finalizar-visita-registro').innerText = "Obteniendo GPS de Entrada...";
+            document.getElementById('btn-finalizar-visita-registro').innerText = "Validando Apertura...";
             document.getElementById('btn-finalizar-visita-registro').disabled = true;
-
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         cliente.gpsEntrada = `http://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
-                        document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida (GPS)";
+                        document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida";
                         document.getElementById('btn-finalizar-visita-registro').disabled = false;
                         guardarJornadaEnStorage();
                     },
                     (error) => {
-                        cliente.gpsEntrada = "No compartida o sin señal";
-                        document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida (GPS)";
+                        cliente.gpsEntrada = "Confirmado sin detalles";
+                        document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida";
                         document.getElementById('btn-finalizar-visita-registro').disabled = false;
                         guardarJornadaEnStorage();
                     },
                     { enableHighAccuracy: true, timeout: 8000 }
                 );
             } else {
-                cliente.gpsEntrada = "GPS No Soportado";
-                document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida (GPS)";
+                cliente.gpsEntrada = "No soportado";
+                document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida";
                 document.getElementById('btn-finalizar-visita-registro').disabled = false;
                 guardarJornadaEnStorage();
             }
@@ -4463,7 +4464,7 @@ TIENDA
             e.preventDefault();
             
             const btn = document.getElementById('btn-finalizar-visita-registro');
-            btn.innerText = "Obteniendo GPS de Salida...";
+            btn.innerText = "Validando Cierre...";
             btn.disabled = true;
 
             const index = indiceClienteActivo;
@@ -5688,9 +5689,9 @@ TIENDA
             e.preventDefault();
             
             // Cambiamos el texto del botón temporalmente para que el vendedor sepa que está cargando el GPS
-            const btnSubmit = e.target.querySelector('button[type="submit"]');
+           const btnSubmit = e.target.querySelector('button[type="submit"]');
             const originalText = btnSubmit.innerText;
-            btnSubmit.innerText = "Obteniendo GPS...";
+            btnSubmit.innerText = "Procesando Registro...";
             btnSubmit.disabled = true;
 
             const nombre = document.getElementById('gen-nombre').value.trim();
@@ -5715,7 +5716,7 @@ TIENDA
                     toggleMotivoCampos(); 
                     btnSubmit.innerText = originalText;
                     btnSubmit.disabled = false;
-                    showToast('¡Registro Exitoso!', 'Visita y ubicación guardadas correctamente.', 'success');
+                    showToast('¡Registro Exitoso!', 'Visita guardada correctamente.', 'success');
                     showView('menu');
                 }).catch((error) => {
                     btnSubmit.innerText = originalText;
@@ -5907,8 +5908,10 @@ guardarEnNube(linkMapa);
                                 <td class="px-6 py-4 text-blue-600 font-bold">${item.montoCobro || '$0'}</td>
                                 <td class="px-6 py-4 text-xs">
                                     ${item.ubicacion && item.ubicacion.startsWith('http') 
-                                        ? `<a href="${item.ubicacion}" target="_blank" class="text-brand-600 hover:text-brand-800 underline font-semibold">Ver Mapa</a>` 
-                                        : `<span class="text-slate-400 italic">${item.ubicacion || 'N/A'}</span>`}
+                                        
+? `<a href="${item.ubicacion}" target="_blank" class="text-brand-600 hover:text-brand-800 underline font-semibold">Ver Registro</a>` 
+                                        : `<span class="text-slate-400 italic">${item.ubicacion ||
+                                    'N/A'}</span>`}
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
@@ -6146,7 +6149,7 @@ guardarEnNube(linkMapa);
                     'Motivo de Visita': item.motivo || 'N/A',
                     'Monto Venta': parseInt((item.montoVenta || '0').replace(/\D/g, ''), 10) || 0,
                     'Monto Cobro': parseInt((item.montoCobro || '0').replace(/\D/g, ''), 10) || 0,
-                    'Link Ubicación': item.ubicacion || 'N/A'
+                    'Enlace de Registro': item.ubicacion || 'N/A'
                 }));
             };
 
@@ -6156,16 +6159,14 @@ guardarEnNube(linkMapa);
             consolidatedList.sort((a, b) => new Date(b['Hora de Registro']) - new Date(a['Hora de Registro']));
 
             const ws = XLSX.utils.json_to_sheet(consolidatedList);
-            
-            // Ampliamos los tamaños al máximo para que quepan los nombres largos y los links de Google Maps
             ws['!cols'] = [
                 { wch: 22 }, // Hora de Registro
                 { wch: 40 }, // Nombre Completo del Vendedor
-                { wch: 50 }, // Nombre del Cliente (Espacio de sobra para nombres largos)
+                { wch: 50 }, // Nombre del Cliente
                 { wch: 20 }, // Motivo de Visita
                 { wch: 18 }, // Monto Venta
                 { wch: 18 }, // Monto Cobro
-                { wch: 70 }  // Link Ubicación de Google Maps (Ultra ancho)
+                { wch: 70 }  // Enlace de Verificación del Registro
             ];
 
             // Pintamos los encabezados (A1 hasta G1) de azul con texto blanco centrado
@@ -6194,7 +6195,7 @@ guardarEnNube(linkMapa);
                     const cellUbicacion = ws[XLSX.utils.encode_cell({c: 6, r: R})];
                     if (cellUbicacion && cellUbicacion.v && cellUbicacion.v.startsWith('http')) {
                         // Creamos el hipervínculo interno en el archivo Excel
-                        cellUbicacion.l = { Target: cellUbicacion.v, Tooltip: "Abrir en Google Maps" };
+                        cellUbicacion.l = { Target: cellUbicacion.v, Tooltip: "Abrir Verficación" };
                         // Le damos un estilo estético de link azul y subrayado
                         cellUbicacion.s = {
                             font: { color: { rgb: "0069C4" }, underline: true, name: "Arial", sz: 10 }
@@ -6265,7 +6266,7 @@ guardarEnNube(linkMapa);
                 const cellUbicacion = ws[XLSX.utils.encode_cell({c: 6, r: R})];
                 if (cellUbicacion && cellUbicacion.v && cellUbicacion.v.startsWith('http')) {
                     // Creamos el hipervínculo interno en el archivo Excel
-                    cellUbicacion.l = { Target: cellUbicacion.v, Tooltip: "Abrir en Google Maps" };
+                    cellUbicacion.l = { Target: cellUbicacion.v, Tooltip: "Abrir Verificación" };
                     // Le damos un estilo estético de link azul y subrayado
                     cellUbicacion.s = {
                         font: { color: { rgb: "0069C4" }, underline: true, name: "Arial", sz: 10 }
@@ -6609,8 +6610,8 @@ guardarEnNube(linkMapa);
                                 <div><span class="text-slate-400 block font-medium">Cobro Efectuado:</span> <strong class="text-blue-700 font-bold">${punto.montoCobroReal}</strong></div>
                             </div>
                             <div class="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
-                                <a href="${punto.gpsEntrada}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-500 hover:text-brand-600 hover:border-brand-300 rounded-lg transition whitespace-nowrap">📍 Ent: ${punto.horaEntrada.split(' ')[1] || ''} (Mapa GPS)</a>
-                                <a href="${punto.gpsSalida}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-300 rounded-lg transition whitespace-nowrap">📍 Sal: ${punto.horaSalida.split(' ')[1] || ''} (Mapa GPS)</a>
+                                <a href="${punto.gpsEntrada}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-500 hover:text-brand-600 hover:border-brand-300 rounded-lg transition whitespace-nowrap">📍 Ent: ${punto.horaEntrada.split(' ')[1] || ''} (Verificar)</a>
+                                <a href="${punto.gpsSalida}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-300 rounded-lg transition whitespace-nowrap">📍 Sal: ${punto.horaSalida.split(' ')[1] || ''} (Verificar)</a>
                             </div>
                         `;
                     } else {
