@@ -494,6 +494,28 @@
                         </div>
                     </div>
 
+                    <!-- FORMULARIO INTEGRADO PARA AÑADIR VISITAS EXTRAS EN CALIENTE -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                        <span class="block text-xs font-bold text-amber-700 uppercase tracking-widest">✨ Registrar Visita Extra (Emergente)</span>
+                        <div class="relative">
+                            <input type="text" id="extra-cliente-input" autocomplete="off" oninput="filterClientsExtra()" onfocus="showClientsDropdownExtra()" onblur="hideClientsDropdownExtra()" class="block w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 font-medium" placeholder="Buscar cliente adicional asignado...">
+                            <div id="extra-cliente-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto divide-y divide-slate-100"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="extra-estimado-venta" class="block text-[11px] font-semibold text-slate-600">Est. Venta</label>
+                                <input type="text" id="extra-estimado-venta" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-emerald-600 bg-white" placeholder="$0">
+                            </div>
+                            <div>
+                                <label for="extra-estimado-cobro" class="block text-[11px] font-semibold text-slate-600">Est. Cobro</label>
+                                <input type="text" id="extra-estimado-cobro" inputmode="numeric" oninput="formatCurrencyInput(this)" class="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-blue-600 bg-white" placeholder="$0">
+                            </div>
+                        </div>
+                        <button type="button" onclick="agregarClienteExtraARuta()" class="w-full bg-amber-500 hover:bg-amber-600 text-white py-2.5 rounded-xl font-bold text-xs transition duration-150 shadow-sm">
+                            + Sumar Visita Extra a mi Agenda
+                        </button>
+                    </div>
+
                     <div class="space-y-3.5" id="contenedor-lista-jornada"></div>
 
                     <div id="formulario-visita-campo" class="hidden border-t border-slate-200 pt-6 space-y-5 fade-in">
@@ -4214,18 +4236,30 @@ TIENDA
             rutaPlanificada.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
+                
+                const badgeRollover = item.esRollover 
+                    ? `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[9px] font-bold bg-purple-100 text-purple-800 rounded">⏱️ Pendiente de Ayer</span>` 
+                    : '';
+                
+                const accionHtml = item.esRollover
+                    ? `<span class="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100">Obligatorio</span>`
+                    : `<button type="button" onclick="eliminarClienteDePlanificacion(${index})" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition">
+                            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                       </button>`;
+
                 tr.innerHTML = `
-                    <td class="p-3 font-bold text-slate-900 max-w-[180px] truncate">${item.nombre}</td>
+                    <td class="p-3 font-bold text-slate-900 max-w-[180px] truncate">
+                        ${item.nombre}
+                        ${badgeRollover}
+                    </td>
                     <td class="p-3 text-center text-[11px]">
                         <span class="text-emerald-600 font-bold block">V: ${item.estimadoVenta}</span>
                         <span class="text-blue-600 font-bold block">C: ${item.estimadoCobro}</span>
                     </td>
                     <td class="p-3 text-center">
-                        <button type="button" onclick="eliminarClienteDePlanificacion(${index})" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition">
-                            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                        </button>
+                        ${accionHtml}
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -4283,13 +4317,20 @@ TIENDA
             rutaPlanificada.forEach((item, index) => {
                 const card = document.createElement('div');
                 
+                // Construcción inteligente de la etiqueta del cliente
+                let badgeDistintivo = '';
+                if (item.esRollover) {
+                    badgeDistintivo = `<span class="inline-block ml-2 px-1.5 py-0.5 text-[9px] font-bold bg-purple-100 text-purple-800 rounded uppercase">⏱️ De Ayer</span>`;
+                } else if (item.esExtra) {
+                    badgeDistintivo = `<span class="inline-block ml-2 px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded uppercase">✨ Extra</span>`;
+                }
+
                 if (item.visitado) {
-                    // Tarjeta Verde: Ya fue completada con éxito
                     card.className = "bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300";
                     card.innerHTML = `
                         <div>
                             <div class="flex justify-between items-start">
-                                <span class="text-sm font-black text-slate-900 tracking-tight">${item.nombre}</span>
+                                <span class="text-sm font-black text-slate-900 tracking-tight uppercase">${item.nombre} ${badgeDistintivo}</span>
                                 <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-800 rounded-full uppercase">Visitado</span>
                             </div>
                             <div class="mt-2 text-[11px] text-slate-500 font-medium space-y-0.5">
@@ -4299,25 +4340,23 @@ TIENDA
                         </div>
                     `;
                 } else if (indiceClienteActivo === index) {
-                    // Tarjeta Azul: Es el cliente que está siendo atendido actualmente
                     card.className = "bg-brand-50 border-2 border-brand-500 rounded-2xl p-4 shadow-sm transition-all duration-300";
                     card.innerHTML = `
                         <div class="flex justify-between items-start">
                             <div>
-                                <span class="text-sm font-black text-slate-900 tracking-tight block">${item.nombre}</span>
+                                <span class="text-sm font-black text-slate-900 tracking-tight block uppercase">${item.nombre} ${badgeDistintivo}</span>
                                 <span class="text-[11px] font-bold text-brand-600 block mt-0.5">📍 Recopilando gestión en sitio...</span>
                             </div>
                             <span class="px-2 py-0.5 text-[10px] font-bold bg-brand-600 text-white rounded-full uppercase animate-pulse">Abierto</span>
                         </div>
                     `;
                 } else {
-                    // Tarjetas Grises/Bloqueadas de la ruta secuencial
                     const hayAlguienActivo = indiceClienteActivo !== null;
                     card.className = `bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center transition-all duration-300 ${hayAlguienActivo ? 'opacity-50' : ''}`;
                     card.innerHTML = `
                         <div class="min-w-0 flex-1 pr-3">
-                            <span class="text-sm font-bold text-slate-900 block truncate">${item.nombre}</span>
-                            <span class="text-[10px] text-slate-400 font-medium block mt-0.5">Meta matutina: V: ${item.estimadoVenta} | C: ${item.estimadoCobro}</span>
+                            <span class="text-sm font-bold text-slate-900 block truncate uppercase">${item.nombre} ${badgeDistintivo}</span>
+                            <span class="text-[10px] text-slate-400 font-medium block mt-0.5">Meta: V: ${item.estimadoVenta} | C: ${item.estimadoCobro}</span>
                         </div>
                         <button type="button" onclick="iniciarVisitaCliente(${index})" ${hayAlguienActivo ? 'disabled' : ''} class="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold transition whitespace-nowrap shadow-sm">
                             Iniciar Visita
@@ -4327,24 +4366,41 @@ TIENDA
                 contenedor.appendChild(card);
             });
 
-            // SALIDA DE EMERGENCIA COMERCIAL: Si completó todo el recorrido, inyectamos el botón de finalización de jornada
-            if (completados === totalClientes && totalClientes > 0) {
+            // EL BOTÓN SIEMPRE ESTARÁ DISPONIBLE SI HAY CLIENTES EN LA LISTA
+            if (totalClientes > 0) {
                 const divBotonCierre = document.createElement('div');
                 divBotonCierre.className = "pt-4 fade-in";
                 divBotonCierre.innerHTML = `
-                    <button type="button" onclick="terminarJornadaCompleta()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-xl font-black text-sm transition duration-150 shadow-lg shadow-emerald-100 text-center uppercase tracking-wider">
-                        🏁 Terminar mi Jornada de Hoy
+                    <button type="button" onclick="terminarJornadaCompleta()" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-xl font-black text-sm transition duration-150 shadow-md text-center uppercase tracking-wider">
+                        🏁 Finalizar mi Jornada de Hoy
                     </button>
                 `;
                 contenedor.appendChild(divBotonCierre);
             }
         }
 
-        // Función Maestra encargada de romper el candado local y liberar la aplicación
+        // Función Maestra encargada de romper el candado local y procesar la cola de no visitados
         function terminarJornadaCompleta() {
-            // 1. Si hay señal, cambiamos el estado de la ruta a finalizada con su respectivo TTL de 60 días
+            // 1. Extraemos de forma quirúrgica los clientes que NO fueron visitados
+            const noVisitados = rutaPlanificada.filter(c => !c.visitado).map(c => ({
+                nombre: c.nombre,
+                estimadoVenta: c.estimadoVenta || '$0',
+                estimadoCobro: c.estimadoCobro || '$0',
+                esRollover: true, // Queda marcado con el flag permanente de atrasado
+                visitado: false,
+                horaEntrada: '', gpsEntrada: '', horaSalida: '', gpsSalida: '', motivoReal: '', montoVentaReal: '', montoCobroReal: ''
+            }));
+
+            // Guardamos en el baúl del dispositivo los pendientes arrastrados para mañana
+            if (noVisitados.length > 0) {
+                localStorage.setItem('fercosur_rollover_' + activeSeller, JSON.stringify(noVisitados));
+            } else {
+                localStorage.removeItem('fercosur_rollover_' + activeSeller);
+            }
+
+            // 2. Si hay señal, cambiamos el estado de la ruta a finalizada en la nube
             if (navigator.onLine && activeSeller && currentRouteId) {
-                db.collection("rutas_activas").doc(currentRouteId).set({ // Archiva usando el ID de sesión
+                db.collection("rutas_activas").doc(currentRouteId).set({
                     vendedor: activeSeller,
                     ruta: rutaPlanificada,
                     finalizada: true,
@@ -4353,23 +4409,21 @@ TIENDA
                 }).catch(e => console.error("Error al archivar jornada:", e));
             }
 
-           // 2. ROMPEMOS EL CANDADO: Borramos la jornada de la memoria interna de este vendedor específico
+           // 3. Borramos el estado activo local de este asesor
             if (activeSeller) {
                 localStorage.removeItem('fercosur_jornada_' + activeSeller);
             }
 
-            // 3. Devolvemos todas las variables globales a su estado de fábrica limpio
-            rutaPlanificada = [];
+            // 4. Cargamos de forma inmediata los no visitados en la matriz base para la siguiente jornada
+            rutaPlanificada = noVisitados;
             jornadaActiva = false;
             indiceClienteActivo = null;
-            currentRouteId = null; // Libera la variable global para la jornada del día siguiente
+            currentRouteId = null;
 
-            // 4. Dejamos las cajas de texto listas para el día de mañana
             document.getElementById('gen-nombre').value = '';
             document.getElementById('form-registro-campo').reset();
             renderTablaPlanificacion();
 
-            // 5. Apagamos la interfaz de ruta y encendemos el planificador original
             document.getElementById('wrapper-jornada-activa').classList.add('hidden');
             document.getElementById('formulario-visita-campo').classList.add('hidden');
             document.getElementById('wrapper-planificacion').classList.remove('hidden');
@@ -4378,10 +4432,98 @@ TIENDA
             document.getElementById('titulo-modulo-ventas').innerText = "Planificación de Jornada";
             document.getElementById('subtitulo-modulo-ventas').innerText = "Configure los clientes y las proyecciones de su ruta diaria.";
 
-            showToast('Jornada Finalizada', 'Los datos están a salvo y tu teléfono ha sido liberado.', 'success');
-            
-            // Regresamos al menú de selección principal de la web de Fercosur
+            showToast('Jornada Finalizada', 'Ruta guardada. Los clientes pendientes se agendaron para su próximo día de trabajo.', 'success');
             showView('menu');
+        }
+
+        // MOTORES LOGICOS PARA CONTROLAR LA INSERCIÓN DE CLIENTES EXTRAS EN CAMPO
+        function showClientsDropdownExtra() {
+            const dropdown = document.getElementById('extra-cliente-dropdown');
+            dropdown.classList.remove('hidden');
+            filterClientsExtra();
+        }
+
+        function filterClientsExtra() {
+            const inputCliente = document.getElementById('extra-cliente-input');
+            const dropdown = document.getElementById('extra-cliente-dropdown');
+            const inputVendedor = document.getElementById('gen-nombre').value.trim().toUpperCase(); 
+            const query = inputCliente.value.toLowerCase().trim();
+
+            dropdown.innerHTML = '';
+            if (!inputVendedor) return;
+
+            const matches = clients.filter(c => 
+                c.vendedor === inputVendedor && 
+                c.nombre.toLowerCase().includes(query)
+            );
+
+            if (matches.length === 0) {
+                const noResult = document.createElement('div');
+                noResult.className = 'px-3 py-2 text-xs text-slate-400 italic bg-slate-50 text-center';
+                noResult.innerText = 'No hay coincidencias';
+                dropdown.appendChild(noResult);
+            } else {
+                matches.forEach(client => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-brand-50 font-semibold transition flex justify-between items-center border-b border-slate-50 last:border-0';
+                    btn.innerHTML = `
+                        <span class="truncate pr-2">${client.nombre}</span>
+                        <span class="text-[9px] font-bold bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">${client.poblacion}</span>
+                    `;
+                    btn.onmousedown = (e) => {
+                        e.preventDefault();
+                        document.getElementById('extra-cliente-input').value = client.nombre;
+                        dropdown.classList.add('hidden');
+                    };
+                    dropdown.appendChild(btn);
+                });
+            }
+        }
+
+        function hideClientsDropdownExtra() {
+            setTimeout(() => {
+                const dropdown = document.getElementById('extra-cliente-dropdown');
+                if (dropdown) dropdown.classList.add('hidden');
+            }, 200);
+        }
+
+        function agregarClienteExtraARuta() {
+            const inputCliente = document.getElementById('extra-cliente-input');
+            const inputVenta = document.getElementById('extra-estimado-venta');
+            const inputCobro = document.getElementById('extra-estimado-cobro');
+
+            const clienteNom = inputCliente.value.trim().toUpperCase();
+            const estVenta = inputVenta.value.trim() || '$0';
+            const estCobro = inputCobro.value.trim() || '$0';
+
+            if (!clienteNom) {
+                showToast('Faltan Datos', 'Por favor seleccione un establecimiento.', 'error');
+                return;
+            }
+
+            if (rutaPlanificada.some(c => c.nombre === clienteNom)) {
+                showToast('Ya Agregado', 'Este cliente ya forma parte de su ruta en curso.', 'error');
+                return;
+            }
+
+            // Inserción limpia con la propiedad esExtra activada
+            rutaPlanificada.push({
+                nombre: clienteNom,
+                estimadoVenta: estVenta,
+                estimadoCobro: estCobro,
+                visitado: false,
+                esExtra: true, 
+                horaEntrada: '', gpsEntrada: '', horaSalida: '', gpsSalida: '', motivoReal: '', montoVentaReal: '', montoCobroReal: ''
+            });
+
+            inputCliente.value = '';
+            inputVenta.value = '';
+            inputCobro.value = '';
+
+            guardarJornadaEnStorage();
+            renderListaJornada();
+            showToast('Visita Extra Sumada', 'Establecimiento emergente integrado a la ruta.', 'success');
         }
 
         // Control de Tiempos: Dispara la captura invisible de llegada y despliega el formulario real
@@ -4867,9 +5009,16 @@ TIENDA
                     }
                 }
                 
-                rutaPlanificada = [];
+                // Si no hay jornada en desarrollo, cargamos el rollover de pendientes si existe
+                const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+                if (rolloverGuardado) {
+                    rutaPlanificada = JSON.parse(rolloverGuardado);
+                } else {
+                    rutaPlanificada = [];
+                }
                 jornadaActiva = false;
                 indiceClienteActivo = null;
+                renderTablaPlanificacion();
                 showView('menu');
             } else {
                 showView('login-ventas');
@@ -4894,7 +5043,6 @@ TIENDA
                     nameInput.classList.add('bg-slate-100', 'text-slate-400');
                 }
 
-                // Inyectar nombre limpio y género en el letrero principal
                 const info = obtenerInfoVendedorVisual(seller);
                 const tituloBienvenida = document.getElementById('txt-bienvenida-modulo');
                 if (tituloBienvenida) {
@@ -4906,6 +5054,17 @@ TIENDA
                     subtituloNombre.innerText = info.nombreVisual;
                     subtituloNombre.classList.remove('hidden');
                 }
+
+                // Cargamos el listado de arrastrados al iniciar sesión fresca
+                const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+                if (rolloverGuardado) {
+                    rutaPlanificada = JSON.parse(rolloverGuardado);
+                } else {
+                    rutaPlanificada = [];
+                }
+                jornadaActiva = false;
+                indiceClienteActivo = null;
+                renderTablaPlanificacion();
 
                 document.getElementById('form-login-ventas').reset();
                 showToast('Inicio de Sesión', `Bienvenido, ${info.nombreVisual}`, 'success');
@@ -6595,6 +6754,14 @@ guardarEnNube(linkMapa);
                     sumaVentaEst += estV;
                     sumaCobroEst += estC;
 
+                    // Marcador de procedencia del cliente en la auditoría del administrador
+                    let badgExtraRollover = '';
+                    if (punto.esExtra) {
+                        badgExtraRollover = `<span class="inline-block ml-1.5 px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-800 rounded border border-amber-200 uppercase">✨ Extra</span>`;
+                    } else if (punto.esRollover) {
+                        badgExtraRollover = `<span class="inline-block ml-1.5 px-1.5 py-0.5 text-[9px] font-black bg-purple-100 text-purple-800 rounded border border-purple-200 uppercase">⏱️ De Ayer</span>`;
+                    }
+
                     let bloqueGestionInterna = '';
                     let claseEstiloBorde = 'border-slate-200 bg-white';
 
@@ -6617,7 +6784,6 @@ guardarEnNube(linkMapa);
                         `;
                     } else {
                         claseEstiloBorde = 'border-slate-200 bg-white border-l-4';
-                        // El botón de quitar cliente solo aparece si la ruta está activa (en desarrollo)
                         const botonQuitarPunto = !docRuta.finalizada ? `
                             <button type="button" onclick="event.stopPropagation(); eliminarClienteDeRutaAdmin('${docRuta.id}', ${idx}); window.cerrarDetalleRutaAdmin();" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition flex-shrink-0" title="Quitar punto de la ruta">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -6637,7 +6803,7 @@ guardarEnNube(linkMapa);
                     cardFilaCliente.innerHTML = `
                         <div class="flex justify-between items-start gap-2">
                             <div class="min-w-0 flex-1">
-                                <span class="font-extrabold text-slate-900 block truncate text-sm uppercase tracking-wide">${punto.nombre}</span>
+                                <span class="font-extrabold text-slate-900 block truncate text-sm uppercase tracking-wide">${punto.nombre} ${badgExtraRollover}</span>
                                 <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-500 mt-0.5 font-medium">
                                     <div>Meta Venta: <strong class="text-slate-700">${punto.estimadoVenta}</strong></div>
                                     <div>Meta Cobro: <strong class="text-slate-700">${punto.estimadoCobro}</strong></div>
