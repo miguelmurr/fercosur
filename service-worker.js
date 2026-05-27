@@ -1,6 +1,6 @@
-const CACHE_NAME = 'fercosur-cache-v1';
+const CACHE_NAME = 'fercosur-cache-auto';
 
-// Listado de archivos esenciales que el celular guardará en su memoria física
+// Archivos iniciales esenciales para el arranque de la aplicación
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -10,27 +10,26 @@ const ASSETS_TO_CACHE = [
   './nuevo_logoplanilla.png'
 ];
 
-// 1. Evento de Instalación: Guarda los archivos en el disco duro del celular
+// 1. Instalación: Guarda la base inicial en el disco duro del celular
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('PWA: Almacenando interfaz y logos en el dispositivo...');
+        console.log('PWA: Guardando base inicial en el dispositivo...');
         return cache.addAll(ASSETS_TO_CACHE);
       })
       .then(() => self.skipWaiting())
   );
 });
 
-// 2. Evento de Activación: Limpia memorias viejas si haces actualizaciones futuras
+// 2. Activación: Toma el control inmediato de la aplicación
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            console.log('PWA: Limpiando caché obsoleta...');
-            return caches.delete(cache);
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
           }
         })
       );
@@ -38,22 +37,33 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. Evento Fetch: Intercepta las pantallas y las abre instantáneamente sin señal
+// 3. Interceptador Inteligente: Muestra lo guardado, pero actualiza en segundo plano
 self.addEventListener('fetch', (event) => {
-  // Ignorar peticiones de Firebase Firestore (ellas se manejan solas con su propia persistencia)
+  // Ignorar consultas directas a la base de datos de Firebase Firestore
   if (event.request.url.includes('firestore.googleapis.com')) {
     return;
   }
 
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // Si el archivo está en la memoria del celular (HTML, Manifest, Logos), lo entrega ya mismo
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        // Si no está en la memoria (como una consulta nueva), lo busca en internet
-        return fetch(event.request);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request).then((cachedResponse) => {
+        
+        // Creamos la consulta a internet en segundo plano
+        const fetchPromise = fetch(event.request).then((networkResponse) => {
+          // Si internet responde bien, guardamos una copia fresca en la memoria local
+          if (networkResponse && networkResponse.status === 200) {
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        }).catch(() => {
+          // Si falla internet (Modo Avión), no pasa nada, se ignora el error en silencio
+        });
+
+        // REGLA DE ORO AUTOMÁTICA: 
+        // Si el archivo está memorizado (HTML, logos, etc.), lo entrega YA.
+        // Si no está memorizado, espera la respuesta de internet.
+        return cachedResponse || fetchPromise;
+      });
+    })
   );
 });
