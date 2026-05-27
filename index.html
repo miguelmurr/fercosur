@@ -6076,7 +6076,6 @@ guardarEnNube(linkMapa);
             const tabGen = document.getElementById('tab-general');
             const tabDespachos = document.getElementById('tab-despachos');
             const tabRutas = document.getElementById('tab-rutas');
-
             // Restablecer estilos de los micro-cuadros verticales a su estado inactivo
             const claseInactiva = "w-12 h-12 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm";
             if(tabGen) tabGen.className = claseInactiva;
@@ -6087,6 +6086,10 @@ guardarEnNube(linkMapa);
             document.getElementById('table-despachos-view').classList.add('hidden');
             document.getElementById('table-rutas-view').classList.add('hidden');
             
+            // REGLA CORRECTIVA: Ocultar la barra masiva de visitas en las otras secciones
+            const toolbarVisitas = document.getElementById('toolbar-visitas-bulk');
+            if (toolbarVisitas) toolbarVisitas.classList.add('hidden');
+            
             const widgetTotales = document.getElementById('widget-totales-visitas');
             if (widgetTotales) widgetTotales.classList.add('hidden');
 
@@ -6094,6 +6097,7 @@ guardarEnNube(linkMapa);
                 if(tabGen) tabGen.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-brand-500 bg-brand-50 text-brand-600 transition shadow-sm";
                 document.getElementById('table-title').innerText = "Registros Visitas";
                 document.getElementById('table-general-view').classList.remove('hidden');
+                if (toolbarVisitas) toolbarVisitas.classList.remove('hidden'); // Se activa exclusivamente aquí
                 if (widgetTotales) widgetTotales.classList.remove('hidden');
             } else if (tabType === 'despachos') {
                 if(tabDespachos) tabDespachos.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-600 transition shadow-sm";
