@@ -235,6 +235,8 @@
 
 		</section>
 
+        </section>
+
         <section id="view-login-ventas" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div class="absolute inset-0 bg-[#f4f7fa]"></div>
@@ -257,7 +259,7 @@
                             <option value="FS IPIALES KATHERINE">FS IPIALES KATHERINE</option>
                             <option value="FS NOR OCCIDENTE ALEJANDRO MONROY">FS NOR OCCIDENTE ALEJANDRO MONROY</option>
                             <option value="FS NORTE 1 EIMER">FS NORTE 1 EIMER</option>
-                            <option value="FS NORTE 2 DIEGO MARTINEZ">FS NORTE 2 DIEGO MARTINEZ</option>
+                            <option value="FS NORTE 2 DIEGO MARTINEZ">FS DIEGO MARTINEZ</option>
                             <option value="FS OCCIDENTE LILIANA ORDOÑEZ">FS OCCIDENTE LILIANA ORDOÑEZ</option>
                             <option value="FS PASTO 1 GLORIA VIVEROS">FS PASTO 1 GLORIA VIVEROS</option>
                             <option value="FS PASTO 2 ROLAND LOPEZ">FS PASTO 2 ROLAND LOPEZ</option>
@@ -288,60 +290,7 @@
             </div>
         </section>
         
-		<section id="view-login-ventas" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
-            <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <div class="absolute inset-0 bg-[#f4f7fa]"></div>
-                <div class="absolute top-[-5%] left-[-10%] w-[600px] h-[600px] bg-brand-500/10 rounded-full wave-glow"></div>
-            </div>
-            
-            <div class="max-w-md w-full bg-white border border-brand-700/30 rounded-3xl p-6 sm:p-8 shadow-xl relative z-10 space-y-6">
-                <div class="text-center">
-                    <span class="px-3 py-1 text-xs font-bold bg-brand-50 text-brand-700 rounded-full uppercase tracking-widest">Módulo de Ventas</span>
-                    <h2 class="text-2xl font-black text-slate-900 mt-3 tracking-tight">Acceso de Asesores</h2>
-                    <p class="text-xs text-slate-500 mt-1">Seleccione su perfil individual para gestionar su ruta y agenda del día.</p>
-                </div>
-
-                <form id="form-login-ventas" onsubmit="submitLoginVentas(event)" class="space-y-4">
-                    <div>
-                        <label for="login-vendedor-select" class="block text-sm font-semibold text-slate-700">Nombre del Asesor</label>
-                        <select id="login-vendedor-select" required class="mt-1.5 block w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 bg-white font-semibold focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm">
-                            <option value="" disabled selected>Seleccione su perfil...</option>
-                            <option value="FS CAUCA FABIAN JIMENEZ">FS CAUCA FABIAN JIMENEZ</option>
-                            <option value="FS IPIALES KATHERINE">FS IPIALES KATHERINE</option>
-                            <option value="FS NOR OCCIDENTE ALEJANDRO MONROY">FS NOR OCCIDENTE ALEJANDRO MONROY</option>
-                            <option value="FS NORTE 1 EIMER">FS NORTE 1 EIMER</option>
-                            <option value="FS NORTE 2 DIEGO MARTINEZ">FS NORTE 2 DIEGO MARTINEZ</option>
-                            <option value="FS OCCIDENTE LILIANA ORDOÑEZ">FS OCCIDENTE LILIANA ORDOÑEZ</option>
-                            <option value="FS PASTO 1 GLORIA VIVEROS">FS PASTO 1 GLORIA VIVEROS</option>
-                            <option value="FS PASTO 2 ROLAND LOPEZ">FS PASTO 2 ROLAND LOPEZ</option>
-                            <option value="FS PUTUMAYO 1 LUIS MIGUEL">FS PUTUMAYO 1 LUIS MIGUEL</option>
-                            <option value="FS PUTUMAYO 2 EDITH SANCHEZ">FS PUTUMAYO 2 EDITH SANCHEZ</option>
-                            <option value="FS PUTUMAYO 3 EDINSON">FS PUTUMAYO 3 EDINSON</option>
-                            <option value="FS SUR HAROLD MARTINEZ">FS SUR HAROLD MARTINEZ</option>
-                            <option value="FS VIA TUMACO CRISTINA BENAVIDES">FS VIA TUMACO CRISTINA BENAVIDES</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="login-vendedor-pin" class="block text-sm font-semibold text-slate-700">PIN de Seguridad (4 Dígitos)</label>
-                        <input type="password" id="login-vendedor-pin" required maxlength="4" inputmode="numeric" placeholder="••••" class="mt-1.5 block w-full text-center text-xl font-black tracking-widest rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:text-sm bg-slate-50">
-                    </div>
-
-                    <p id="login-ventas-error-msg" class="hidden text-xs text-red-600 font-bold text-center">Contraseña o PIN incorrecto. Inténtelo nuevamente.</p>
-
-                    <div class="pt-2 flex gap-3">
-                        <button type="button" onclick="goToPortal()" class="w-1/3 py-3 px-4 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition text-sm text-center">
-                            Atrás
-                        </button>
-                        <button type="submit" class="flex-1 py-3 px-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-md shadow-brand-100 transition text-sm">
-                            Iniciar Sesión
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
-        
-       <section id="view-menu" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
+        <section id="view-menu" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
             
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div class="absolute inset-0 bg-[#f0f6fc]"></div>
@@ -423,9 +372,8 @@
                 </button>
             </div>
         </section>
-
-
-        <!-- VISTA 2: FORMULARIO REGISTRO GENERAL -->
+        
+		<!-- VISTA 2: FORMULARIO REGISTRO GENERAL -->
        <section id="view-form-general" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
             
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -4781,105 +4729,7 @@ TIENDA
             }
         }
         
-
-       let activeSeller = null;
-
-        function checkVentasAuth() {
-            const session = localStorage.getItem('fercosur_seller_session');
-            if (session) {
-                activeSeller = session;
-                const nameInput = document.getElementById('gen-nombre');
-                if (nameInput) {
-                    nameInput.value = activeSeller;
-                    nameInput.setAttribute('readonly', 'readonly');
-                    nameInput.classList.add('bg-slate-100', 'text-slate-400');
-                }
-                
-                // Actualizar el indicador visual del nombre del asesor en el menú
-                const labelMenu = document.getElementById('txt-active-seller-name');
-                if (labelMenu) {
-                    labelMenu.innerText = activeSeller;
-                }
-                
-                // Cargar estado de jornada individual guardada de este asesor
-                const sessionGuardada = localStorage.getItem('fercosur_jornada_' + activeSeller);
-                if (sessionGuardada) {
-                    const estado = JSON.parse(sessionGuardada);
-                    if (estado && estado.jornadaActiva) {
-                        rutaPlanificada = estado.ruta || [];
-                        jornadaActiva = estado.jornadaActiva;
-                        indiceClienteActivo = estado.indiceClienteActivo;
-                        
-                        if (indiceClienteActivo !== null) {
-                            showView('form-general');
-                            activarInterfazJornadaReal();
-                            document.getElementById('formulario-visita-campo').classList.remove('hidden');
-                            document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
-                            document.getElementById('btn-finalizar-visita-registro').disabled = false;
-                            return;
-                        } else {
-                            showView('form-general');
-                            activarInterfazJornadaReal();
-                            return;
-                        }
-                    }
-                }
-                
-                // Si no tiene ruta activa previa, lo envía al menú normal de forma limpia
-                rutaPlanificada = [];
-                jornadaActiva = false;
-                indiceClienteActivo = null;
-                showView('menu');
-            } else {
-                showView('login-ventas');
-            }
-        }
-
-        function submitLoginVentas(e) {
-            e.preventDefault();
-            const seller = document.getElementById('login-vendedor-select').value;
-            const pin = document.getElementById('login-vendedor-pin').value;
-            const errorMsg = document.getElementById('login-ventas-error-msg');
-
-            if (pin === '4545') {
-                errorMsg.classList.add('hidden');
-                localStorage.setItem('fercosur_seller_session', seller);
-                activeSeller = seller;
-
-                const nameInput = document.getElementById('gen-nombre');
-                if (nameInput) {
-                    nameInput.value = seller;
-                    nameInput.setAttribute('readonly', 'readonly');
-                    nameInput.classList.add('bg-slate-100', 'text-slate-400');
-                }
-
-                document.getElementById('form-login-ventas').reset();
-                showToast('Inicio de Sesión', `Bienvenido, ${seller}`, 'success');
-                showView('menu');
-            } else {
-                errorMsg.classList.remove('hidden');
-                document.getElementById('login-vendedor-pin').value = '';
-                document.getElementById('login-vendedor-pin').focus();
-            }
-        }
-
-		function logoutVentas() {
-            // Remueve la sesión activa pero preserva el rutero offline por si vuelve a entrar
-            localStorage.removeItem('fercosur_seller_session');
-            activeSeller = null;
-            
-            const nameInput = document.getElementById('gen-nombre');
-            if (nameInput) {
-                nameInput.value = '';
-                nameInput.removeAttribute('readonly');
-                nameInput.classList.remove('bg-slate-100', 'text-slate-400');
-            }
-            
-            showToast('Sesión Cerrada', 'Se ha cerrado la sesión del asesor correctamente.', 'success');
-            goToPortal();
-        }
-
-        let activeSeller = null;
+     let activeSeller = null;
 
         // Diccionario estricto para extraer nombre limpio en MAYÚSCULAS y detectar género
         function obtenerInfoVendedorVisual(codigoCompleto) {
@@ -4889,61 +4739,20 @@ TIENDA
             let esFemenino = false;
 
             switch(normalized) {
-                case "FS CAUCA FABIAN JIMENEZ":
-                    nombreVisual = "FABIAN JIMENEZ";
-                    esFemenino = false;
-                    break;
-                case "FS IPIALES KATHERINE":
-                    nombreVisual = "KATHERINE";
-                    esFemenino = true;
-                    break;
-                case "FS NOR OCCIDENTE ALEJANDRO MONROY":
-                    nombreVisual = "ALEJANDRO MONROY";
-                    esFemenino = false;
-                    break;
-                case "FS NORTE 1 EIMER":
-                    nombreVisual = "EIMER";
-                    esFemenino = false;
-                    break;
-                case "FS NORTE 2 DIEGO MARTINEZ":
-                    nombreVisual = "DIEGO MARTINEZ";
-                    esFemenino = false;
-                    break;
-                case "FS OCCIDENTE LILIANA ORDOÑEZ":
-                    nombreVisual = "LILIANA ORDOÑEZ";
-                    esFemenino = true;
-                    break;
-                case "FS PASTO 1 GLORIA VIVEROS":
-                    nombreVisual = "GLORIA VIVEROS";
-                    esFemenino = true;
-                    break;
-                case "FS PASTO 2 ROLAND LOPEZ":
-                    nombreVisual = "ROLAND LOPEZ";
-                    esFemenino = false;
-                    break;
-                case "FS PUTUMAYO 1 LUIS MIGUEL":
-                    nombreVisual = "LUIS MIGUEL";
-                    esFemenino = false;
-                    break;
-                case "FS PUTUMAYO 2 EDITH SANCHEZ":
-                    nombreVisual = "EDITH SANCHEZ";
-                    esFemenino = true;
-                    break;
-                case "FS PUTUMAYO 3 EDINSON":
-                    nombreVisual = "EDINSON";
-                    esFemenino = false;
-                    break;
-                case "FS SUR HAROLD MARTINEZ":
-                    nombreVisual = "HAROLD MARTINEZ";
-                    esFemenino = false;
-                    break;
-                case "FS VIA TUMACO CRISTINA BENAVIDES":
-                    nombreVisual = "CRISTINA BENAVIDES";
-                    esFemenino = true;
-                    break;
-                default:
-                    nombreVisual = normalized;
-                    esFemenino = false;
+                case "FS CAUCA FABIAN JIMENEZ": nombreVisual = "FABIAN JIMENEZ"; esFemenino = false; break;
+                case "FS IPIALES KATHERINE": nombreVisual = "KATHERINE"; esFemenino = true; break;
+                case "FS NOR OCCIDENTE ALEJANDRO MONROY": nombreVisual = "ALEJANDRO MONROY"; esFemenino = false; break;
+                case "FS NORTE 1 EIMER": nombreVisual = "EIMER"; esFemenino = false; break;
+                case "FS NORTE 2 DIEGO MARTINEZ": nombreVisual = "DIEGO MARTINEZ"; esFemenino = false; break;
+                case "FS OCCIDENTE LILIANA ORDOÑEZ": nombreVisual = "LILIANA ORDOÑEZ"; esFemenino = true; break;
+                case "FS PASTO 1 GLORIA VIVEROS": nombreVisual = "GLORIA VIVEROS"; esFemenino = true; break;
+                case "FS PASTO 2 ROLAND LOPEZ": nombreVisual = "ROLAND LOPEZ"; esFemenino = false; break;
+                case "FS PUTUMAYO 1 LUIS MIGUEL": nombreVisual = "LUIS MIGUEL"; esFemenino = false; break;
+                case "FS PUTUMAYO 2 EDITH SANCHEZ": nombreVisual = "EDITH SANCHEZ"; esFemenino = true; break;
+                case "FS PUTUMAYO 3 EDINSON": nombreVisual = "EDINSON"; esFemenino = false; break;
+                case "FS SUR HAROLD MARTINEZ": nombreVisual = "HAROLD MARTINEZ"; esFemenino = false; break;
+                case "FS VIA TUMACO CRISTINA BENAVIDES": nombreVisual = "CRISTINA BENAVIDES"; esFemenino = true; break;
+                default: nombreVisual = normalized; esFemenino = false;
             }
             return { nombreVisual, esFemenino };
         }
@@ -6682,104 +6491,7 @@ guardarEnNube(linkMapa);
             cobrosMesEl.innerText = formatMoney(dataActual.cobros);
         }
 
-        function abrirHistorialMensual() {
-            document.getElementById('historial-financiero-modal').classList.remove('hidden');
-            const container = document.getElementById('historial-meses-list');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
-            const mesesOrdenados = Object.keys(window.historialFinanciero || {}).sort().reverse();
-
-            if (mesesOrdenados.length === 0) {
-                container.innerHTML = `<div class="text-center p-6 text-slate-500 text-sm font-medium">No hay registros financieros todavía.</div>`;
-                return;
-            }
-
-            const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-
-            mesesOrdenados.forEach(mes => {
-                const parts = mes.split('-');
-                if(parts.length !== 2) return;
-                
-                const year = parts[0];
-                const monthNum = parseInt(parts[1], 10);
-                const nombreMes = nombresMeses[monthNum - 1];
-                const data = window.historialFinanciero[mes];
-
-                const div = document.createElement('div');
-                div.className = "flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 hover:bg-slate-100 transition shadow-sm";
-                div.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wide">${nombreMes} ${year}</h4>
-                    </div>
-                    <div class="flex space-x-6 text-right">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Ventas</span>
-                            <span class="font-black text-emerald-600">${formatMoney(data.ventas)}</span>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Cobros</span>
-                            <span class="font-black text-blue-600">${formatMoney(data.cobros)}</span>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function cerrarHistorialMensual() {
-            const modal = document.getElementById('historial-financiero-modal');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function abrirHistorialMensual() {
-            document.getElementById('historial-financiero-modal').classList.remove('hidden');
-            const container = document.getElementById('historial-meses-list');
-            container.innerHTML = '';
-
-            const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
-            // Ordenar los meses para que el más reciente salga arriba
-            const mesesOrdenados = Object.keys(window.historialFinanciero || {}).sort().reverse();
-
-            if (mesesOrdenados.length === 0) {
-                container.innerHTML = `<div class="text-center p-6 text-slate-500 text-sm font-medium">No hay registros financieros todavía.</div>`;
-                return;
-            }
-
-            const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-
-            mesesOrdenados.forEach(mes => {
-                const [year, monthNum] = mes.split('-');
-                const nombreMes = nombresMeses[parseInt(monthNum, 10) - 1];
-                const data = window.historialFinanciero[mes];
-
-                const div = document.createElement('div');
-                div.className = "flex justify-between items-center p-4 bg-slate-50 border border-slate-200 rounded-2xl mb-3 hover:bg-slate-100 transition";
-                div.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wide">${nombreMes} ${year}</h4>
-                    </div>
-                    <div class="flex space-x-6 text-right">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase block">Ventas</span>
-                            <span class="font-black text-emerald-600">${formatMoney(data.ventas)}</span>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase block">Cobros</span>
-                            <span class="font-black text-blue-600">${formatMoney(data.cobros)}</span>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function cerrarHistorialMensual() {
-            document.getElementById('historial-financiero-modal').classList.add('hidden');
-        }
-       
-        // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA EN CAMPO ---
+          // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA EN CAMPO ---
         window.onload = function() {
             showView('portal');
             // Disparar la sincronización automática de datos pendientes al abrir la app
