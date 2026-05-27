@@ -289,6 +289,12 @@
         </section>
         
 		<section id="view-menu" class="hidden fade-in w-full min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden bg-white">
+            <div class="w-full max-w-md flex justify-between items-center mb-6 p-4 bg-slate-50 border border-slate-200 rounded-2xl z-10 animate-pulse-once">
+               <div class="text-xs text-slate-600 font-semibold">Asesor: <span id="txt-active-seller-name" class="font-black text-brand-700"></span></div>
+               <button onclick="logoutVentas()" class="text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl transition shadow-sm">
+                Cerrar Sesión
+                </button>
+           </div>
             
             <!-- CAPA DE ONDAS Y RESPLANDOR AZUL CLARITO (ESTILO CORPORATIVO SUAVE) -->
             <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -4750,6 +4756,12 @@ TIENDA
                     nameInput.classList.add('bg-slate-100', 'text-slate-400');
                 }
                 
+                // Actualizar el indicador visual del nombre del asesor en el menú
+                const labelMenu = document.getElementById('txt-active-seller-name');
+                if (labelMenu) {
+                    labelMenu.innerText = activeSeller;
+                }
+                
                 // Cargar estado de jornada individual guardada de este asesor
                 const sessionGuardada = localStorage.getItem('fercosur_jornada_' + activeSeller);
                 if (sessionGuardada) {
@@ -4810,6 +4822,22 @@ TIENDA
                 document.getElementById('login-vendedor-pin').value = '';
                 document.getElementById('login-vendedor-pin').focus();
             }
+        }
+
+		function logoutVentas() {
+            // Remueve la sesión activa pero preserva el rutero offline por si vuelve a entrar
+            localStorage.removeItem('fercosur_seller_session');
+            activeSeller = null;
+            
+            const nameInput = document.getElementById('gen-nombre');
+            if (nameInput) {
+                nameInput.value = '';
+                nameInput.removeAttribute('readonly');
+                nameInput.classList.remove('bg-slate-100', 'text-slate-400');
+            }
+            
+            showToast('Sesión Cerrada', 'Se ha cerrado la sesión del asesor correctamente.', 'success');
+            goToPortal();
         }
 
         function goToPortal() {
