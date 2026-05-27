@@ -4698,6 +4698,7 @@ TIENDA
             document.getElementById('view-menu-despachos').classList.add('hidden');
             document.getElementById('view-form-despachos').classList.add('hidden');
             document.getElementById('view-admin').classList.add('hidden');
+            document.getElementById('view-login-ventas').classList.add('hidden');
 
             document.getElementById('view-' + viewId).classList.remove('hidden');
 
@@ -4732,18 +4733,58 @@ TIENDA
         }
         
 
+       let activeSeller = null;
+
+        function checkVentasAuth() {
+            const session = localStorage.getItem('fercosur_seller_session');
+            if (session) {
+                activeSeller = session;
+                const nameInput = document.getElementById('gen-nombre');
+                if (nameInput) {
+                    nameInput.value = activeSeller;
+                    nameInput.setAttribute('readonly', 'readonly');
+                    nameInput.classList.add('bg-slate-100', 'text-slate-400');
+                }
+                showView('menu');
+            } else {
+                showView('login-ventas');
+            }
+        }
+
+        function submitLoginVentas(e) {
+            e.preventDefault();
+            const seller = document.getElementById('login-vendedor-select').value;
+            const pin = document.getElementById('login-vendedor-pin').value;
+            const errorMsg = document.getElementById('login-ventas-error-msg');
+
+            if (pin === '4545') {
+                errorMsg.classList.add('hidden');
+                localStorage.setItem('fercosur_seller_session', seller);
+                activeSeller = seller;
+
+                const nameInput = document.getElementById('gen-nombre');
+                if (nameInput) {
+                    nameInput.value = seller;
+                    nameInput.setAttribute('readonly', 'readonly');
+                    nameInput.classList.add('bg-slate-100', 'text-slate-400');
+                }
+
+                document.getElementById('form-login-ventas').reset();
+                showToast('Inicio de Sesión', `Bienvenido, ${seller}`, 'success');
+                showView('menu');
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('login-vendedor-pin').value = '';
+                document.getElementById('login-vendedor-pin').focus();
+            }
+        }
+
         function goToPortal() {
-            // Primero, cerramos la sesión del administrador por completo
             isAdminLoggedIn = false;
-            
-            // Segundo, le decimos a los botones que se actualicen en la pantalla
             document.getElementById('btn-admin-access').classList.remove('hidden');
             document.getElementById('btn-admin-logout').classList.add('hidden');
-            
-            // Finalmente, mostramos el portal de bienvenida original
             showView('portal');
-      }
-
+        }
         // --- 8. TOAST (MENSAJES FLOTANTES DE ÉXITO O ALERTA) ---
         function showToast(title, message, type = 'success') {
             const container = document.getElementById('toast-container');
