@@ -4095,15 +4095,16 @@ TIENDA
         let jornadaActiva = false;
         let indiceClienteActivo = null;
 
-        // Guarda el estado actual en el almacenamiento interno del dispositivo
+        // Guarda el estado actual en el almacenamiento interno del dispositivo de forma individual
         function guardarJornadaEnStorage() {
+            if (!activeSeller) return;
             const estado = {
-                vendedor: document.getElementById('gen-nombre').value.trim(),
+                vendedor: activeSeller,
                 jornadaActiva: jornadaActiva,
                 indiceClienteActivo: indiceClienteActivo,
                 ruta: rutaPlanificada
             };
-            localStorage.setItem('fercosur_jornada_v2', JSON.stringify(estado));
+            localStorage.setItem('fercosur_jornada_' + activeSeller, JSON.stringify(estado));
         }
 
         // Agrega clientes a la tabla de preparación matutina
@@ -4299,8 +4300,10 @@ TIENDA
                 db.collection("rutas_activas").doc(vendedor).delete().catch(e => console.error(e));
             }
 
-            // 2. ROMPEMOS EL CANDADO: Borramos la jornada de la memoria interna para liberar el celular
-            localStorage.removeItem('fercosur_jornada_v2');
+           // 2. ROMPEMOS EL CANDADO: Borramos la jornada de la memoria interna de este vendedor específico
+            if (activeSeller) {
+                localStorage.removeItem('fercosur_jornada_' + activeSeller);
+            }
 
             // 3. Devolvemos todas las variables globales a su estado de fábrica limpio
             rutaPlanificada = [];
@@ -4507,6 +4510,7 @@ TIENDA
                 montoVenta: reg.montoVenta,
                 montoCobro: reg.montoCobro,
                 ubicacion: reg.gpsSalida, // Compatibilidad con el mapa nativo del administrador
+                fechaExpiracion: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // TTL: Borrado automático en 60 días
                 auditoria: {
                     horaEntrada: reg.horaEntrada,
                     gpsEntrada: reg.gpsEntrada,
@@ -4745,6 +4749,35 @@ TIENDA
                     nameInput.setAttribute('readonly', 'readonly');
                     nameInput.classList.add('bg-slate-100', 'text-slate-400');
                 }
+                
+                // Cargar estado de jornada individual guardada de este asesor
+                const sessionGuardada = localStorage.getItem('fercosur_jornada_' + activeSeller);
+                if (sessionGuardada) {
+                    const estado = JSON.parse(sessionGuardada);
+                    if (estado && estado.jornadaActiva) {
+                        rutaPlanificada = estado.ruta || [];
+                        jornadaActiva = estado.jornadaActiva;
+                        indiceClienteActivo = estado.indiceClienteActivo;
+                        
+                        if (indiceClienteActivo !== null) {
+                            showView('form-general');
+                            activarInterfazJornadaReal();
+                            document.getElementById('formulario-visita-campo').classList.remove('hidden');
+                            document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
+                            document.getElementById('btn-finalizar-visita-registro').disabled = false;
+                            return;
+                        } else {
+                            showView('form-general');
+                            activarInterfazJornadaReal();
+                            return;
+                        }
+                    }
+                }
+                
+                // Si no tiene ruta activa previa, lo envía al menú normal de forma limpia
+                rutaPlanificada = [];
+                jornadaActiva = false;
+                indiceClienteActivo = null;
                 showView('menu');
             } else {
                 showView('login-ventas');
@@ -5544,7 +5577,8 @@ TIENDA
                     motivo: motivo,
                     montoVenta: montoVenta,
                     montoCobro: montoCobro,
-                    ubicacion: ubicacionFinal
+                    ubicacion: ubicacionFinal,
+                    fechaExpiracion: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000) // TTL: Borrado automático en 60 días
                 }).then(() => {
                     document.getElementById('form-pedidos-general').reset();
                     toggleMotivoCampos(); 
@@ -6483,40 +6517,10 @@ guardarEnNube(linkMapa);
             document.getElementById('historial-financiero-modal').classList.add('hidden');
         }
        
-        // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA ---
         // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA EN CAMPO ---
         window.onload = function() {
             showView('portal');
-
-            // Recuperación automática de Jornada en caso de apagón por batería
-            const sessionGuardada = localStorage.getItem('fercosur_jornada_v2');
-            if (sessionGuardada) {
-                const estado = JSON.parse(sessionGuardada);
-                if (estado && estado.jornadaActiva) {
-                    rutaPlanificada = estado.ruta || [];
-                    jornadaActiva = estado.jornadaActiva;
-                    indiceClienteActivo = estado.indiceClienteActivo;
-                    
-                    document.getElementById('gen-nombre').value = estado.vendedor;
-                    
-                    // Si el apagón ocurrió a mitad de una visita abierta, dejamos el formulario listo
-                    if (indiceClienteActivo !== null) {
-                        setTimeout(() => {
-                            showView('form-general');
-                            activarInterfazJornadaReal();
-                            document.getElementById('formulario-visita-campo').classList.remove('hidden');
-                            document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
-                            document.getElementById('btn-finalizar-visita-registro').disabled = false;
-                        }, 200);
-                    } else {
-                        setTimeout(() => {
-                            showView('form-general');
-                            activarInterfazJornadaReal();
-                        }, 200);
-                    }
-                }
-            }
-			// Disparar la sincronización de datos pendientes al abrir la app
+            // Disparar la sincronización automática de datos pendientes al abrir la app
             sincronizarColaOffline();
         }
     </script>
