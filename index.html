@@ -934,41 +934,39 @@
                             <h3 class="text-xl font-black text-slate-900 tracking-tight" id="table-title">Registros Visitas</h3>
                             <p class="text-sm text-slate-500 mt-0.5">Mostrando registros guardados en tiempo real por orden de ingreso.</p>
                              
-                          <div id="widget-totales-visitas" class="mt-4 flex flex-col gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 w-full min-w-full shadow-sm">
+                          <div id="widget-totales-visitas" class="mt-4 flex flex-col gap-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 max-w-xl shadow-sm">
                           
-                                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                                <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
                                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Filtro Financiero:</span>
-                                    <select id="filtro-periodo-financiero" onchange="renderTotalesMensuales()" class="text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2 py-1 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
+                                    <select id="filtro-periodo-financiero" onchange="renderTotalesMensuales()" class="text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2 py-0.5 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
                                         <option value="hoy">Hoy</option>
                                         <option value="semana">Últimos 7 Días</option>
                                         <option value="mes" selected>Mes Actual</option>
                                     </select>
                                 </div>
                                 
-                               <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center">
-                                    <!-- TOTAL VENTAS -->
-                                    <div class="flex-1 w-full bg-white p-3 rounded-xl border border-slate-100 sm:bg-transparent sm:p-0 sm:border-0">
+                                <div class="flex flex-row items-center gap-6 py-0.5">
+                                    <div class="flex-shrink-0">
                                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Ventas</span>
-                                        <span class="text-2xl font-black text-emerald-600 block mt-1" id="suma-ventas-mes">$0</span>
+                                        <span class="text-xl font-black text-emerald-600 block mt-0.5" id="suma-ventas-mes">$0</span>
                                     </div>
                                     
-                                    <div class="hidden sm:block w-px h-10 bg-slate-200"></div>
+                                    <div class="w-px h-8 bg-slate-200"></div>
                                     
-                                    <!-- TOTAL COBROS CON ALINEACIÓN PARALELA ESTRICTA A LA DERECHA -->
-                                    <div class="flex-1 w-full bg-white p-3 rounded-xl border border-slate-100 sm:bg-transparent sm:p-0 sm:border-0 flex flex-row items-center gap-5">
+                                    <div class="flex flex-row items-center gap-4">
                                         <div>
                                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Cobros</span>
-                                            <span class="text-2xl font-black text-blue-600 block mt-1" id="suma-cobros-mes">$0</span>
+                                            <span class="text-xl font-black text-blue-600 block mt-0.5" id="suma-cobros-mes">$0</span>
                                         </div>
                             
-                                        <!-- DESGLOSE DE COBRANZA DIRECTAMENTE AL LADO Y CON LETRA MÁS GRANDE -->
-                                        <div class="flex flex-col gap-0.5 text-xs sm:text-sm font-bold bg-slate-50 p-2 rounded-xl border border-slate-200/60 min-w-[130px]">
+                                        <div class="flex flex-col gap-0.5 text-xs font-bold bg-white px-2.5 py-1 rounded-xl border border-slate-200/60 min-w-[130px]">
                                             <div class="text-slate-600 flex justify-between gap-3"><span>💵 Efectivo</span> <span id="suma-cobros-efectivo" class="text-emerald-600">$0</span></div>
                                             <div class="text-slate-600 flex justify-between gap-3"><span>🏦 Consig</span> <span id="suma-cobros-consig" class="text-blue-600">$0</span></div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+  
+                           </div>
                         </div>
                         <div>
                             <button id="btn-export-individual" onclick="exportActiveTable()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition duration-150">
