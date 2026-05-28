@@ -4274,25 +4274,37 @@ TIENDA
        // Guarda el estado actual en el almacenamiento interno del dispositivo de forma individual
        function guardarJornadaEnStorage() {
             if (!activeSeller) return;
+            
+            // NUEVO: Conservar o registrar la hora de inicio de creación original fija
+            let horaInicioFija = formatTimestamp();
+            const sessionGuardada = localStorage.getItem('fercosur_jornada_' + activeSeller);
+            if (sessionGuardada) {
+                const estadoPrevio = JSON.parse(sessionGuardada);
+                if (estadoPrevio && estadoPrevio.horaInicio) {
+                    horaInicioFija = estadoPrevio.horaInicio;
+                }
+            }
+
             const estado = {
                 vendedor: activeSeller,
                 jornadaActiva: jornadaActiva,
                 indiceClienteActivo: indiceClienteActivo,
                 ruta: rutaPlanificada,
-                idRuta: currentRouteId // Incluye el identificador único en el registro local
+                idRuta: currentRouteId,
+                horaInicio: horaInicioFija // Guardamos el candado local
             };
             localStorage.setItem('fercosur_jornada_' + activeSeller, JSON.stringify(estado));
-            sincronizarRutaALaNube();
+            sincronizarRutaALaNube(horaInicioFija);
         }
 
         // Transmite el estado actual del rutero a Firebase si el teléfono tiene internet
-        function sincronizarRutaALaNube() {
+        function sincronizarRutaALaNube(horaInicioFija) {
             if (!navigator.onLine || !activeSeller || !jornadaActiva || !currentRouteId) return;
-            db.collection("rutas_activas").doc(currentRouteId).set({ // Guarda en un documento único de sesión
+            db.collection("rutas_activas").doc(currentRouteId).set({ 
                 vendedor: activeSeller,
                 ruta: rutaPlanificada,
                 finalizada: false,
-                timestamp: formatTimestamp(),
+                timestamp: horaInicioFija || formatTimestamp(), // Mantiene la hora de creación real en la nube
                 fechaExpiracion: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
             }).catch(e => console.error("Error en sincronización de ruta remota:", e));
         }
@@ -4528,7 +4540,7 @@ TIENDA
             }
         }
 
-      // Función Maestra encargada de romper el candado local y procesar la cola de no visitados
+     // Función Maestra encargada de romper el candado local y procesar la cola de no visitados
         function terminarJornadaCompleta() {
             // MENSAJE DE CONFIRMACIÓN PARA EVITAR ACCIDENTES EN CAMPO
             const confirmarCierreJornada = confirm("¿Está seguro de que desea finalizar su jornada de hoy? Al aceptar, se cerrará su ruta activa y los establecimientos pendientes quedarán agendados para su próximo día de trabajo.");
@@ -4543,7 +4555,6 @@ TIENDA
                 visitado: false,
                 horaEntrada: '', gpsEntrada: '', horaSalida: '', gpsSalida: '', motivoReal: '', montoVentaReal: '', montoCobroReal: ''
             }));
-
             // Guardamos en el baúl del dispositivo los pendientes arrastrados para mañana
             if (noVisitados.length > 0) {
                 localStorage.setItem('fercosur_rollover_' + activeSeller, JSON.stringify(noVisitados));
@@ -4551,14 +4562,12 @@ TIENDA
                 localStorage.removeItem('fercosur_rollover_' + activeSeller);
             }
 
-            // 2. Si hay señal, cambiamos el estado de la ruta a finalizada en la nube
+            // 2. Si hay señal, actualizamos el documento en la nube SIN borrar la creación original (timestamp)
             if (navigator.onLine && activeSeller && currentRouteId) {
-                db.collection("rutas_activas").doc(currentRouteId).set({
-                    vendedor: activeSeller,
+                db.collection("rutas_activas").doc(currentRouteId).update({
                     ruta: rutaPlanificada,
                     finalizada: true,
-                    timestamp: formatTimestamp(),
-                    fechaExpiracion: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
+                    horaFin: formatTimestamp() // Guardamos la hora exacta de finalización de jornada
                 }).catch(e => console.error("Error al archivar jornada:", e));
             }
 
@@ -6633,9 +6642,9 @@ guardarEnNube(linkMapa);
                     const formatDineroResumen = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
                     const distanciaMostrar = distanciaTotalKms > 0 ? distanciaTotalKms.toFixed(1) + ' km' : '0 km';
                     
-                    const cardAsesor = document.createElement('div');
+                   const cardAsesor = document.createElement('div');
                     cardAsesor.className = "bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md hover:border-brand-400 cursor-pointer transition-all duration-200 flex flex-col justify-between transform active:scale-[0.99]";
-                    cardAsesor.setAttribute('onclick', `window.abrirDetalleRutaAdmin('${docRuta.id}')`);
+                    cardAsesor.setAttribute('onclick', `window.abrirModalResumenGestion('${docRuta.id}')`);
                     
                     const estadoTextoBadge = esRutaFinalizada ? "Finalizada" : "En Vivo";
                     const estadoClaseBadge = esRutaFinalizada 
@@ -7468,8 +7477,8 @@ guardarEnNube(linkMapa);
                             </div>
                         `;
                         container.appendChild(card);
-                    } else {
-                        const botonQuitarPunto = !docRuta.finalizada && isAdminLoggedIn ? `
+                   } else {
+                        const botonQuitarPunto = !docRuta.finalizada ? `
                             <button type="button" onclick="event.stopPropagation(); eliminarClienteDeRutaAdmin('${docRuta.id}', ${idx}); window.cerrarModalResumenGestion();" class="px-2 py-1 bg-red-50 text-red-500 hover:bg-red-100 rounded-md transition text-[10px] font-bold border border-red-100" title="Quitar punto de la ruta">
                                 Eliminar Punto
                             </button>
@@ -7493,11 +7502,15 @@ guardarEnNube(linkMapa);
                     }
                 });
 
-                if (primeraEntrada && ultimaSalida) {
-                    tiempoTotalMinutos = calcularMinutosDiferencia(primeraEntrada, ultimaSalida);
-                }
+                // CORREGIDO: El tiempo total de la jornada mide desde la creación de la ruta hasta su finalización (o la hora actual si sigue activa)
+                const horaTerminacionEfectiva = docRuta.finalizada ? (docRuta.horaFin || formatTimestamp()) : formatTimestamp();
+                tiempoTotalMinutos = calcularMinutosDiferencia(docRuta.timestamp, horaTerminacionEfectiva);
             } else {
                 container.innerHTML = `<p class="text-xs text-slate-400 italic py-6 text-center">No hay clientes programados ni visitados en esta ruta.</p>`;
+                
+                // Si la ruta no tiene clientes pero está activa o finalizada, también calculamos su tiempo de vida elemental
+                const horaTerminacionEfectiva = docRuta.finalizada ? (docRuta.horaFin || formatTimestamp()) : formatTimestamp();
+                tiempoTotalMinutos = calcularMinutosDiferencia(docRuta.timestamp, horaTerminacionEfectiva);
             }
 
             const formatDinero = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
