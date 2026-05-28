@@ -5018,14 +5018,12 @@ TIENDA
         }
         
      let activeSeller = null;
-
         // Diccionario estricto para extraer nombre limpio en MAYÚSCULAS y detectar género
         function obtenerInfoVendedorVisual(codigoCompleto) {
             if (!codigoCompleto) return { nombreVisual: "", esFemenino: false };
             const normalized = codigoCompleto.trim().toUpperCase();
             let nombreVisual = "";
             let esFemenino = false;
-
             switch(normalized) {
                 case "FS CAUCA FABIAN JIMENEZ": nombreVisual = "FABIAN JIMENEZ"; esFemenino = false; break;
                 case "FS IPIALES KATHERINE": nombreVisual = "KATHERINE"; esFemenino = true; break;
@@ -5049,7 +5047,6 @@ TIENDA
             const session = localStorage.getItem('fercosur_seller_session');
             if (session) {
                 activeSeller = session;
-                
                 const nameInput = document.getElementById('gen-nombre');
                 if (nameInput) {
                     nameInput.value = activeSeller;
@@ -5070,7 +5067,7 @@ TIENDA
                     subtituloNombre.classList.remove('hidden');
                 }
                 
-                // Cargar estado de jornada individual guardada de este asesor
+                // 1. Intentar cargar estado de la memoria local interna por velocidad
                 const sessionGuardada = localStorage.getItem('fercosur_jornada_' + activeSeller);
                 if (sessionGuardada) {
                     const estado = JSON.parse(sessionGuardada);
@@ -5078,37 +5075,90 @@ TIENDA
                         rutaPlanificada = estado.ruta || [];
                         jornadaActiva = estado.jornadaActiva;
                         indiceClienteActivo = estado.indiceClienteActivo;
-                        currentRouteId = estado.idRuta || null; // Recupera el identificador único del proceso
+                        currentRouteId = estado.idRuta || null;
                         
+                        showView('form-general');
+                        activarInterfazJornadaReal();
                         if (indiceClienteActivo !== null) {
-                            showView('form-general');
-                            activarInterfazJornadaReal();
                             document.getElementById('formulario-visita-campo').classList.remove('hidden');
                             document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
                             document.getElementById('btn-finalizar-visita-registro').disabled = false;
-                            return;
-                        } else {
-                            showView('form-general');
-                            activarInterfazJornadaReal();
-                            return;
                         }
+                        return;
                     }
                 }
                 
-                // Si no hay jornada en desarrollo, cargamos el rollover de pendientes si existe
-                const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
-                if (rolloverGuardado) {
-                    rutaPlanificada = JSON.parse(rolloverGuardado);
+                // 2. Si no hay registro local en este equipo, buscamos de forma blindada una ruta activa abierta en la nube
+                if (navigator.onLine) {
+                    db.collection("rutas_activas")
+                        .where("vendedor", "==", activeSeller)
+                        .where("finalizada", "==", false)
+                        .get()
+                        .then((querySnapshot) => {
+                            if (!querySnapshot.empty) {
+                                // ¡Existe una jornada en ejecución iniciada desde otro dispositivo!
+                                const docRuta = querySnapshot.docs[0];
+                                const dataRuta = docRuta.data();
+                                
+                                currentRouteId = docRuta.id;
+                                rutaPlanificada = dataRuta.ruta || [];
+                                jornadaActiva = true;
+                                
+                                // Deducir de forma automática si se dejó un cliente abierto en proceso de auditoría
+                                indiceClienteActivo = null;
+                                rutaPlanificada.forEach((item, index) => {
+                                    if (!item.visitado && item.horaEntrada && !item.horaSalida) {
+                                        indiceClienteActivo = index;
+                                    }
+                                });
+                                
+                                // Clonar el estado en el almacenamiento del dispositivo secundario para mantener consistencia absoluta
+                                const estadoCloud = {
+                                    vendedor: activeSeller,
+                                    jornadaActiva: jornadaActiva,
+                                    indiceClienteActivo: indiceClienteActivo,
+                                    ruta: rutaPlanificada,
+                                    idRuta: currentRouteId
+                                };
+                                localStorage.setItem('fercosur_jornada_' + activeSeller, JSON.stringify(estadoCloud));
+                                
+                                showView('form-general');
+                                activarInterfazJornadaReal();
+                                if (indiceClienteActivo !== null) {
+                                    document.getElementById('formulario-visita-campo').classList.remove('hidden');
+                                    document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
+                                    document.getElementById('btn-finalizar-visita-registro').disabled = false;
+                                }
+                                showToast('Jornada Sincronizada', 'Se restauró tu ruta activa detectada en la nube.', 'success');
+                            } else {
+                                // No hay rutas activas en la nube, procesamos el flujo matutino habitual
+                                cargarRutaMatutinaBase();
+                            }
+                        })
+                        .catch((err) => {
+                            console.error("Fallo al verificar ruta en la nube:", err);
+                            cargarRutaMatutinaBase();
+                        });
                 } else {
-                    rutaPlanificada = [];
+                    cargarRutaMatutinaBase();
                 }
-                jornadaActiva = false;
-                indiceClienteActivo = null;
-                renderTablaPlanificacion();
-                showView('menu');
             } else {
                 showView('login-ventas');
             }
+        }
+
+        // Función de respaldo para inicialización de planificador limpio o rollover
+        function cargarRutaMatutinaBase() {
+            const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+            if (rolloverGuardado) {
+                rutaPlanificada = JSON.parse(rolloverGuardado);
+            } else {
+                rutaPlanificada = [];
+            }
+            jornadaActiva = false;
+            indiceClienteActivo = null;
+            renderTablaPlanificacion();
+            showView('menu');
         }
 
         function submitLoginVentas(e) {
@@ -5116,45 +5166,16 @@ TIENDA
             const seller = document.getElementById('login-vendedor-select').value;
             const pin = document.getElementById('login-vendedor-pin').value;
             const errorMsg = document.getElementById('login-ventas-error-msg');
-
             if (pin === '4545') {
                 errorMsg.classList.add('hidden');
                 localStorage.setItem('fercosur_seller_session', seller);
-                activeSeller = seller;
-
-                const nameInput = document.getElementById('gen-nombre');
-                if (nameInput) {
-                    nameInput.value = seller;
-                    nameInput.setAttribute('readonly', 'readonly');
-                    nameInput.classList.add('bg-slate-100', 'text-slate-400');
-                }
-
-                const info = obtenerInfoVendedorVisual(seller);
-                const tituloBienvenida = document.getElementById('txt-bienvenida-modulo');
-                if (tituloBienvenida) {
-                    tituloBienvenida.innerText = info.esFemenino ? "Bienvenida al Módulo de Ventas" : "Bienvenido al Módulo de Ventas";
-                }
                 
-                const subtituloNombre = document.getElementById('txt-vendedor-modulo-subtitle');
-                if (subtituloNombre) {
-                    subtituloNombre.innerText = info.nombreVisual;
-                    subtituloNombre.classList.remove('hidden');
-                }
-
-                // Cargamos el listado de arrastrados al iniciar sesión fresca
-                const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
-                if (rolloverGuardado) {
-                    rutaPlanificada = JSON.parse(rolloverGuardado);
-                } else {
-                    rutaPlanificada = [];
-                }
-                jornadaActiva = false;
-                indiceClienteActivo = null;
-                renderTablaPlanificacion();
-
-                document.getElementById('form-login-ventas').reset();
+                const info = obtenerInfoVendedorVisual(seller);
                 showToast('Inicio de Sesión', `Bienvenido, ${info.nombreVisual}`, 'success');
-                showView('menu');
+                
+                // Delegamos la validación financiera y de enrutamiento de rutas a checkVentasAuth
+                checkVentasAuth();
+                document.getElementById('form-login-ventas').reset();
             } else {
                 errorMsg.classList.remove('hidden');
                 document.getElementById('login-vendedor-pin').value = '';
