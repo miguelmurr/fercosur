@@ -4462,8 +4462,12 @@ TIENDA
             }
         }
 
-        // Función Maestra encargada de romper el candado local y procesar la cola de no visitados
+      // Función Maestra encargada de romper el candado local y procesar la cola de no visitados
         function terminarJornadaCompleta() {
+            // MENSAJE DE CONFIRMACIÓN PARA EVITAR ACCIDENTES EN CAMPO
+            const confirmarCierreJornada = confirm("¿Está seguro de que desea finalizar su jornada de hoy? Al aceptar, se cerrará su ruta activa y los establecimientos pendientes quedarán agendados para su próximo día de trabajo.");
+            if (!confirmarCierreJornada) return;
+
             // 1. Extraemos de forma quirúrgica los clientes que NO fueron visitados
             const noVisitados = rutaPlanificada.filter(c => !c.visitado).map(c => ({
                 nombre: c.nombre,
