@@ -345,8 +345,8 @@
                     </p>
                 </div>
 
-                <div class="flex justify-center">
-                    <div onclick="showView('form-general')" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 w-full max-w-md overflow-hidden">
+                <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full px-2">
+                    <div onclick="showView('form-general')" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
                         <div>
                             <div class="inline-flex p-4 rounded-2xl bg-brand-50 text-brand-600 mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -354,14 +354,29 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-black text-slate-900 tracking-tight">Registro de Visitas</h3>
-                            <p class="mt-3 text-slate-600 leading-relaxed text-sm font-medium">Formulario estándar para el control, radicación y seguimiento de visitas en el flujo diario de Fercosur.</p>
+                            <h3 class="text-2xl font-black text-slate-900 tracking-tight">Iniciar / Continuar Ruta</h3>
+                            <p class="mt-3 text-slate-600 leading-relaxed text-sm font-medium">Formulario estándar para el control, radicación y seguimiento de la ruta del día.</p>
                         </div>
                         <div class="mt-8 flex items-center text-brand-600 font-semibold text-sm">
-                            Comenzar registro 
-                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
+                            Comenzar ruta 
+                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                    </div>
+
+                    <div onclick="abrirHistorialAsesor()" class="group relative bg-white/70 backdrop-blur-xl border border-slate-300 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(16,185,129,0.15)] hover:border-emerald-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-10 group-hover:bg-emerald-100/50 transition-colors duration-300"></div>
+                        <div>
+                            <div class="inline-flex p-4 rounded-2xl bg-emerald-50 text-emerald-600 mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-black text-slate-900 tracking-tight">Resumen Gestión</h3>
+                            <p class="mt-3 text-slate-600 leading-relaxed text-sm font-medium">Historial detallado de sus rutas anteriores, incluyendo tiempos, ventas y distancias.</p>
+                        </div>
+                        <div class="mt-8 flex items-center text-emerald-600 font-semibold text-sm">
+                            Ver historial 
+                            <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </div>
                     </div>
                 </div>
@@ -484,10 +499,13 @@
                 </div>
 
                 <div id="wrapper-jornada-activa" class="hidden space-y-6">
-                    <div class="bg-brand-50 border border-brand-100 rounded-2xl p-4 flex flex-col gap-2.5">
+                     <div class="bg-brand-50 border border-brand-100 rounded-2xl p-4 flex flex-col gap-2.5">
                         <div class="flex justify-between items-center text-xs font-bold text-brand-900 uppercase tracking-wider">
-                            <span>Avance de Ruta</span>
-                            <span id="txt-progreso-visitas">0 / 0 Completados</span>
+                            <div class="flex items-center space-x-2">
+                                <span>Avance de Ruta</span>
+                                <span id="txt-distancia-recorrida" class="bg-brand-200 text-brand-800 px-2 py-0.5 rounded border border-brand-300 font-mono flex items-center gap-1" title="Distancia acumulada"><span>📍</span> 0 km</span>
+                            </div>
+                             <span id="txt-progreso-visitas">0 / 0 Completados</span>
                         </div>
                         <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
                             <div id="bar-progreso-visitas" class="bg-brand-600 h-full transition-all duration-500" style="width: 0%"></div>
@@ -1360,38 +1378,68 @@
     </div>
     </div>
 
-    <div id="ruta-detalle-modal" class="hidden fixed inset-0 z-50 overflow-y-auto animate-fade-in" role="dialog" aria-modal="true">
+   <div id="historial-asesor-modal" class="hidden fixed inset-0 z-50 overflow-y-auto animate-fade-in" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="window.cerrarDetalleRutaAdmin()"></div>
+            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="cerrarHistorialAsesor()"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full border border-slate-200">
+                <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-black text-slate-950 uppercase" id="titulo-historial-asesor">Mis Rutas</h3>
+                                <p class="text-xs text-slate-500 font-medium">Seleccione una jornada para ver su resumen de gestión.</p>
+                            </div>
+                        </div>
+                        <button onclick="cerrarHistorialAsesor()" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                    <div class="max-h-[50vh] overflow-y-auto pr-1 space-y-3" id="lista-rutas-historial-asesor">
+                        </div>
+                </div>
+                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse">
+                    <button type="button" onclick="cerrarHistorialAsesor()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Volver al Menú</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-200">
+    <div id="modal-resumen-gestion" class="hidden fixed inset-0 z-50 overflow-y-auto animate-fade-in" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/60 transition-opacity" aria-hidden="true" onclick="cerrarModalResumenGestion()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+            <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full border border-slate-200">
                 <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
                     <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
                         <div class="flex items-center space-x-3 min-w-0">
-                            <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl flex-shrink-0">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                            <div class="p-2.5 bg-brand-50 text-brand-600 rounded-xl flex-shrink-0">
+                                <span class="text-xl">📋</span>
                             </div>
                             <div class="min-w-0 flex-1">
-                                <h3 class="text-lg font-black text-slate-950 truncate uppercase" id="ruta-modal-asesor">Asesor Comercial</h3>
+                                <h3 class="text-lg font-black text-slate-950 truncate uppercase">Resumen de Gestión</h3>
                                 <div class="flex items-center space-x-2 mt-0.5 text-xs text-slate-500 font-medium font-mono">
-                                    <span id="ruta-modal-consecutivo" class="bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-bold">R-00</span>
-                                    <span id="ruta-modal-fecha">---</span>
+                                    <span id="resumen-modal-asesor" class="font-bold text-slate-700 uppercase">---</span>
+                                    <span id="resumen-modal-fecha">---</span>
                                 </div>
                             </div>
                         </div>
-                        <button onclick="window.cerrarDetalleRutaAdmin()" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition flex-shrink-0">
+                        <button onclick="cerrarModalResumenGestion()" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition flex-shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
 
-                    <div id="ruta-modal-totales-box" class="mb-4"></div>
+                    <div id="resumen-modal-metricas" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"></div>
 
-                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Puntos de atención agendados</span>
-                    <div class="max-h-[45vh] overflow-y-auto pr-1 space-y-2" id="ruta-modal-clientes-list"></div>
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 px-1 border-b border-slate-100 pb-2">Cronología de Visitas y Tiempos</span>
+                    
+                    <div class="max-h-[45vh] overflow-y-auto pr-1 space-y-3" id="resumen-modal-clientes-list"></div>
                 </div>
                 <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse">
-                    <button type="button" onclick="window.cerrarDetalleRutaAdmin()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar Reporte</button>
+                    <button type="button" onclick="cerrarModalResumenGestion()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-6 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">Cerrar Resumen</button>
                 </div>
             </div>
         </div>
@@ -4372,7 +4420,7 @@ TIENDA
             renderListaJornada();
         }
 
-        // Dibuja las tarjetas interactivas de ruta y calcula la barra de progreso
+       // Dibuja las tarjetas interactivas de ruta y calcula la barra de progreso
         function renderListaJornada() {
             const contenedor = document.getElementById('contenedor-lista-jornada');
             contenedor.innerHTML = '';
@@ -4381,9 +4429,30 @@ TIENDA
             const completados = rutaPlanificada.filter(c => c.visitado).length;
             const porcentaje = totalClientes > 0 ? (completados / totalClientes) * 100 : 0;
 
-            // Actualizar barra de progreso superior
+            // NUEVO: Calcular distancia recorrida acumulada en el dispositivo del vendedor
+            let distanciaVendedor = 0;
+            let ultimoGpsVendedor = null;
+            
+            rutaPlanificada.forEach(c => {
+                if (c.visitado && c.gpsEntrada) {
+                    const coords = extraerCoordenadas(c.gpsEntrada);
+                    if (coords) {
+                        if (ultimoGpsVendedor) {
+                            distanciaVendedor += calcularDistanciaHaversine(ultimoGpsVendedor.lat, ultimoGpsVendedor.lon, coords.lat, coords.lon);
+                        }
+                        ultimoGpsVendedor = coords;
+                    }
+                }
+            });
+
+            // Actualizar barra de progreso superior y kilometraje
             document.getElementById('txt-progreso-visitas').innerText = `${completados} / ${totalClientes} Visitados`;
             document.getElementById('bar-progreso-visitas').style.width = `${porcentaje}%`;
+            
+            const indicadorDistancia = document.getElementById('txt-distancia-recorrida');
+            if (indicadorDistancia) {
+                indicadorDistancia.innerHTML = `<span>📍</span> ${distanciaVendedor > 0 ? distanciaVendedor.toFixed(1) + ' km' : '0 km'}`;
+            }
 
             rutaPlanificada.forEach((item, index) => {
                 const card = document.createElement('div');
@@ -5299,6 +5368,58 @@ function checkVentasAuth() {
             const now = new Date();
             const pad = (num) => String(num).padStart(2, '0');
             return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+        };
+
+        // --- NUEVOS MOTORES DE DISTANCIA Y FORMATO DE FECHAS ---
+        const formatFechaElegante = (timestampStr) => {
+            if (!timestampStr) return 'Fecha desconocida';
+            try {
+                const partes = timestampStr.split(' ');
+                const fechaPartes = partes[0].split('-');
+                const horaPartes = partes[1].split(':');
+                const fecha = new Date(fechaPartes[0], fechaPartes[1] - 1, fechaPartes[2], horaPartes[0], horaPartes[1]);
+                
+                const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                
+                const diaSemana = dias[fecha.getDay()];
+                const diaNum = fecha.getDate();
+                const mes = meses[fecha.getMonth()];
+                const anio = fecha.getFullYear();
+                
+                let horas = fecha.getHours();
+                const minutos = String(fecha.getMinutes()).padStart(2, '0');
+                const ampm = horas >= 12 ? 'PM' : 'AM';
+                horas = horas % 12;
+                horas = horas ? horas : 12; 
+                
+                return `${diaSemana}, ${diaNum} de ${mes} de ${anio} - ${horas}:${minutos} ${ampm}`;
+            } catch (e) {
+                return timestampStr; // Retorna original si hay error de formato
+            }
+        };
+
+        const calcularDistanciaHaversine = (lat1, lon1, lat2, lon2) => {
+            const R = 6371; // Radio de la Tierra en kilómetros
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; 
+        };
+
+        const extraerCoordenadas = (gpsString) => {
+            if (!gpsString || !gpsString.includes(',')) return null;
+            try {
+                // Extrae la latitud y longitud del enlace URL de Maps guardado
+                const fragmentoCoords = gpsString.substring(gpsString.lastIndexOf('/') + 2); 
+                const partes = fragmentoCoords.split(',');
+                return { lat: parseFloat(partes[0]), lon: parseFloat(partes[1]) };
+            } catch(e) {
+                return null;
+            }
         };
 
         // --- 9. GESTIÓN DE PLANILLAS / LOTES DE DESPACHOS EN FIREBASE ---
@@ -6486,17 +6607,32 @@ guardarEnNube(linkMapa);
                         return;
                     }
 
+                   // --- CÁLCULO DE DISTANCIA, VENTAS Y COBROS ---
                     let acumuladoVentaRuta = 0;
                     let acumuladoCobroRuta = 0;
+                    let distanciaTotalKms = 0;
+                    let ultimoPuntoGps = null;
+
                     if (docRuta.ruta) {
                         docRuta.ruta.forEach(p => {
                             if (p.visitado) {
                                 acumuladoVentaRuta += parseInt(String(p.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0;
                                 acumuladoCobroRuta += parseInt(String(p.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0;
+                                
+                                // Calcular distancia acumulada si hay ubicación real registrada
+                                const coordsActual = extraerCoordenadas(p.ubicacionReal);
+                                if (coordsActual) {
+                                    if (ultimoPuntoGps) {
+                                        distanciaTotalKms += calcularDistanciaHaversine(ultimoPuntoGps.lat, ultimoPuntoGps.lon, coordsActual.lat, coordsActual.lon);
+                                    }
+                                    ultimoPuntoGps = coordsActual;
+                                }
                             }
                         });
                     }
                     const formatDineroResumen = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
+                    const distanciaMostrar = distanciaTotalKms > 0 ? distanciaTotalKms.toFixed(1) + ' km' : '0 km';
+                    
                     const cardAsesor = document.createElement('div');
                     cardAsesor.className = "bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md hover:border-brand-400 cursor-pointer transition-all duration-200 flex flex-col justify-between transform active:scale-[0.99]";
                     cardAsesor.setAttribute('onclick', `window.abrirDetalleRutaAdmin('${docRuta.id}')`);
@@ -6506,7 +6642,6 @@ guardarEnNube(linkMapa);
                         ? "text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200" 
                         : "text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100";
 
-                    // ASIGNACIÓN DE FILTROS E INDICES DE CLASES DISTINTOS
                     const checkClass = esRutaFinalizada ? 'ruta-historico-checkbox' : 'ruta-activa-checkbox';
                     const checkHandler = esRutaFinalizada ? 'updateRutasHistoricoSelection()' : 'updateRutasActivasSelection()';
                     const checkColor = esRutaFinalizada ? 'text-slate-600 focus:ring-slate-500' : 'text-emerald-600 focus:ring-emerald-500';
@@ -6514,15 +6649,17 @@ guardarEnNube(linkMapa);
                     cardAsesor.innerHTML = `
                         <div class="space-y-3">
                             <div class="flex justify-between items-start gap-2">
-                                <!-- SHIELD / ESCUDO PROTECTOR PARA DETENER CARGA DEL MODAL POR ACCIDENTE -->
                                 <div class="pt-0.5 flex-shrink-0" onclick="event.stopPropagation()">
                                     <input type="checkbox" class="${checkClass} h-4 w-4 rounded border-slate-300 ${checkColor} cursor-pointer" data-id="${docRuta.id}" onchange="${checkHandler}">
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <h4 class="text-sm font-black text-slate-900 tracking-tight truncate uppercase">${docRuta.vendedor}</h4>
-                                    <div class="flex items-center space-x-2 mt-1 flex-wrap gap-y-1">
-                                        <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono">${consecutivoRuta}</span>
-                                        <span class="text-[10px] text-slate-400 font-mono font-medium">${docRuta.timestamp || ''}</span>
+                                    <div class="flex flex-col mt-1 space-y-1">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono">${consecutivoRuta}</span>
+                                            <span class="text-[10px] font-bold text-slate-500">📍 Recorrido: <span class="text-brand-600">${distanciaMostrar}</span></span>
+                                        </div>
+                                        <span class="text-[9px] text-slate-400 font-semibold tracking-wide uppercase">${formatFechaElegante(docRuta.timestamp)}</span>
                                     </div>
                                 </div>
                                 <div class="flex flex-col items-end gap-1 flex-shrink-0">
@@ -6546,9 +6683,16 @@ guardarEnNube(linkMapa);
                                 <div class="bg-emerald-500 h-full transition-all duration-500" style="width: ${porcentaje}%"></div>
                             </div>
                             
-                            <div class="text-[11px] text-brand-600 font-bold text-right flex items-center justify-end space-x-1">
-                                <span>Ver reporte completo</span>
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            <div class="flex items-center justify-between border-t border-slate-100 pt-2 mt-2">
+                                <div class="text-[11px] text-brand-600 font-bold flex items-center space-x-1">
+                                    <span>Ver mapa/detalles</span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </div>
+                                
+                                <button type="button" onclick="event.stopPropagation(); abrirModalResumenGestion('${docRuta.id}')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors flex items-center shadow-sm border border-slate-200" title="Ver Resumen de Gestión">
+                                    <span class="text-xs mr-1">📋</span>
+                                    <span class="text-[10px] font-bold">Resumen</span>
+                                </button>
                             </div>
                         </div>
                     `;
@@ -7191,121 +7335,200 @@ guardarEnNube(linkMapa);
                 document.getElementById('despachos-pin-input').focus();
             }
         }
-		// --- INTERMITENCIA Y CONSTRUCCIÓN DINÁMICA DEL REPORTE MODAL DE RUTAS (NUEVO) ---
-        window.abrirDetalleRutaAdmin = function(docId) {
+		// --- MOTORES LÓGICOS DEL HISTORIAL Y RESUMEN DE GESTIÓN (NUEVO) ---
+        
+        // Función auxiliar para leer fechas del formato YYYY-MM-DD HH:MM:SS de manera blindada
+        const parseDateCustom = (dateStr) => {
+            if (!dateStr) return new Date();
+            try {
+                const parts = dateStr.split(' ');
+                const d = parts[0].split('-');
+                const t = parts[1].split(':');
+                return new Date(d[0], d[1]-1, d[2], t[0], t[1], t[2] || 0);
+            } catch(e) { return new Date(); }
+        };
+
+        // Función para extraer la diferencia de tiempo entre dos estampas en minutos netos
+        const calcularMinutosDiferencia = (inicio, fin) => {
+            if (!inicio || !fin) return 0;
+            const ms = parseDateCustom(fin) - parseDateCustom(inicio);
+            return Math.max(0, Math.round(ms / 60000));
+        };
+
+        // Despliega la ventana donde el asesor elige cuál ruta histórica desea auditar
+        window.abrirHistorialAsesor = function() {
+            if (!activeSeller) {
+                showToast('Acceso Denegado', 'Debe iniciar sesión para ver su historial.', 'error');
+                return;
+            }
+            
+            const rutasDelAsesor = dbRutas
+                .filter(r => r.vendedor === activeSeller)
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Más recientes primero
+                
+            const container = document.getElementById('lista-rutas-historial-asesor');
+            container.innerHTML = '';
+            
+            if (rutasDelAsesor.length === 0) {
+                container.innerHTML = `<p class="text-sm text-slate-400 italic py-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">Aún no tiene rutas finalizadas ni en ejecución en su historial.</p>`;
+            } else {
+                rutasDelAsesor.forEach((ruta, idx) => {
+                    // Calcular el consecutivo respetando el orden lógico de antigüedad
+                    const totalRutas = rutasDelAsesor.length;
+                    const numRuta = totalRutas - idx; 
+                    const numFormateado = numRuta < 10 ? '0' + numRuta : numRuta;
+                    const consecutivo = `R-${numFormateado}`;
+                    
+                    const estadoText = ruta.finalizada ? 'Finalizada' : 'En Ejecución';
+                    const estadoColor = ruta.finalizada ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                    
+                    const card = document.createElement('div');
+                    card.className = "flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl hover:border-brand-400 hover:shadow-md transition cursor-pointer";
+                    card.setAttribute('onclick', `abrirModalResumenGestion('${ruta.id}')`);
+                    
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-mono">${consecutivo}</span>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded border uppercase ${estadoColor}">${estadoText}</span>
+                            </div>
+                            <p class="text-sm font-bold text-slate-800 mt-2">${formatFechaElegante(ruta.timestamp)}</p>
+                        </div>
+                        <div class="text-brand-600 bg-brand-50 p-2 rounded-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+            document.getElementById('historial-asesor-modal').classList.remove('hidden');
+        };
+
+        window.cerrarHistorialAsesor = function() {
+            document.getElementById('historial-asesor-modal').classList.add('hidden');
+        };
+
+        // VENTANA MAESTRA: Despliega el informe final de gestión para el vendedor y el admin
+        window.abrirModalResumenGestion = function(docId) {
             const docRuta = dbRutas.find(r => r.id === docId);
             if (!docRuta) return;
 
-            // Inyectar datos base en cabecera del modal
-            document.getElementById('ruta-modal-asesor').innerText = docRuta.vendedor;
-            document.getElementById('ruta-modal-fecha').innerText = docRuta.timestamp || 'N/A';
+            document.getElementById('resumen-modal-asesor').innerText = docRuta.vendedor;
+            document.getElementById('resumen-modal-fecha').innerText = formatFechaElegante(docRuta.timestamp);
+
+            let sumaVenta = 0, sumaCobro = 0, distanciaTotal = 0, tiempoTotalMinutos = 0;
+            let ultimoGps = null;
+            let primeraEntrada = null;
+            let ultimaSalida = null;
             
-            // Re-calcular el consecutivo correspondiente
-            const rutasDelVendedor = dbRutas
-                .filter(r => r.vendedor === docRuta.vendedor)
-                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-            const posRuta = rutasDelVendedor.findIndex(r => r.id === docRuta.id);
-            const numRuta = posRuta + 1;
-            const numFormateado = numRuta < 10 ? '0' + numRuta : numRuta;
-            const consecutivoRuta = posRuta !== -1 ? `R-${numFormateado}` : 'R-00';
-            document.getElementById('ruta-modal-consecutivo').innerText = consecutivoRuta;
-
-            let sumaVentaReal = 0;
-            let sumaCobroReal = 0;
-            let sumaVentaEst = 0;
-            let sumaCobroEst = 0;
-
-            const container = document.getElementById('ruta-modal-clientes-list');
+            const container = document.getElementById('resumen-modal-clientes-list');
             container.innerHTML = '';
 
             if (docRuta.ruta && docRuta.ruta.length > 0) {
                 docRuta.ruta.forEach((punto, idx) => {
-                    const estV = parseInt(String(punto.estimadoVenta || '0').replace(/\D/g, ''), 10) || 0;
-                    const estC = parseInt(String(punto.estimadoCobro || '0').replace(/\D/g, ''), 10) || 0;
-                    sumaVentaEst += estV;
-                    sumaCobroEst += estC;
-
-                    // Marcador de procedencia del cliente en la auditoría del administrador
                     let badgExtraRollover = '';
-                    if (punto.esExtra) {
-                        badgExtraRollover = `<span class="inline-block ml-1.5 px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-800 rounded border border-amber-200 uppercase">✨ Extra</span>`;
-                    } else if (punto.esRollover) {
-                        badgExtraRollover = `<span class="inline-block ml-1.5 px-1.5 py-0.5 text-[9px] font-black bg-purple-100 text-purple-800 rounded border border-purple-200 uppercase">⏱️ De Ayer</span>`;
-                    }
-
-                    let bloqueGestionInterna = '';
-                    let claseEstiloBorde = 'border-slate-200 bg-white';
+                    if (punto.esExtra) badgExtraRollover = `<span class="inline-block ml-1.5 px-1.5 py-0.5 text-[9px] font-black bg-amber-100 text-amber-800 rounded border border-amber-200 uppercase">✨ Extra</span>`;
+                    else if (punto.esRollover) badgExtraRollover = `<span class="inline-block ml-1.5 px-1.5 py-0.5 text-[9px] font-black bg-purple-100 text-purple-800 rounded border border-purple-200 uppercase">⏱️ De Ayer</span>`;
 
                     if (punto.visitado) {
-                        const vR = parseInt(String(punto.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0;
-                        const cR = parseInt(String(punto.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0;
-                        sumaVentaReal += vR;
-                        sumaCobroReal += cR;
+                        sumaVenta += parseInt(String(punto.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0;
+                        sumaCobro += parseInt(String(punto.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0;
+                        
+                        if (!primeraEntrada && punto.horaEntrada) primeraEntrada = punto.horaEntrada;
+                        if (punto.horaSalida) ultimaSalida = punto.horaSalida;
 
-                        claseEstiloBorde = 'border-emerald-500 bg-emerald-50/10 border-l-4 shadow-sm';
-                        bloqueGestionInterna = `
-                            <div class="mt-2 grid grid-cols-2 gap-2 text-xs bg-emerald-50/40 p-2.5 rounded-xl border border-emerald-100">
-                                <div><span class="text-slate-400 block font-medium">Venta Efectuada:</span> <strong class="text-emerald-700 font-bold">${punto.montoVentaReal}</strong></div>
-                                <div><span class="text-slate-400 block font-medium">Cobro Efectuado:</span> <strong class="text-blue-700 font-bold">${punto.montoCobroReal}</strong></div>
-                            </div>
-                            <div class="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
-                                <a href="${punto.gpsEntrada}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-500 hover:text-brand-600 hover:border-brand-300 rounded-lg transition whitespace-nowrap">📍 Ent: ${punto.horaEntrada.split(' ')[1] || ''} (Verificar)</a>
-                                <a href="${punto.gpsSalida}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 text-slate-500 hover:text-emerald-600 hover:border-emerald-300 rounded-lg transition whitespace-nowrap">📍 Sal: ${punto.horaSalida.split(' ')[1] || ''} (Verificar)</a>
+                        const tiempoCliente = calcularMinutosDiferencia(punto.horaEntrada, punto.horaSalida);
+                        
+                        let distanciaCliente = 0;
+                        const coordsActual = extraerCoordenadas(punto.gpsEntrada) || extraerCoordenadas(punto.ubicacionReal);
+                        if (coordsActual) {
+                            if (ultimoGps) {
+                                distanciaCliente = calcularDistanciaHaversine(ultimoGps.lat, ultimoGps.lon, coordsActual.lat, coordsActual.lon);
+                                distanciaTotal += distanciaCliente;
+                            }
+                            ultimoGps = coordsActual;
+                        }
+
+                        const card = document.createElement('div');
+                        card.className = "bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-left relative overflow-hidden";
+                        
+                        card.innerHTML = `
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-emerald-500"></div>
+                            <div class="pl-2">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-extrabold text-slate-900 text-sm uppercase">${punto.nombre} ${badgExtraRollover}</h4>
+                                    <span class="px-2 py-0.5 text-[10px] font-black bg-slate-100 text-slate-600 rounded uppercase border border-slate-200">${punto.motivoReal || 'Visitado'}</span>
+                                </div>
+                                <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                    <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Venta Real</span><span class="font-bold text-emerald-600">$${new Intl.NumberFormat('es-CO').format(parseInt(String(punto.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0)}</span></div>
+                                    <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Cobro Real</span><span class="font-bold text-blue-600">$${new Intl.NumberFormat('es-CO').format(parseInt(String(punto.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0)}</span></div>
+                                    <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Tiempo</span><span class="font-bold text-slate-700">⏱️ ${tiempoCliente} min</span></div>
+                                    <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Distancia</span><span class="font-bold text-brand-600">📍 ${distanciaCliente.toFixed(1)} km</span></div>
+                                </div>
                             </div>
                         `;
+                        container.appendChild(card);
                     } else {
-                        claseEstiloBorde = 'border-slate-200 bg-white border-l-4';
-                        const botonQuitarPunto = !docRuta.finalizada ? `
-                            <button type="button" onclick="event.stopPropagation(); eliminarClienteDeRutaAdmin('${docRuta.id}', ${idx}); window.cerrarDetalleRutaAdmin();" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition flex-shrink-0" title="Quitar punto de la ruta">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        const botonQuitarPunto = !docRuta.finalizada && isAdminLoggedIn ? `
+                            <button type="button" onclick="event.stopPropagation(); eliminarClienteDeRutaAdmin('${docRuta.id}', ${idx}); window.cerrarModalResumenGestion();" class="px-2 py-1 bg-red-50 text-red-500 hover:bg-red-100 rounded-md transition text-[10px] font-bold border border-red-100" title="Quitar punto de la ruta">
+                                Eliminar Punto
                             </button>
                         ` : '';
 
-                        bloqueGestionInterna = `
-                            <div class="flex justify-between items-center mt-1 text-xs text-slate-400 italic font-medium">
-                                <span>Establecimiento pendiente en la agenda</span>
-                                ${botonQuitarPunto}
-                            </div>
-                        `;
-                    }
-
-                    const cardFilaCliente = document.createElement('div');
-                    cardFilaCliente.className = `p-4 rounded-2xl border ${claseEstiloBorde} text-left`;
-                    cardFilaCliente.innerHTML = `
-                        <div class="flex justify-between items-start gap-2">
-                            <div class="min-w-0 flex-1">
-                                <span class="font-extrabold text-slate-900 block truncate text-sm uppercase tracking-wide">${punto.nombre} ${badgExtraRollover}</span>
-                                <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-500 mt-0.5 font-medium">
-                                    <div>Meta Venta: <strong class="text-slate-700">${punto.estimadoVenta}</strong></div>
-                                    <div>Meta Cobro: <strong class="text-slate-700">${punto.estimadoCobro}</strong></div>
+                        const card = document.createElement('div');
+                        card.className = "bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 text-left opacity-80 relative overflow-hidden";
+                        card.innerHTML = `
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-slate-300"></div>
+                            <div class="pl-2">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-slate-500 text-sm uppercase line-through">${punto.nombre} ${badgExtraRollover}</h4>
+                                    <div class="flex items-center space-x-2">
+                                        ${botonQuitarPunto}
+                                        <span class="px-2 py-0.5 text-[10px] font-bold bg-slate-200 text-slate-400 rounded uppercase">No visitado</span>
+                                    </div>
                                 </div>
                             </div>
-                            <span class="px-2.5 py-0.5 text-[9px] font-black rounded-full uppercase flex-shrink-0 ${punto.visitado ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-slate-100 text-slate-500'}">${punto.visitado ? (punto.motivoReal || 'Visita') : 'No visitado'}</span>
-                        </div>
-                        ${bloqueGestionInterna}
-                    `;
-                    container.appendChild(cardFilaCliente);
+                        `;
+                        container.appendChild(card);
+                    }
                 });
+
+                if (primeraEntrada && ultimaSalida) {
+                    tiempoTotalMinutos = calcularMinutosDiferencia(primeraEntrada, ultimaSalida);
+                }
             } else {
-                container.innerHTML = `<p class="text-xs text-slate-400 italic py-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">Esta agenda no cuenta con clientes programados.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400 italic py-6 text-center">No hay clientes programados ni visitados en esta ruta.</p>`;
             }
 
-            // Formatear e inyectar el bloque de totales generales consolidados dentro del Modal
-            const fmt = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
-            document.getElementById('ruta-modal-totales-box').innerHTML = `
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-brand-50/50 p-3 rounded-2xl border border-brand-100 text-xs">
-                    <div><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Venta</span><span class="font-bold text-slate-700">${fmt(sumaVentaEst)}</span></div>
-                    <div><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Meta Cobro</span><span class="font-bold text-slate-700">${fmt(sumaCobroEst)}</span></div>
-                    <div><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Venta Real</span><span class="font-black text-emerald-600 text-sm">${fmt(sumaVentaReal)}</span></div>
-                    <div><span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Cobro Real</span><span class="font-black text-blue-600 text-sm">${fmt(sumaCobroReal)}</span></div>
+            const formatDinero = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
+            const horasTotal = Math.floor(tiempoTotalMinutos / 60);
+            const minRestantes = tiempoTotalMinutos % 60;
+            const tiempoStr = horasTotal > 0 ? `${horasTotal}h ${minRestantes}m` : `${tiempoTotalMinutos}m`;
+
+            document.getElementById('resumen-modal-metricas').innerHTML = `
+                <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-2xl flex flex-col justify-center">
+                    <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider block">Total Ventas</span>
+                    <span class="font-black text-emerald-700 text-lg sm:text-xl truncate" title="${formatDinero(sumaVenta)}">${formatDinero(sumaVenta)}</span>
+                </div>
+                <div class="bg-blue-50 border border-blue-100 p-3 rounded-2xl flex flex-col justify-center">
+                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider block">Total Cobros</span>
+                    <span class="font-black text-blue-700 text-lg sm:text-xl truncate" title="${formatDinero(sumaCobro)}">${formatDinero(sumaCobro)}</span>
+                </div>
+                <div class="bg-slate-100 border border-slate-200 p-3 rounded-2xl flex flex-col justify-center">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Tiempo Jornada</span>
+                    <span class="font-black text-slate-800 text-lg sm:text-xl truncate">⏱️ ${tiempoStr}</span>
+                </div>
+                <div class="bg-brand-50 border border-brand-100 p-3 rounded-2xl flex flex-col justify-center">
+                    <span class="text-[10px] font-bold text-brand-600 uppercase tracking-wider block">Distancia Total</span>
+                    <span class="font-black text-brand-700 text-lg sm:text-xl truncate">📍 ${distanciaTotal.toFixed(1)} km</span>
                 </div>
             `;
 
-            document.getElementById('ruta-detalle-modal').classList.remove('hidden');
+            document.getElementById('modal-resumen-gestion').classList.remove('hidden');
         };
 
-        window.cerrarDetalleRutaAdmin = function() {
-            document.getElementById('ruta-detalle-modal').classList.add('hidden');
+        window.cerrarModalResumenGestion = function() {
+            document.getElementById('modal-resumen-gestion').classList.add('hidden');
         };
 
         // --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL CORREGIDA Y REFORZADA ---
