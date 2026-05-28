@@ -896,15 +896,6 @@
                     <h2 class="text-3xl font-extrabold text-slate-900">Panel de Control General</h2>
                     <p class="text-slate-500 mt-1">Supervisión e informes unificados de registros y flujos.</p>
                 </div>
-                <!-- Botón Exportar Todo Consolidado -->
-                <div>
-                    <button onclick="exportConsolidated()" class="w-full inline-flex justify-center items-center px-5 py-3 text-base font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-2xl shadow-lg shadow-brand-100 hover:shadow-xl hover:shadow-brand-200 transition-all duration-200 transform active:scale-[0.98]">
-                        <svg class="w-5 h-5 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        Exportar Todo Consolidado (.xlsx)
-                    </button>
-                </div>
             </div>
 
            <!-- DISTRIBUCIÓN DEL PANEL CON NAVEGACIÓN LATERAL VERTICAL -->
@@ -6826,20 +6817,9 @@ guardarEnNube(linkMapa);
                 }));
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
-                
-                // Aplicamos los mismos tamaños súper amplios para este reporte
                 ws['!cols'] = [
-                    { wch: 22 }, // Hora de Registro
-                    { wch: 40 }, // Nombre Completo del Vendedor
-                    { wch: 50 }, // Nombre del Cliente
-                    { wch: 20 }, // Motivo de Visita
-                    { wch: 18 }, // Monto Venta
-                    { wch: 18 }, // Monto Cobro
-                    { wch: 70 }  // Link Ubicación de Google Maps
+                    { wch: 22 }, { wch: 40 }, { wch: 50 }, { wch: 20 }, { wch: 18 }, { wch: 18 }, { wch: 70 }
                 ];
-
-                // Pintamos los encabezados (A1 hasta G1) de azul con texto blanco centrado
-                // Pintamos los encabezados (A1 hasta G1) de azul con texto blanco centrado
                 const headers = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1'];
                 headers.forEach(cell => {
                     if(ws[cell]) {
@@ -6850,29 +6830,25 @@ guardarEnNube(linkMapa);
                         };
                     }
                 });
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = 1; R <= range.e.r; ++R) {
+                    const cellVenta = ws[XLSX.utils.encode_cell({c: 4, r: R})];
+                    const cellCobro = ws[XLSX.utils.encode_cell({c: 5, r: R})];
+                    if (cellVenta && cellVenta.t === 'n') cellVenta.z = '#,##0';
+                    if (cellCobro && cellCobro.t === 'n') cellCobro.z = '#,##0';
 
-                // Recorremos las filas para aplicar el formato de separador de miles a las columnas E y F
-               // Recorremos las filas para aplicar el formato de miles y activar los links funcionales
-            const range = XLSX.utils.decode_range(ws['!ref']);
-            for (let R = 1; R <= range.e.r; ++R) {
-                const cellVenta = ws[XLSX.utils.encode_cell({c: 4, r: R})]; // Columna E (Venta)
-                const cellCobro = ws[XLSX.utils.encode_cell({c: 5, r: R})]; // Columna F (Cobro)
-                if (cellVenta && cellVenta.t === 'n') cellVenta.z = '#,##0';
-                if (cellCobro && cellCobro.t === 'n') cellCobro.z = '#,##0';
-
-                // Localizamos la columna G (índice 6) que es donde está la ubicación
-                const cellUbicacion = ws[XLSX.utils.encode_cell({c: 6, r: R})];
-                if (cellUbicacion && cellUbicacion.v && cellUbicacion.v.startsWith('http')) {
-                    // Creamos el hipervínculo interno en el archivo Excel
-                    cellUbicacion.l = { Target: cellUbicacion.v, Tooltip: "Abrir Verificación" };
-                    // Le damos un estilo estético de link azul y subrayado
-                    cellUbicacion.s = {
-                        font: { color: { rgb: "0069C4" }, underline: true, name: "Arial", sz: 10 }
-                    };
+                    const cellUbicacion = ws[XLSX.utils.encode_cell({c: 6, r: R})];
+                    if (cellUbicacion && cellUbicacion.v && cellUbicacion.v.startsWith('http')) {
+                        cellUbicacion.l = { Target: cellUbicacion.v, Tooltip: "Abrir Verificación" };
+                        cellUbicacion.s = { font: { color: { rgb: "0069C4" }, underline: true, name: "Arial", sz: 10 } };
+                    }
                 }
-            }
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Visitas Generales");
+                XLSX.writeFile(wb, "REPORTE_VISITAS_FERCOSUR.xlsx");
+                showToast('Descarga Exitosa', 'Historial de visitas exportado con éxito.', 'success');
 
-           } else if (currentActiveAdminTab === 'despachos') {
+            } else if (currentActiveAdminTab === 'despachos') {
                 let allDespachosFlat = [];
                 dbLotes.forEach(lote => {
                     if (lote.despachos) {
@@ -6902,8 +6878,7 @@ guardarEnNube(linkMapa);
                     if (item.empaques.carreta > 0) empList.push(`${item.empaques.carreta} Car`);
                     if (item.empaques.cadena > 0) empList.push(`${item.empaques.cadena} Cad`);
                     if (item.empaques.otros > 0) empList.push(`${item.empaques.otros} Otr`);
-                    const detalleEmpaques = empList.length > 0 ?
-                    empList.join(', ') + ` (Total: ${item.empaques.total})` : 'Sin empaques';
+                    const detalleEmpaques = empList.length > 0 ? empList.join(', ') + ` (Total: ${item.empaques.total})` : 'Sin empaques';
 
                     return {
                         'Hora de Registro': item.timestamp,
@@ -6919,33 +6894,19 @@ guardarEnNube(linkMapa);
                 });
 
                 const ws = XLSX.utils.json_to_sheet(dataToExport);
-
-                // 1. ASIGNACIÓN DE COLUMNAS ANCHAS (Evita que se corte la información de Fercosur)
                 ws['!cols'] = [
-                    { wch: 22 }, // Hora de Registro
-                    { wch: 25 }, // Lote Planilla
-                    { wch: 18 }, // Número de Remisión
-                    { wch: 15 }, // Número FVE
-                    { wch: 45 }, // Cliente Destinatario (Espacio amplio para nombres largos)
-                    { wch: 15 }, // Teléfono
-                    { wch: 22 }, // Población / Ciudad
-                    { wch: 40 }, // Detalle Empaques
-                    { wch: 15 }  // Total Unidades
+                    { wch: 22 }, { wch: 25 }, { wch: 18 }, { wch: 15 }, { wch: 45 }, { wch: 15 }, { wch: 22 }, { wch: 40 }, { wch: 15 }
                 ];
-
-                // 2. DISEÑO DE ENCABEZADOS: AMBER/NARANJA CON LETRA BLANCA CENTRADA (A1 hasta I1)
                 const headersDespachos = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'I1'];
                 headersDespachos.forEach(cell => {
                     if(ws[cell]) {
                         ws[cell].s = {
-                            fill: { fgColor: { rgb: "EA580C" } }, // El naranja representativo de tus despachos
+                            fill: { fgColor: { rgb: "EA580C" } },
                             font: { color: { rgb: "FFFFFF" }, bold: true, name: "Arial", sz: 11 },
                             alignment: { horizontal: "center", vertical: "center" }
                         };
                     }
                 });
-
-                // 3. ESTILIZADO DE LAS FILAS DE DATOS (Alineación y Fuentes Limpias)
                 const range = XLSX.utils.decode_range(ws['!ref']);
                 for (let R = 1; R <= range.e.r; ++R) {
                     for (let C = 0; C <= 8; ++C) {
@@ -6953,26 +6914,97 @@ guardarEnNube(linkMapa);
                         if (cell) {
                             if (!cell.s) cell.s = {};
                             cell.s.font = { name: "Arial", sz: 10 };
-                            
-                            // Alineación inteligente: Códigos y números al centro; nombres e información a la izquierda
                             if ([0, 2, 3, 5, 8].includes(C)) {
                                 cell.s.alignment = { horizontal: "center", vertical: "center" };
                             } else {
                                 cell.s.alignment = { horizontal: "left", vertical: "center" };
                             }
-
-                            // Forzar que el total de unidades resalte en negrita
-                            if (C === 8) {
-                                cell.s.font.bold = true;
-                            }
+                            if (C === 8) cell.s.font.bold = true;
                         }
                     }
                 }
-
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Despachos Logísticos");
                 XLSX.writeFile(wb, "REPORTE_DESPACHOS_LOGISTICA.xlsx");
                 showToast('Descarga Exitosa', 'Historial de despachos logísticos exportado.', 'success');
+
+            } else if (currentActiveAdminTab === 'rutas') {
+                if (dbRutas.length === 0) {
+                    showToast('Sin Datos', 'No hay registros en la Base de Datos de Rutas.', 'error');
+                    return;
+                }
+
+                let flattenedRutas = [];
+                dbRutas.forEach(docRuta => {
+                    // Mapeo cronológico de consecutivos idéntico al panel visual de administración
+                    const rutasDelVendedor = dbRutas
+                        .filter(r => r.vendedor === docRuta.vendedor)
+                        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                    const posRuta = rutasDelVendedor.findIndex(r => r.id === docRuta.id);
+                    const numRuta = posRuta + 1;
+                    const numFormateado = numRuta < 10 ? '0' + numRuta : numRuta;
+                    const consecutivoRuta = posRuta !== -1 ? `R-${numFormateado}` : 'R-00';
+
+                    if (docRuta.ruta && docRuta.ruta.length > 0) {
+                        docRuta.ruta.forEach(punto => {
+                            flattenedRutas.push({
+                                'Asesor Comercial': docRuta.vendedor,
+                                'Consecutivo': consecutivoRuta,
+                                'Fecha Creación': docRuta.timestamp || 'N/A',
+                                'Estado Jornada': docRuta.finalizada ? 'Finalizada' : 'En Vivo',
+                                'Cliente Programado': punto.nombre,
+                                'Meta Venta': parseInt(String(punto.estimadoVenta || '0').replace(/\D/g, ''), 10) || 0,
+                                'Meta Cobro': parseInt(String(punto.estimadoCobro || '0').replace(/\D/g, ''), 10) || 0,
+                                'Estado Visita': punto.visitado ? 'Visitado' : 'Pendiente',
+                                'Motivo Real': punto.motivoReal || 'N/A',
+                                'Venta Realizada': parseInt(String(punto.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0,
+                                'Cobro Realizado': parseInt(String(punto.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0,
+                                'Método Cobro': punto.metodoCobro || 'N/A',
+                                'Hora Entrada': punto.horaEntrada ? punto.horaEntrada.split(' ')[1] : 'N/A',
+                                'Hora Salida': punto.horaSalida ? punto.horaSalida.split(' ')[1] : 'N/A'
+                            });
+                        });
+                    }
+                });
+
+                if (flattenedRutas.length === 0) {
+                    showToast('Sin Datos', 'No hay agendas configuradas para exportar.', 'error');
+                    return;
+                }
+
+                const ws = XLSX.utils.json_to_sheet(flattenedRutas);
+                ws['!cols'] = [
+                    { wch: 35 }, { wch: 15 }, { wch: 22 }, { wch: 18 }, { wch: 45 }, { wch: 15 }, { wch: 15 },
+                    { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 18 }, { wch: 15 }, { wch: 15 }
+                ];
+
+                const headersRutas = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'I1', 'J1', 'K1', 'L1', 'M1', 'N1'];
+                headersRutas.forEach(cell => {
+                    if(ws[cell]) {
+                        ws[cell].s = {
+                            fill: { fgColor: { rgb: "10B981" } }, // Estilo Verde Esmeralda exclusivo de Rutas
+                            font: { color: { rgb: "FFFFFF" }, bold: true, name: "Arial", sz: 11 },
+                            alignment: { horizontal: "center", vertical: "center" }
+                        };
+                    }
+                });
+
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let R = 1; R <= range.e.r; ++R) {
+                    const cMetaV = ws[XLSX.utils.encode_cell({c: 5, r: R})];
+                    const cMetaC = ws[XLSX.utils.encode_cell({c: 6, r: R})];
+                    const cVentaR = ws[XLSX.utils.encode_cell({c: 9, r: R})];
+                    const cCobroR = ws[XLSX.utils.encode_cell({c: 10, r: R})];
+                    if (cMetaV && cMetaV.t === 'n') cMetaV.z = '#,##0';
+                    if (cMetaC && cMetaC.t === 'n') cMetaC.z = '#,##0';
+                    if (cVentaR && cVentaR.t === 'n') cVentaR.z = '#,##0';
+                    if (cCobroR && cCobroR.t === 'n') cCobroR.z = '#,##0';
+                }
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Monitoreo de Rutas");
+                XLSX.writeFile(wb, "REPORTE_MONITOREO_RUTAS.xlsx");
+                showToast('Descarga Exitosa', 'Historial de monitoreo de rutas exportado.', 'success');
             }
         }
 
