@@ -5046,8 +5046,7 @@ TIENDA
             }
             return { nombreVisual, esFemenino };
         }
-
-        function checkVentasAuth() {
+function checkVentasAuth() {
             const session = localStorage.getItem('fercosur_seller_session');
             if (session) {
                 activeSeller = session;
@@ -5071,28 +5070,7 @@ TIENDA
                     subtituloNombre.classList.remove('hidden');
                 }
                 
-                // 1. Intentar cargar estado de la memoria local interna por velocidad
-                const sessionGuardada = localStorage.getItem('fercosur_jornada_' + activeSeller);
-                if (sessionGuardada) {
-                    const estado = JSON.parse(sessionGuardada);
-                    if (estado && estado.jornadaActiva) {
-                        rutaPlanificada = estado.ruta || [];
-                        jornadaActiva = estado.jornadaActiva;
-                        indiceClienteActivo = estado.indiceClienteActivo;
-                        currentRouteId = estado.idRuta || null;
-                        
-                        showView('form-general');
-                        activarInterfazJornadaReal();
-                        if (indiceClienteActivo !== null) {
-                            document.getElementById('formulario-visita-campo').classList.remove('hidden');
-                            document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
-                            document.getElementById('btn-finalizar-visita-registro').disabled = false;
-                        }
-                        return;
-                    }
-                }
-                
-                // 2. Si no hay registro local en este equipo, buscamos de forma blindada una ruta activa abierta en la nube
+                // PRIORIDAD ONLINE: Si hay señal de red, la nube manda para ganarle a datos locales desactualizados
                 if (navigator.onLine) {
                     db.collection("rutas_activas")
                         .where("vendedor", "==", activeSeller)
@@ -5100,7 +5078,7 @@ TIENDA
                         .get()
                         .then((querySnapshot) => {
                             if (!querySnapshot.empty) {
-                                // ¡Existe una jornada en ejecución iniciada desde otro dispositivo!
+                                // ¡Se encontró la ruta en vivo actualizada con los clics del celular!
                                 const docRuta = querySnapshot.docs[0];
                                 const dataRuta = docRuta.data();
                                 
@@ -5108,7 +5086,7 @@ TIENDA
                                 rutaPlanificada = dataRuta.ruta || [];
                                 jornadaActiva = true;
                                 
-                                // Deducir de forma automática si se dejó un cliente abierto en proceso de auditoría
+                                // Deducir de manera automática si quedó una visita abierta en proceso de atención
                                 indiceClienteActivo = null;
                                 rutaPlanificada.forEach((item, index) => {
                                     if (!item.visitado && item.horaEntrada && !item.horaSalida) {
@@ -5116,7 +5094,7 @@ TIENDA
                                     }
                                 });
                                 
-                                // Clonar el estado en el almacenamiento del dispositivo secundario para mantener consistencia absoluta
+                                // Sobreescribimos la memoria local del equipo con la verdad absoluta de la nube
                                 const estadoCloud = {
                                     vendedor: activeSeller,
                                     jornadaActiva: jornadaActiva,
@@ -5126,6 +5104,7 @@ TIENDA
                                 };
                                 localStorage.setItem('fercosur_jornada_' + activeSeller, JSON.stringify(estadoCloud));
                                 
+                                // Desplegar la pantalla de trabajo
                                 showView('form-general');
                                 activarInterfazJornadaReal();
                                 if (indiceClienteActivo !== null) {
@@ -5133,24 +5112,63 @@ TIENDA
                                     document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
                                     document.getElementById('btn-finalizar-visita-registro').disabled = false;
                                 }
-                                showToast('Jornada Sincronizada', 'Se restauró tu ruta activa detectada en la nube.', 'success');
+                                showToast('Ruta Sincronizada', 'Datos actualizados desde el servidor en la nube.', 'success');
                             } else {
-                                // No hay rutas activas en la nube, procesamos el flujo matutino habitual
+                                // Si la nube reporta que no hay jornadas activas, limpiamos basura local vieja
+                                localStorage.removeItem('fercosur_jornada_' + activeSeller);
                                 cargarRutaMatutinaBase();
                             }
                         })
                         .catch((err) => {
-                            console.error("Fallo al verificar ruta en la nube:", err);
-                            cargarRutaMatutinaBase();
+                            console.error("Fallo al conectar con la nube, usando respaldo local:", err);
+                            cargarRespaldoLocalOffline();
                         });
                 } else {
-                    cargarRutaMatutinaBase();
+                    // MODO OFFLINE: Si no hay señal de red, dependemos obligatoriamente del almacenamiento del dispositivo
+                    cargarRespaldoLocalOffline();
                 }
             } else {
                 showView('login-ventas');
             }
         }
 
+        // Subfunción de apoyo para leer la memoria local en caso de contingencia offline
+        function cargarRespaldoLocalOffline() {
+            const sessionGuardada = localStorage.getItem('fercosur_jornada_' + activeSeller);
+            if (sessionGuardada) {
+                const estado = JSON.parse(sessionGuardada);
+                if (estado && estado.jornadaActiva) {
+                    rutaPlanificada = estado.ruta || [];
+                    jornadaActiva = estado.jornadaActiva;
+                    indiceClienteActivo = estado.indiceClienteActivo;
+                    currentRouteId = estado.idRuta || null;
+                    
+                    showView('form-general');
+                    activarInterfazJornadaReal();
+                    if (indiceClienteActivo !== null) {
+                        document.getElementById('formulario-visita-campo').classList.remove('hidden');
+                        document.getElementById('txt-cliente-activo-nombre').innerText = rutaPlanificada[indiceClienteActivo].nombre;
+                        document.getElementById('btn-finalizar-visita-registro').disabled = false;
+                    }
+                    return;
+                }
+            }
+            cargarRutaMatutinaBase();
+        }
+
+        // Subfunción de apoyo para cargar la planificación inicial de la mañana o los pendientes acumulados
+        function cargarRutaMatutinaBase() {
+            const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+            if (rolloverGuardado) {
+                rutaPlanificada = JSON.parse(rolloverGuardado);
+            } else {
+                rutaPlanificada = [];
+            }
+            jornadaActiva = false;
+            indiceClienteActivo = null;
+            renderTablaPlanificacion();
+            showView('menu');
+        }
         // Función de respaldo para inicialización de planificador limpio o rollover
         function cargarRutaMatutinaBase() {
             const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
