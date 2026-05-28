@@ -564,6 +564,12 @@
                     </div>
                 </div>
             </div>
+		   <!-- BOTÓN DE ESCAPE RÁPIDO EN LA ESQUINA INFERIOR DERECHA -->
+            <div class="absolute bottom-4 right-4 z-10">
+                <button onclick="logoutVentas()" class="text-xs font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition shadow-sm border border-red-200/40">
+                    CERRAR SESIÓN
+                </button>
+            </div>
         </section>
 
        
@@ -4456,9 +4462,6 @@ TIENDA
                 divBotonCierre.innerHTML = `
                     <button type="button" onclick="terminarJornadaCompleta()" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-4 rounded-xl font-black text-sm transition duration-150 shadow-md text-center uppercase tracking-wider">
                         🏁 Finalizar mi Jornada de Hoy
-                    </button>
-                    <button type="button" onclick="logoutVentas()" class="w-full mt-3 bg-red-50 hover:bg-red-100 text-red-600 py-3 rounded-xl font-bold text-sm transition duration-150 border border-red-200/60 text-center uppercase tracking-wider shadow-sm">
-                        🚪 Cerrar Sesión (Salir sin finalizar)
                     </button>
                 `;
                 contenedor.appendChild(divBotonCierre);
