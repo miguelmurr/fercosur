@@ -4706,7 +4706,7 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        cliente.gpsEntrada = `http://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+                        cliente.gpsEntrada = `http://googleusercontent.com/maps.google.com/${position.coords.latitude},${position.coords.longitude}`;
                         document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida";
                         document.getElementById('btn-finalizar-visita-registro').disabled = false;
                         guardarJornadaEnStorage();
@@ -4831,10 +4831,10 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             };
 
             // Ejecución del rastreo satelital de salida
-            if (navigator.geolocation) {
+           if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        cliente.gpsSalida = `http://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+                        cliente.gpsSalida = `http://googleusercontent.com/maps.google.com/${position.coords.latitude},${position.coords.longitude}`;
                         guardarRegistroLocalYContinuar();
                     },
                     (error) => {
@@ -6156,11 +6156,12 @@ function checkVentasAuth() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                      // Si el vendedor acepta, creamos el link de Google Maps
-const lat = position.coords.latitude;
-const lon = position.coords.longitude;
-const linkMapa = `https://www.google.com/maps?q=${lat},${lon}`;
-guardarEnNube(linkMapa);
+                      (position) => {
+                        // Si el vendedor acepta, creamos el link de Google Maps
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const linkMapa = `http://googleusercontent.com/maps.google.com/${lat},${lon}`;
+                        guardarEnNube(linkMapa);
                     },
                     (error) => {
                         // Si lo rechaza o no tiene señal, guardamos la visita de todas formas
@@ -7497,13 +7498,20 @@ guardarEnNube(linkMapa);
                                     <span class="px-2 py-0.5 text-[10px] font-black bg-slate-100 text-slate-600 rounded uppercase border border-slate-200">${punto.motivoReal || 'Visitado'}</span>
                                 </div>
                                 <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                                    <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Venta Real</span><span class="font-bold text-emerald-600">$${new Intl.NumberFormat('es-CO').format(parseInt(String(punto.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0)}</span></div>
-                                    <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Cobro Real</span><span class="font-bold text-blue-600">$${new Intl.NumberFormat('es-CO').format(parseInt(String(punto.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0)}</span></div>
-                                    <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Tiempo</span><span class="font-bold text-slate-700">⏱️ ${tiempoCliente} min</span></div>
-                                   <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Distancia</span><span class="font-bold text-brand-600">📍 ${distanciaCliente.toFixed(2)} km</span></div>
-                                </div>
+                                <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Venta Real</span><span class="font-bold text-emerald-600">$${new Intl.NumberFormat('es-CO').format(parseInt(String(punto.montoVentaReal || '0').replace(/\D/g, ''), 10) || 0)}</span></div>
+                                <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Cobro Real</span><span class="font-bold text-blue-600">$${new Intl.NumberFormat('es-CO').format(parseInt(String(punto.montoCobroReal || '0').replace(/\D/g, ''), 10) || 0)}</span></div>
+                                <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Tiempo</span><span class="font-bold text-slate-700">⏱️ ${tiempoCliente} min</span></div>
+                                <div><span class="text-[10px] text-slate-400 block font-bold uppercase">Distancia</span><span class="font-bold text-brand-600">📍 ${distanciaCliente.toFixed(2)} km</span></div>
                             </div>
-                        `;
+                            ${punto.gpsEntrada && punto.gpsEntrada.includes('http') ? 
+                            `<div class="mt-2 pt-2 border-t border-slate-100 flex justify-end">
+                                <a href="${punto.gpsEntrada}" target="_blank" class="text-[11px] font-bold text-brand-600 hover:text-brand-800 flex items-center gap-1 transition-colors">
+                                    <span>🗺️ Ver ubicación de llegada</span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                </a>
+                            </div>` : ''}
+                        </div>
+                    `;
                         container.appendChild(card);
                    } else {
                         const botonQuitarPunto = !docRuta.finalizada ? `
