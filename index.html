@@ -346,7 +346,7 @@
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full px-2">
-                    <div onclick="showView('form-general')" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
+                    <div onclick="renderTablaPlanificacion(); showView('form-general')" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
                         <div>
                             <div class="inline-flex p-4 rounded-2xl bg-brand-50 text-brand-600 mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -5289,7 +5289,12 @@ function checkVentasAuth() {
             jornadaActiva = false;
             indiceClienteActivo = null;
             renderTablaPlanificacion();
-            showView('menu');
+            
+            // Redirigir al menú únicamente si el asesor está en la pantalla de login (evita sacarlo si ya está planificando)
+            const vistaLogin = document.getElementById('view-login-ventas');
+            if (vistaLogin && !vistaLogin.classList.contains('hidden')) {
+                showView('menu');
+            }
         }
 
         function submitLoginVentas(e) {
