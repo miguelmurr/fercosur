@@ -4353,7 +4353,8 @@ TIENDA
             inputCobro.value = '';
 
             if (activeSeller) {
-                localStorage.setItem('fercosur_pre_ruta_' + activeSeller, JSON.stringify(rutaPlanificada));
+                db.collection("pre_rutas").doc(activeSeller).set({ ruta: rutaPlanificada })
+                    .catch(e => console.error("Error al sincronizar pre-ruta en la nube:", e));
             }
 
             renderTablaPlanificacion();
@@ -4403,11 +4404,12 @@ TIENDA
             });
         }
 
-        // Permite remover un punto antes de congelar la ruta
+       // Permite remover un punto antes de congelar la ruta
         function eliminarClienteDePlanificacion(index) {
             rutaPlanificada.splice(index, 1);
             if (activeSeller) {
-                localStorage.setItem('fercosur_pre_ruta_' + activeSeller, JSON.stringify(rutaPlanificada));
+                db.collection("pre_rutas").doc(activeSeller).set({ ruta: rutaPlanificada })
+                    .catch(e => console.error("Error al actualizar remoción en la nube:", e));
             }
             renderTablaPlanificacion();
         }
@@ -4427,7 +4429,8 @@ TIENDA
             jornadaActiva = true;
             currentRouteId = 'ruta-' + Date.now(); 
             if (activeSeller) {
-                localStorage.removeItem('fercosur_pre_ruta_' + activeSeller);
+                db.collection("pre_rutas").doc(activeSeller).delete()
+                    .catch(e => console.error("Error al limpiar pre-ruta de la nube:", e));
             }
             guardarJornadaEnStorage();
             activarInterfazJornadaReal();
@@ -5251,18 +5254,32 @@ function checkVentasAuth() {
             cargarRutaMatutinaBase();
         }
 
-       // Subfunción de apoyo para cargar la planificación inicial de la mañana, pre-guardados o pendientes acumulados
+       // Subfunción de apoyo para cargar la planificación inicial de la mañana, pre-guardados o pendientes acumulados desde Firestore
         function cargarRutaMatutinaBase() {
-            const preRutaGuardada = localStorage.getItem('fercosur_pre_ruta_' + activeSeller);
-            const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+            if (!activeSeller) return;
             
-            if (preRutaGuardada) {
-                rutaPlanificada = JSON.parse(preRutaGuardada);
-            } else if (rolloverGuardado) {
-                rutaPlanificada = JSON.parse(rolloverGuardado);
-            } else {
-                rutaPlanificada = [];
-            }
+            db.collection("pre_rutas").doc(activeSeller).get().then((doc) => {
+                if (doc.exists) {
+                    rutaPlanificada = doc.data().ruta || [];
+                    finalizarCargaMatutina();
+                } else {
+                    const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+                    if (rolloverGuardado) {
+                        rutaPlanificada = JSON.parse(rolloverGuardado);
+                    } else {
+                        rutaPlanificada = [];
+                    }
+                    finalizarCargaMatutina();
+                }
+            }).catch((err) => {
+                console.error("Error al descargar pre-ruta desde Firestore:", err);
+                const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+                rutaPlanificada = rolloverGuardado ? JSON.parse(rolloverGuardado) : [];
+                finalizarCargaMatutina();
+            });
+        }
+
+        function finalizarCargaMatutina() {
             jornadaActiva = false;
             indiceClienteActivo = null;
             renderTablaPlanificacion();
