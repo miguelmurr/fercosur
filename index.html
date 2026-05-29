@@ -1001,9 +1001,6 @@
                 <button id="btn-delete-selected-visitas" onclick="eliminarVisitasSeleccionadas()" disabled class="p-1 text-red-500 hover:bg-red-50 disabled:text-slate-300 transition text-sm flex items-center space-x-1" title="Eliminar seleccionados">
                     <span>🗑️</span> <span class="text-xs font-bold font-mono">(<span id="count-selected-visitas">0</span>)</span>
                 </button>
-                <button onclick="vaciarTodasVisitas()" class="p-1 text-red-400 hover:bg-red-50 transition text-sm flex items-center space-x-1" title="Vaciar toda la lista">
-                    <span>🗑️</span> <span class="text-xs font-bold">Vaciar Todo</span>
-                </button>
             </div>
 
                 <div class="overflow-auto max-h-[560px] relative">
@@ -6426,13 +6423,25 @@ guardarEnNube(linkMapa);
                 showToast('Sin Rutas', 'No hay rutas en vivo operando.', 'error');
                 return;
             }
-            if (confirm("¿Está seguro de eliminar COMPLETAMENTE TODAS las rutas activas en vivo?")) {
+            if (confirm("¿Está seguro de eliminar COMPLETAMENTE TODAS las rutas activas en vivo y sus visitas asociadas?")) {
                 showToast('Procesando', 'Borrando...', 'success');
+                
+                // Efecto dominó: Limpiar visitas enlazadas antes de borrar el rutero
+                activas.forEach(docRuta => {
+                    if (docRuta.ruta) {
+                        dbGeneral.forEach(item => {
+                            if (item.nombre === docRuta.vendedor && docRuta.ruta.some(p => p.visitado && p.horaSalida === item.timestamp)) {
+                                db.collection("pedidos_generales").doc(item.id).delete().catch(err => console.error(err));
+                            }
+                        });
+                    }
+                });
+
                 let promises = activas.map(item => db.collection("rutas_activas").doc(item.id).delete());
                 Promise.all(promises).then(() => {
                     document.getElementById('master-checkbox-rutas-activas').checked = false;
                     updateRutasActivasSelection();
-                    showToast('Rutas en vivo vaciadas', 'Eliminación completada.', 'success');
+                    showToast('Rutas y visitas limpiadas', 'Vaciado completo.', 'success');
                 }).catch(err => console.error(err));
             }
         }
@@ -6440,14 +6449,26 @@ guardarEnNube(linkMapa);
         function eliminarRutasActivasSeleccionadas() {
             const checkboxes = document.querySelectorAll('.ruta-activa-checkbox:checked');
             if (checkboxes.length === 0) return;
-
-            if (confirm(`¿Eliminar las ${checkboxes.length} rutas activas seleccionadas?`)) {
+            if (confirm(`¿Eliminar las ${checkboxes.length} rutas activas seleccionadas con sus visitas asociadas?`)) {
                 showToast('Eliminando', 'Borrando...', 'success');
-                const promises = Array.from(checkboxes).map(cb => db.collection("rutas_activas").doc(cb.getAttribute('data-id')).delete());
+                
+                const promises = Array.from(checkboxes).map(cb => {
+                    const id = cb.getAttribute('data-id');
+                    const docRuta = dbRutas.find(r => r.id === id);
+                    if (docRuta && docRuta.ruta) {
+                        dbGeneral.forEach(item => {
+                            if (item.nombre === docRuta.vendedor && docRuta.ruta.some(p => p.visitado && p.horaSalida === item.timestamp)) {
+                                db.collection("pedidos_generales").doc(item.id).delete().catch(err => console.error(err));
+                            }
+                        });
+                    }
+                    return db.collection("rutas_activas").doc(id).delete();
+                });
+
                 Promise.all(promises).then(() => {
                     document.getElementById('master-checkbox-rutas-activas').checked = false;
                     updateRutasActivasSelection();
-                    showToast('Rutas Eliminadas', 'Bloque removido con éxito.', 'success');
+                    showToast('Rutas y Visitas Removidas', 'Operación completada con éxito.', 'success');
                 }).catch(err => console.error(err));
             }
         }
@@ -6459,13 +6480,11 @@ guardarEnNube(linkMapa);
             updateRutasHistoricoSelection();
         }
 
-        // CAMBIO DE MEMORIA TÉCNICA REQUERIDO PARA RECONOCER SELECCIONADOS HISTÓRICOS
         function updateRutasHistoricoSelection() {
             const checkboxes = document.querySelectorAll('.ruta-historico-checkbox');
             const checked = Array.from(checkboxes).filter(cb => cb.checked);
             const btnDelete = document.getElementById('btn-delete-selected-rutas-historico');
             const countLabel = document.getElementById('count-selected-rutas-historico');
-            
             if (countLabel) countLabel.innerText = checked.length;
             if (btnDelete) btnDelete.disabled = checked.length === 0;
         }
@@ -6476,13 +6495,24 @@ guardarEnNube(linkMapa);
                 showToast('Sin Historial', 'No hay rutas guardadas en el historial.', 'error');
                 return;
             }
-            if (confirm("¿Está seguro de eliminar COMPLETAMENTE TODO el historial de rutas guardadas?")) {
+            if (confirm("¿Está seguro de eliminar COMPLETAMENTE TODO el historial de rutas y todas sus visitas asociadas?")) {
                 showToast('Procesando', 'Vaciando...', 'success');
+                
+                historicas.forEach(docRuta => {
+                    if (docRuta.ruta) {
+                        dbGeneral.forEach(item => {
+                            if (item.nombre === docRuta.vendedor && docRuta.ruta.some(p => p.visitado && p.horaSalida === item.timestamp)) {
+                                db.collection("pedidos_generales").doc(item.id).delete().catch(err => console.error(err));
+                            }
+                        });
+                    }
+                });
+
                 let promises = historicas.map(item => db.collection("rutas_activas").doc(item.id).delete());
                 Promise.all(promises).then(() => {
                     document.getElementById('master-checkbox-rutas-historico').checked = false;
                     updateRutasHistoricoSelection();
-                    showToast('Historial Vaciado', 'Se eliminó el registro de rutas guardadas.', 'success');
+                    showToast('Historial y visitas purgados', 'Se limpió el registro histórico.', 'success');
                 }).catch(err => console.error(err));
             }
         }
@@ -6490,18 +6520,30 @@ guardarEnNube(linkMapa);
         function eliminarRutasHistoricoSeleccionadas() {
             const checkboxes = document.querySelectorAll('.ruta-historico-checkbox:checked');
             if (checkboxes.length === 0) return;
-
-            if (confirm(`¿Eliminar las ${checkboxes.length} rutas del historial seleccionadas?`)) {
+            if (confirm(`¿Eliminar las ${checkboxes.length} rutas del historial seleccionadas con sus visitas asociadas?`)) {
                 showToast('Eliminando', 'Borrando...', 'success');
-                const promises = Array.from(checkboxes).map(cb => db.collection("rutas_activas").doc(cb.getAttribute('data-id')).delete());
+                
+                const promises = Array.from(checkboxes).map(cb => {
+                    const id = cb.getAttribute('data-id');
+                    const docRuta = dbRutas.find(r => r.id === id);
+                    if (docRuta && docRuta.ruta) {
+                        dbGeneral.forEach(item => {
+                            if (item.nombre === docRuta.vendedor && docRuta.ruta.some(p => p.visitado && p.horaSalida === item.timestamp)) {
+                                db.collection("pedidos_generales").doc(item.id).delete().catch(err => console.error(err));
+                            }
+                        });
+                    }
+                    return db.collection("rutas_activas").doc(id).delete();
+                });
+
                 Promise.all(promises).then(() => {
                     document.getElementById('master-checkbox-rutas-historico').checked = false;
                     updateRutasHistoricoSelection();
-                    showToast('Historial Modificado', 'Bloque removido.', 'success');
+                    showToast('Bloque Histórico Removido', 'Rutas y registros de visitas eliminados.', 'success');
                 }).catch(err => console.error(err));
             }
         }
-
+		
         function renderTableData() {
             const emptyState = document.getElementById('table-empty-state');
             if(!emptyState) return;
@@ -6757,17 +6799,15 @@ guardarEnNube(linkMapa);
                                  </div>
                             </div>
 
-                            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                 <div class="bg-emerald-500 h-full transition-all duration-500" style="width: ${porcentaje}%"></div>
-                            </div>
-                            
-                             <div class="flex items-center justify-between border-t border-slate-100 pt-2 mt-2">
-                                <div onclick="event.stopPropagation(); window.verMapaRutaGoogle('${docRuta.id}')" class="text-[11px] text-brand-600 font-bold flex items-center space-x-1 hover:text-brand-800 transition-colors cursor-pointer" title="Abrir recorrido completo en Google Maps">
-                                    <span>🗺️ Ver mapa en Google Maps</span>
-                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            <div id="bar-progreso-rutas-admin" class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-emerald-500 h-full transition-all duration-500" style="width: ${porcentaje}%"></div>
                                 </div>
-                                
-                                <button type="button" onclick="event.stopPropagation(); abrirModalResumenGestion('${docRuta.id}')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors flex items-center shadow-sm border border-slate-200" title="Ver Resumen de Gestión">
+                                <div class="flex items-center justify-between border-t border-slate-100 pt-2 mt-2">
+                                    <div onclick="event.stopPropagation(); window.verMapaRutaGoogle('${docRuta.id}')" class="text-[11px] text-brand-600 font-bold flex items-center space-x-1 hover:text-brand-800 transition-colors cursor-pointer" title="Abrir recorrido completo en Google Maps">
+                                        <span></span>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                                    </div>
+                                    <button type="button" onclick="event.stopPropagation(); abrirModalResumenGestion('${docRuta.id}')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors flex items-center shadow-sm border border-slate-200" title="Ver Resumen de Gestión">
                                     <span class="text-xs mr-1">📋</span>
                                     <span class="text-[10px] font-bold">Resumen</span>
                                 </button>
