@@ -5212,9 +5212,10 @@ function checkVentasAuth() {
                                 }
                                 showToast('Ruta Sincronizada', 'Datos actualizados desde el servidor en la nube.', 'success');
                             } else {
-                                // Si la nube reporta que no hay jornadas activas, limpiamos basura local vieja
+                                // Si la nube reporta que no hay jornadas activas, limpiamos basura local vieja e ingresamos al menú
                                 localStorage.removeItem('fercosur_jornada_' + activeSeller);
                                 cargarRutaMatutinaBase();
+                                showView('menu'); // Redirección directa determinada sin esperas cruzadas
                             }
                         })
                         .catch((err) => {
@@ -5285,16 +5286,10 @@ function checkVentasAuth() {
             });
         }
 
-       function finalizarCargaMatutina() {
+        function finalizarCargaMatutina() {
             jornadaActiva = false;
             indiceClienteActivo = null;
             renderTablaPlanificacion();
-            
-            // Permitir la entrada al menú si NO estamos actualmente dentro de la pantalla de planificación de ruta
-            const vistaPlanificacion = document.getElementById('view-form-general');
-            if (vistaPlanificacion && vistaPlanificacion.classList.contains('hidden')) {
-                showView('menu');
-            }
         }
 
         function submitLoginVentas(e) {
