@@ -5254,11 +5254,17 @@ function checkVentasAuth() {
             cargarRutaMatutinaBase();
         }
 
-       // Subfunción de apoyo para cargar la planificación inicial de la mañana, pre-guardados o pendientes acumulados desde Firestore
+       // Subfunción de apoyo para cargar la planificación en tiempo real desde Firestore multidispositivo
         function cargarRutaMatutinaBase() {
             if (!activeSeller) return;
-            
-            db.collection("pre_rutas").doc(activeSeller).get().then((doc) => {
+
+            if (window.unsubPreRuta) {
+                window.unsubPreRuta();
+            }
+
+            window.unsubPreRuta = db.collection("pre_rutas").doc(activeSeller).onSnapshot((doc) => {
+                if (jornadaActiva) return;
+
                 if (doc.exists) {
                     rutaPlanificada = doc.data().ruta || [];
                     finalizarCargaMatutina();
@@ -5271,8 +5277,8 @@ function checkVentasAuth() {
                     }
                     finalizarCargaMatutina();
                 }
-            }).catch((err) => {
-                console.error("Error al descargar pre-ruta desde Firestore:", err);
+            }, (err) => {
+                console.error("Error en el escuchador en vivo de pre-ruta:", err);
                 const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
                 rutaPlanificada = rolloverGuardado ? JSON.parse(rolloverGuardado) : [];
                 finalizarCargaMatutina();
