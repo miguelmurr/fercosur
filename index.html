@@ -5952,7 +5952,7 @@ function checkVentasAuth() {
             });
         }
 
-        // --- 11. VISOR PREMIUM EN NUEVA PESTAÑA (ESTILO DOCUMENTO COMERCIAl) ---
+       // --- 11. VISOR PREMIUM EN NUEVA PESTAÑA (ESTILO DOCUMENTO COMERCIAl) ---
         function previewLotePDF(loteId) {
             const lote = dbLotes.find(l => l.id === loteId);
             if (!lote) return;
@@ -6014,16 +6014,16 @@ function checkVentasAuth() {
                 <meta charset="utf-8">
                 <title>${consecutivo} - Planilla Logística Fercosur</title>
                 <style>
-                    /* CONFIGURACIÓN MAESTRA DE IMPRESIÓN HORIZONTAL SIN ENCOGER */
+                    /* ELIMINACIÓN ABSOLUTA DE ENCABEZADOS Y PIES DE PÁGINA DEL NAVEGADOR */
                     @page {
                         size: landscape;
-                        margin: 0.4in;
+                        margin: 0; /* Al estar en cero, desaparecen los textos automáticos de fecha, título y URL */
                     }
                     
-                    /* ESTILOS DE PANTALLA: SIMULA UN VISOR DE ACROBAT EN GMAIL */
+                    /* ESTILOS DE PANTALLA: VISOR TIPO ACROBAT EN GMAIL */
                     @media screen {
                         html, body {
-                            background-color: #323639; /* Gris oscuro corporativo de visores */
+                            background-color: #323639;
                             margin: 0;
                             padding: 0;
                             display: flex;
@@ -6033,7 +6033,7 @@ function checkVentasAuth() {
                         }
                         .document-canvas {
                             background-color: #ffffff;
-                            width: 297mm; /* Ancho exacto de A4 Horizontal */
+                            width: 297mm;
                             min-height: 210mm;
                             margin: 30px auto;
                             padding: 40px;
@@ -6043,10 +6043,21 @@ function checkVentasAuth() {
                         }
                     }
 
-                    /* ESTILOS DE IMPRESIÓN LIMPIOS */
+                    /* ESTILOS DE IMPRESIÓN EXCLUSIVOS SIN TEXTOS REDUNDANTES */
                     @media print {
-                        html, body { background-color: #ffffff; margin: 0; padding: 0; width: 100%; }
-                        .document-canvas { width: 100% !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+                        html, body { 
+                            background-color: #ffffff; 
+                            margin: 0; 
+                            padding: 0; 
+                            width: 100%; 
+                        }
+                        .document-canvas { 
+                            width: 100% !important; 
+                            padding: 0.4in 0.5in 0.5in 0.5in !important; /* El margen real se aplica aquí para proteger el contenido */
+                            margin: 0 !important; 
+                            box-shadow: none !important; 
+                            box-sizing: border-box;
+                        }
                     }
 
                     body { font-family: Arial, sans-serif; color: #000000; }
