@@ -1019,7 +1019,6 @@
                                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Venta</th>
                                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cobro</th>
                                 <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Verificación</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-general" class="divide-y divide-slate-100 text-sm text-slate-700">
@@ -6585,15 +6584,10 @@ guardarEnNube(linkMapa);
                                 </td>
                                 <td class="px-6 py-4 text-xs">
                                     ${item.ubicacion && item.ubicacion.startsWith('http') 
-                                        ? `<a href="${item.ubicacion}" target="_blank" class="text-brand-600 hover:text-brand-800 underline font-semibold">Ver Registro</a>` 
-                                        : `<span class="text-slate-400 italic">${item.ubicacion || 'N/A'}</span>`}
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <button onclick="eliminarPedidoGeneral('${item.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition inline-flex items-center justify-center" title="Eliminar Registro">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                    </button>
+                                        ?
+`<a href="${item.ubicacion}" target="_blank" class="text-brand-600 hover:text-brand-800 underline font-semibold">Ver Registro</a>` 
+                                        : `<span class="text-slate-400 italic">${item.ubicacion ||
+'N/A'}</span>`}
                                 </td>
                             </tr>
                         `;
@@ -7653,24 +7647,6 @@ guardarEnNube(linkMapa);
             document.getElementById('modal-resumen-gestion').classList.add('hidden');
         };
 
-        // --- FUNCIÓN DE ADMINISTRACIÓN: ELIMINAR PEDIDO GENERAL CORREGIDA Y REFORZADA ---
-        function eliminarPedidoGeneral(id) {
-            const confirmacion = confirm("¿Está seguro de eliminar permanentemente este registro de pedido de la nube? Esta acción no se puede deshacer.");
-            if (confirmacion) {
-                db.collection("pedidos_generales").doc(id).delete().then(() => {
-                    // Sacamos el pedido del mapa local de inmediato
-                    dbGeneral = dbGeneral.filter(item => item.id !== id);
-                    
-                    // Obligamos al panel a redibujarse al instante con el registro borrado
-                    renderAdminPanel();
-                    
-                    showToast('Registro Eliminado', 'El pedido general fue removido con éxito de la base de datos.', 'success');
-                }).catch((error) => {
-                    showToast('Error', 'No se pudo eliminar el registro. Verifique su conexión o permisos.', 'error');
-                    console.error("Error al borrar en Firebase:", error);
-                });
-            }
-        }
 	  // --- 17. LÓGICA DE TOTALES FINANCIEROS Y FILTROS (BLINDADA) ---
         function renderTotalesMensuales() {
             const ventasMesEl = document.getElementById('suma-ventas-mes');
