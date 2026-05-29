@@ -5285,14 +5285,14 @@ function checkVentasAuth() {
             });
         }
 
-        function finalizarCargaMatutina() {
+       function finalizarCargaMatutina() {
             jornadaActiva = false;
             indiceClienteActivo = null;
             renderTablaPlanificacion();
             
-            // Redirigir al menú únicamente si el asesor está en la pantalla de login (evita sacarlo si ya está planificando)
-            const vistaLogin = document.getElementById('view-login-ventas');
-            if (vistaLogin && !vistaLogin.classList.contains('hidden')) {
+            // Permitir la entrada al menú si NO estamos actualmente dentro de la pantalla de planificación de ruta
+            const vistaPlanificacion = document.getElementById('view-form-general');
+            if (vistaPlanificacion && vistaPlanificacion.classList.contains('hidden')) {
                 showView('menu');
             }
         }
