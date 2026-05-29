@@ -5952,7 +5952,7 @@ function checkVentasAuth() {
             });
         }
 
-        // --- 11. GENERADOR DE IMPRESIÓN DIRECTA HORIZONTAL (PDF NATIVO COMPLETO) ---
+        // --- 11. VISOR PREMIUM EN NUEVA PESTAÑA (ESTILO DOCUMENTO COMERCIAl) ---
         function previewLotePDF(loteId) {
             const lote = dbLotes.find(l => l.id === loteId);
             if (!lote) return;
@@ -5978,21 +5978,21 @@ function checkVentasAuth() {
                 
                 tableRows += `
                     <tr>
-                        <td style="border: 1px solid #000000; padding: 5px 3px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${d.remision}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 3px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center; color:#4B5563;">${d.fve || ''}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 4px; font-family: Arial; font-size: 8pt; font-weight: bold;">${d.cliente}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 3px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${d.telefono || ''}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 3px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${d.poblacion}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${caja}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${paquete}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${rollo}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${atado}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${saca}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${lio}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${carreta}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${cadena}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8pt; font-weight: bold; text-align: center;">${otros}</td>
-                        <td style="border: 1px solid #000000; padding: 5px 2px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center; background-color: #F8FAFC;">${total}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${d.remision}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center; color:#4B5563;">${d.fve || ''}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 6px; font-family: Arial; font-size: 8.5pt; font-weight: bold;">${d.cliente}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${d.telefono || ''}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${d.poblacion}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${caja}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${paquete}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${rollo}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${atado}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${saca}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${lio}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${carreta}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${cadena}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: center;">${otros}</td>
+                        <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 9pt; font-weight: bold; text-align: center; background-color: #F8FAFC;">${total}</td>
                     </tr>
                 `;
             });
@@ -6002,8 +6002,8 @@ function checkVentasAuth() {
             tableRows += `
                 <tr>
                     <td colspan="13" style="border: none;"></td>
-                    <td style="border: 1px solid #000000; padding: 5px 4px; font-family: Arial; font-size: 8.5pt; font-weight: bold; text-align: right;">TOTAL:</td>
-                    <td style="border: 1px solid #000000; padding: 5px 4px; font-family: Arial; font-size: 9pt; font-weight: bold; text-align: center; color: #1E3A8A; background-color: #E2E8F0;">${granTotal}</td>
+                    <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 9pt; font-weight: bold; text-align: right;">TOTAL:</td>
+                    <td style="border: 1px solid #000000; padding: 6px 4px; font-family: Arial; font-size: 10pt; font-weight: bold; text-align: center; color: #1E3A8A; background-color: #E2E8F0;">${granTotal}</td>
                 </tr>
             `;
 
@@ -6012,109 +6012,132 @@ function checkVentasAuth() {
             <html>
             <head>
                 <meta charset="utf-8">
-                <title>Planilla de Despacho - ${lote.nombre}</title>
+                <title>${consecutivo} - Planilla Logística Fercosur</title>
                 <style>
+                    /* CONFIGURACIÓN MAESTRA DE IMPRESIÓN HORIZONTAL SIN ENCOGER */
                     @page {
                         size: landscape;
-                        margin: 0.3in 0.4in 0.4in 0.4in;
+                        margin: 0.4in;
                     }
-                    body { font-family: Arial, sans-serif; color: #000000; margin: 0; padding: 0; width: 100%; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-                    th { background-color: #E2E8F0 !important; color: #000000; font-family: Arial; font-size: 8.5pt; font-weight: bold; border: 1px solid #000000; padding: 6px 3px; text-align: center; }
+                    
+                    /* ESTILOS DE PANTALLA: SIMULA UN VISOR DE ACROBAT EN GMAIL */
+                    @media screen {
+                        html, body {
+                            background-color: #323639; /* Gris oscuro corporativo de visores */
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            justify-content: center;
+                            align-items: flex-start;
+                            min-height: 100vh;
+                        }
+                        .document-canvas {
+                            background-color: #ffffff;
+                            width: 297mm; /* Ancho exacto de A4 Horizontal */
+                            min-height: 210mm;
+                            margin: 30px auto;
+                            padding: 40px;
+                            box-sizing: border-box;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 1px 8px rgba(0,0,0,0.3);
+                            border-radius: 4px;
+                        }
+                    }
+
+                    /* ESTILOS DE IMPRESIÓN LIMPIOS */
+                    @media print {
+                        html, body { background-color: #ffffff; margin: 0; padding: 0; width: 100%; }
+                        .document-canvas { width: 100% !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+                    }
+
+                    body { font-family: Arial, sans-serif; color: #000000; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                    th { background-color: #E2E8F0 !important; color: #000000; font-family: Arial; font-size: 9pt; font-weight: bold; border: 1px solid #000000; padding: 8px 4px; text-align: center; }
+                    td { border: 1px solid #000000; padding: 4px; font-family: Arial; }
                     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                 </style>
             </head>
             <body>
-                <table style="width: 100%; border: none; margin-bottom: 5px; margin-top: 0px;">
-                    <tr style="border: none;">
-                        <td style="border: none; width: 65%; vertical-align: middle; padding: 0;">
-                            <img src="nuevo_logoplanilla.png" alt="FERCOSUR S.A.S." style="max-height: 48px;">
-                        </td>
-                        <td style="border: none; width: 35%; text-align: right; vertical-align: middle; font-family: Arial; font-size: 8.5pt; padding: 0; line-height: 1.4;">
-                            <p style="margin: 0;"><strong>Fecha:</strong> ${lote.timestamp}</p>
-                            <p style="margin: 1px 0 0 0;"><strong>Lote:</strong> ${lote.nombre}</p>
-                            <p style="margin: 1px 0 0 0; color: #4B5563;"><strong>Consecutivo:</strong> ${consecutivo}</p>
-                        </td>
-                    </tr>
-                </table>
-
-                <div style="border-bottom: 2px solid #1E3A8A; margin-bottom: 12px; margin-top: 6px;"></div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th rowspan="2" style="width: 7%;">N° Guía</th>
-                            <th rowspan="2" style="width: 7%;">N° FVE</th>
-                            <th rowspan="2" style="width: 15%; text-align: left; padding-left: 4px;">Cliente Destinatario</th>
-                            <th rowspan="2" style="width: 8%;">Celular</th>
-                            <th rowspan="2" style="width: 8%;">Población</th>
-                            <th colspan="10" style="width: 55%; background-color: #CBD5E1 !important;">Información del Despacho (Unidades de Empaque)</th>
-                        </tr>
-                        <tr>
-                            <th style="width: 5.5%;">Caja</th>
-                            <th style="width: 5.5%;">Paq.</th>
-                            <th style="width: 5.5%;">Rollo</th>
-                            <th style="width: 5.5%;">Atado</th>
-                            <th style="width: 5.5%;">Saca</th>
-                            <th style="width: 5.5%;">Lío</th>
-                            <th style="width: 5.5%;">Carr.</th>
-                            <th style="width: 5.5%;">Cade.</th>
-                            <th style="width: 5.5%;">Otros</th>
-                            <th style="width: 5.5%; background-color: #94A3B8 !important; color: #FFFFFF !important;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${tableRows}
-                    </tbody>
-                </table>
-
-                <div style="margin-top: 16px; border: 1.5px solid #1E3A8A; padding: 10px; width: 100%; box-sizing: border-box;">
-                    <h3 style="margin-top: 0; margin-bottom: 6px; font-family: Arial; font-size: 9pt; font-weight: bold; color: #1E3A8A; border-bottom: 1px solid #1E3A8A; padding-bottom: 4px;">CONTROL DE ENTREGA Y TRANSPORTE</h3>
-                    <table style="width: 100%; border: none !important; margin-top: 2px;">
-                        <tr style="border: none !important;">
-                            <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 5px 0; color: #1E293B;"><strong>Nombre de Conductor:</strong> ___________________________</td>
-                            <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 5px 0; color: #1E293B;"><strong>Cédula de Ciudadanía:</strong> _________________________</td>
-                        </tr>
-                        <tr style="border: none !important;">
-                            <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 5px 0; color: #1E293B;"><strong>Placa del Vehículo:</strong> ___________________________</td>
-                            <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 5px 0; color: #1E293B;"><strong>Número de Celular:</strong> _________________________</td>
-                        </tr>
-                        <tr style="border: none !important;">
-                            <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 5px 0; color: #1E293B;"><strong>Nombre de quien carga:</strong> ___________________________</td>
-                            <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 5px 0; color: #1E293B;"><strong>Nombre de quien entrega:</strong> _________________________</td>
-                        </tr>
-                        <tr style="border: none !important;">
-                            <td style="border: none !important; width: 50%; font-family: Arial; font-size: 8.5pt; padding: 5px 0; color: #1E293B;"><strong>Valor flete:</strong> _________________________</td>
+                <div class="document-canvas">
+                    <!-- Cabecera de la Hoja -->
+                    <table style="width: 100%; border: none; margin-bottom: 5px; margin-top: 0px;">
+                        <tr style="border: none;">
+                            <td style="border: none; width: 65%; vertical-align: middle; padding: 0;">
+                                <img src="nuevo_logoplanilla.png" alt="FERCOSUR S.A.S." style="max-height: 52px;">
+                            </td>
+                            <td style="border: none; width: 35%; text-align: right; vertical-align: middle; font-family: Arial; font-size: 9pt; padding: 0; line-height: 1.5;">
+                                <p style="margin: 0;"><strong>Fecha de Emisión:</strong> ${lote.timestamp}</p>
+                                <p style="margin: 1px 0 0 0;"><strong>Lote Logístico:</strong> ${lote.nombre}</p>
+                                <p style="margin: 1px 0 0 0; color: #1E3A8A; font-weight: bold;"><strong>Consecutivo:</strong> ${consecutivo}</p>
+                            </td>
                         </tr>
                     </table>
+
+                    <div style="border-bottom: 2px solid #1E3A8A; margin-bottom: 14px; margin-top: 8px;"></div>
+
+                    <!-- Tabla de Despachos en Formato Grande -->
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width: 7%;">N° Guía</th>
+                                <th rowspan="2" style="width: 7%;">N° FVE</th>
+                                <th rowspan="2" style="width: 16%; text-align: left; padding-left: 6px;">Cliente Destinatario</th>
+                                <th rowspan="2" style="width: 8%;">Celular</th>
+                                <th rowspan="2" style="width: 8%;">Población</th>
+                                <th colspan="10" style="width: 54%; background-color: #CBD5E1 !important;">Información del Despacho (Unidades de Empaque)</th>
+                            </tr>
+                            <tr>
+                                <th style="width: 5.4%;">Caja</th>
+                                <th style="width: 5.4%;">Paq.</th>
+                                <th style="width: 5.4%;">Rollo</th>
+                                <th style="width: 5.4%;">Atado</th>
+                                <th style="width: 5.4%;">Saca</th>
+                                <th style="width: 5.4%;">Lío</th>
+                                <th style="width: 5.4%;">Carr.</th>
+                                <th style="width: 5.4%;">Cade.</th>
+                                <th style="width: 5.4%;">Otros</th>
+                                <th style="width: 5.4%; background-color: #1E3A8A !important; color: #FFFFFF !important;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRows}
+                        </tbody>
+                    </table>
+
+                    <!-- Bloque de Firmas y Transporte -->
+                    <div style="margin-top: 20px; border: 1.5px solid #1E3A8A; padding: 12px; width: 100%; box-sizing: border-box;">
+                        <h3 style="margin-top: 0; margin-bottom: 8px; font-family: Arial; font-size: 9.5pt; font-weight: bold; color: #1E3A8A; border-bottom: 1px solid #1E3A8A; padding-bottom: 4px; tracking-width: 0.5px;">CONTROL DE ENTREGA Y TRANSPORTE</h3>
+                        <table style="width: 100%; border: none !important; margin-top: 2px;">
+                            <tr style="border: none !important;">
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 9pt; padding: 5px 0; color: #1E293B;"><strong>Nombre de Conductor:</strong> ___________________________</td>
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 9pt; padding: 5px 0; color: #1E293B;"><strong>Cédula de Ciudadanía:</strong> _________________________</td>
+                            </tr>
+                            <tr style="border: none !important;">
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 9pt; padding: 5px 0; color: #1E293B;"><strong>Placa del Vehículo:</strong> ___________________________</td>
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 9pt; padding: 5px 0; color: #1E293B;"><strong>Número de Celular:</strong> _________________________</td>
+                            </tr>
+                            <tr style="border: none !important;">
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 9pt; padding: 5px 0; color: #1E293B;"><strong>Nombre de quien carga:</strong> ___________________________</td>
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 9pt; padding: 5px 0; color: #1E293B;"><strong>Nombre de quien entrega:</strong> _________________________</td>
+                            </tr>
+                            <tr style="border: none !important;">
+                                <td style="border: none !important; width: 50%; font-family: Arial; font-size: 9pt; padding: 5px 0; color: #1E293B;"><strong>Valor flete:</strong> _________________________</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </body>
             </html>
             `;
 
-            // Creación u obtención del iframe oculto para lanzar la impresión en la misma pestaña
-            let printIframe = document.getElementById('fercosur-print-frame');
-            if (!printIframe) {
-                printIframe = document.createElement('iframe');
-                printIframe.id = 'fercosur-print-frame';
-                printIframe.style.position = 'absolute';
-                printIframe.style.width = '0';
-                printIframe.style.height = '0';
-                printIframe.style.border = 'none';
-                printIframe.style.top = '-1000px';
-                document.body.appendChild(printIframe);
+            // Abre una pestaña en blanco y renderiza directamente el lienzo optimizado horizontal
+            const targetWindow = window.open('', '_blank');
+            if (targetWindow) {
+                targetWindow.document.write(htmlContent);
+                targetWindow.document.close();
+                showToast('Planilla Generada', 'Documento listo para revisión en la nueva pestaña.', 'success');
+            } else {
+                showToast('Permiso Requerido', 'Por favor habilite las ventanas emergentes para ver la planilla.', 'error');
             }
-
-            const iframeDoc = printIframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(htmlContent);
-            iframeDoc.close();
-
-            // Desencadenar el cuadro nativo de impresión de forma inmediata en la misma pestaña
-            setTimeout(() => {
-                printIframe.contentWindow.focus();
-                printIframe.contentWindow.print();
-            }, 150);
         }
 
         // --- 12. FORMULARIOS DE REGISTRO ORIGINALES A FIREBASE ---
