@@ -491,9 +491,9 @@
                         </div>
                     </div>
 
-                    <div class="pt-2">
+                   <div class="pt-2">
                         <button type="button" onclick="congelarEIniciarJornada()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold text-sm transition duration-150 shadow-md shadow-brand-100">
-                            Iniciar mi Jornada
+                            Ver / Gestionar mi Ruta Activa
                         </button>
                     </div>
                 </div>
@@ -4414,7 +4414,7 @@ TIENDA
             renderTablaPlanificacion();
         }
 
-        // Congela la ruta matutina y activa el panel de progreso en ruta
+       // Congela la ruta matutina y da paso a la interfaz de campo sin iniciar el reloj
         function congelarEIniciarJornada() {
             const vendedor = document.getElementById('gen-nombre').value.trim();
             if (!vendedor) {
@@ -4426,13 +4426,10 @@ TIENDA
                 return;
             }
 
-            jornadaActiva = true;
-            currentRouteId = 'ruta-' + Date.now(); 
-            if (activeSeller) {
-                db.collection("pre_rutas").doc(activeSeller).delete()
-                    .catch(e => console.error("Error al limpiar pre-ruta de la nube:", e));
-            }
-            guardarJornadaEnStorage();
+            // Mantenemos el estado de tiempo en espera
+            jornadaActiva = false; 
+            currentRouteId = null; 
+
             activarInterfazJornadaReal();
         }
 
@@ -4711,8 +4708,22 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             showToast('Visita Extra Sumada', 'Establecimiento emergente integrado a la ruta.', 'success');
         }
 
-        // Control de Tiempos: Dispara la captura invisible de llegada y despliega el formulario real
+        // Control de Tiempos: Dispara la captura invisible de llegada, activa el reloj de la jornada si es la primera y despliega el formulario
         function iniciarVisitaCliente(index) {
+            // DETECTOR AUTOMÁTICO: Si la jornada general no ha iniciado, arranca el reloj oficial en este instante
+            if (!jornadaActiva || !currentRouteId) {
+                jornadaActiva = true;
+                currentRouteId = 'ruta-' + Date.now();
+                
+                // Eliminamos la pre-ruta de la noche anterior ya que pasa a ser la ruta oficial en vivo
+                if (activeSeller) {
+                    db.collection("pre_rutas").doc(activeSeller).delete()
+                        .catch(e => console.error("Error al limpiar pre-ruta de la nube:", e));
+                }
+                
+                showToast('Jornada Iniciada', 'Su tiempo de ruta empezó a correr con esta primera visita.', 'success');
+            }
+
             indiceClienteActivo = index;
             const cliente = rutaPlanificada[index];
             cliente.horaEntrada = formatTimestamp();
