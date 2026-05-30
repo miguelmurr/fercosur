@@ -7595,9 +7595,18 @@ guardarEnNube(linkMapa);
             document.getElementById('resumen-modal-fecha').innerText = formatFechaElegante(docRuta.timestamp);
 
             let sumaVenta = 0, sumaCobro = 0, distanciaTotal = 0, tiempoTotalMinutos = 0;
-            let ultimoGps = null;
-            let primeraEntrada = null;
-            let ultimaSalida = null;
+    let ultimoGps = null;
+    let primeraEntrada = null;
+    let ultimasalida = null;
+
+    // Ordenar la ruta cronológicamente por hora de entrada (del más antiguo al más nuevo)
+    if (docRuta && Array.isArray(docRuta.ruta)) {
+        docRuta.ruta.sort((a, b) => {
+            const horaA = a.horaEntrada || '';
+            const horaB = b.horaEntrada || '';
+            return horaA.localeCompare(horaB);
+        });
+    }
             
             const container = document.getElementById('resumen-modal-clientes-list');
             container.innerHTML = '';
