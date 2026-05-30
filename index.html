@@ -346,7 +346,7 @@
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto w-full px-2">
-                    <div onclick="renderTablaPlanificacion(); showView('form-general')" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
+                    <div onclick="ingresarAGestionRuta()" class="group relative bg-white/70 backdrop-blur-xl border border-brand-700 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,84,160,0.2)] hover:border-brand-500 cursor-pointer transition-all duration-500 flex flex-col justify-between transform hover:-translate-y-2 overflow-hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-brand-50 rounded-bl-full -z-10 group-hover:bg-brand-100/50 transition-colors duration-300"></div>
                         <div>
                             <div class="inline-flex p-4 rounded-2xl bg-brand-50 text-brand-600 mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -5162,10 +5162,43 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             }
             return { nombreVisual, esFemenino };
         }
-function checkVentasAuth() {
+// CONTROL DE ACCESO SEGURO E INDEPENDIENTE DE RUTAS
+        function ingresarAGestionRuta() {
+            if (jornadaActiva) {
+                activarInterfazJornadaReal();
+            } else {
+                // Forzar restauración completa de la interfaz de planificación para el nuevo vendedor
+                const wrapperPlanif = document.getElementById('wrapper-planificacion');
+                const wrapperActivo = document.getElementById('wrapper-jornada-activa');
+                const btnRegresar = document.getElementById('btn-regresar-ruta');
+                const formCampo = document.getElementById('formulario-visita-campo');
+                const titModulo = document.getElementById('titulo-modulo-ventas');
+                const subModulo = document.getElementById('subtitulo-modulo-ventas');
+
+                if (wrapperPlanif) wrapperPlanif.classList.remove('hidden');
+                if (wrapperActivo) wrapperActivo.classList.add('hidden');
+                if (btnRegresar) btnRegresar.classList.remove('hidden');
+                if (formCampo) formCampo.classList.add('hidden');
+                
+                if (titModulo) titModulo.innerText = "Planificación de Jornada";
+                if (subModulo) subModulo.innerText = "Configure los clientes y las proyecciones de su ruta diaria.";
+                
+                renderTablaPlanificacion();
+            }
+            showView('form-general');
+        }
+
+        function checkVentasAuth() {
             const session = localStorage.getItem('fercosur_seller_session');
             if (session) {
                 activeSeller = session;
+                
+                // CONTROL DE RAÍZ: Vaciar el estado global previo antes de evaluar al nuevo vendedor
+                rutaPlanificada = [];
+                jornadaActiva = false;
+                indiceClienteActivo = null;
+                currentRouteId = null;
+
                 const nameInput = document.getElementById('gen-nombre');
                 if (nameInput) {
                     nameInput.value = activeSeller;
