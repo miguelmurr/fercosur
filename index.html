@@ -4611,7 +4611,14 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             indiceClienteActivo = null;
             currentRouteId = null;
 
-            document.getElementById('gen-nombre').value = '';
+            // Blindar el nombre del perfil activo para la nueva planificación
+            const nameInput = document.getElementById('gen-nombre');
+            if (nameInput && activeSeller) {
+                nameInput.value = activeSeller;
+                nameInput.setAttribute('readonly', 'readonly');
+                nameInput.classList.add('bg-slate-100', 'text-slate-400');
+            }
+
             document.getElementById('form-registro-campo').reset();
             renderTablaPlanificacion();
 
