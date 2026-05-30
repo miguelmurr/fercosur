@@ -5359,6 +5359,24 @@ function checkVentasAuth() {
             if (tituloBienvenida) {
                 tituloBienvenida.innerText = "Bienvenido al Módulo de Ventas";
             }
+
+            // REINICIO VISUAL DE LA INTERFAZ: Limpiar residuos de pantallas del usuario anterior
+            const wrapperPlanificacion = document.getElementById('wrapper-planificacion');
+            const wrapperJornadaActiva = document.getElementById('wrapper-jornada-activa');
+            const btnRegresarRuta = document.getElementById('btn-regresar-ruta');
+            const formularioVisitaCampo = document.getElementById('formulario-visita-campo');
+            const contenedorListaJornada = document.getElementById('contenedor-lista-jornada');
+            const tituloModuloVentas = document.getElementById('titulo-modulo-ventas');
+            const subtituloModuloVentas = document.getElementById('subtitulo-modulo-ventas');
+
+            if (wrapperPlanificacion) wrapperPlanificacion.classList.remove('hidden');
+            if (wrapperJornadaActiva) wrapperJornadaActiva.classList.add('hidden');
+            if (btnRegresarRuta) btnRegresarRuta.classList.remove('hidden');
+            if (formularioVisitaCampo) formularioVisitaCampo.classList.add('hidden');
+            if (contenedorListaJornada) contenedorListaJornada.innerHTML = '';
+            
+            if (tituloModuloVentas) tituloModuloVentas.innerText = "Planificación de Jornada";
+            if (subtituloModuloVentas) subtituloModuloVentas.innerText = "Configure los clientes y las proyecciones de su ruta diaria.";
             
             showToast('Sesión Cerrada', 'Se ha cerrado la sesión del asesor correctamente.', 'success');
             goToPortal();
