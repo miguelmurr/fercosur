@@ -4739,20 +4739,24 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        cliente.gpsEntrada = `http://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+                        cliente.gpsEntrada = `https://www.google.com/maps/search/${position.coords.latitude},${position.coords.longitude}`;
                         document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida";
+    
                         document.getElementById('btn-finalizar-visita-registro').disabled = false;
                         guardarJornadaEnStorage();
                     },
                     (error) => {
+            
                         cliente.gpsEntrada = "Confirmado sin detalles";
                         document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida";
                         document.getElementById('btn-finalizar-visita-registro').disabled = false;
                         guardarJornadaEnStorage();
+    
                     },
                     { enableHighAccuracy: true, timeout: 8000 }
                 );
-            } else {
+            }
+			else {
                 cliente.gpsEntrada = "No soportado";
                 document.getElementById('btn-finalizar-visita-registro').innerText = "Finalizar Registro y Sellar Salida";
                 document.getElementById('btn-finalizar-visita-registro').disabled = false;
@@ -4867,16 +4871,19 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        cliente.gpsSalida = `http://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+                        cliente.gpsSalida = `https://www.google.com/maps/search/${position.coords.latitude},${position.coords.longitude}`;
+               
                         guardarRegistroLocalYContinuar();
                     },
                     (error) => {
                         cliente.gpsSalida = "No compartida o sin señal";
+                   
                         guardarRegistroLocalYContinuar();
                     },
                     { enableHighAccuracy: true, timeout: 8000 }
                 );
-            } else {
+            }
+			else {
                 cliente.gpsSalida = "GPS No Soportado";
                 guardarRegistroLocalYContinuar();
             }
@@ -5471,10 +5478,19 @@ function checkVentasAuth() {
         const extraerCoordenadas = (gpsString) => {
             if (!gpsString || !gpsString.includes(',')) return null;
             try {
-                // Extrae la latitud y longitud del enlace URL de Maps guardado
-                const fragmentoCoords = gpsString.substring(gpsString.lastIndexOf('/') + 2); 
+                // Buscamos el fragmento de texto después del último '/'
+                const fragmentoCoords = gpsString.substring(gpsString.lastIndexOf('/') + 1);
                 const partes = fragmentoCoords.split(',');
-                return { lat: parseFloat(partes[0]), lon: parseFloat(partes[1]) };
+                
+                // Limpiamos cualquier carácter extraño dejando solo números, puntos o signos menos
+                const latClean = partes[0].replace(/[^0-9.-]/g, '');
+                const lonClean = partes[1].replace(/[^0-9.-]/g, '');
+                
+                const lat = parseFloat(latClean);
+                const lon = parseFloat(lonClean);
+                
+                if (isNaN(lat) || isNaN(lon)) return null;
+                return { lat, lon };
             } catch(e) {
                 return null;
             }
@@ -6244,16 +6260,18 @@ function checkVentasAuth() {
                       // Si el vendedor acepta, creamos el link de Google Maps
 const lat = position.coords.latitude;
 const lon = position.coords.longitude;
-const linkMapa = `https://www.google.com/maps?q=${lat},${lon}`;
+const linkMapa = `https://www.google.com/maps/search/${lat},${lon}`;
 guardarEnNube(linkMapa);
                     },
                     (error) => {
                         // Si lo rechaza o no tiene señal, guardamos la visita de todas formas
+                    
                         guardarEnNube("No compartida");
                     },
                     { enableHighAccuracy: true, timeout: 10000 } // Forzamos alta precisión del GPS
                 );
-            } else {
+            }
+			else {
                 guardarEnNube("GPS no soportado");
             }
         }
