@@ -491,8 +491,11 @@
                         </div>
                     </div>
 
-                   <div class="pt-2">
-                        <button type="button" onclick="congelarEIniciarJornada()" class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold text-sm transition duration-150 shadow-md shadow-brand-100">
+                   <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                        <button type="button" onclick="guardarRutaPrevia()" class="w-full sm:w-1/2 bg-slate-800 hover:bg-slate-900 text-white py-3.5 rounded-xl font-bold text-sm transition duration-150 shadow-md flex items-center justify-center gap-2">
+                            💾 Guardar mi Ruta
+                        </button>
+                        <button type="button" onclick="congelarEIniciarJornada()" class="w-full sm:w-1/2 bg-brand-600 hover:bg-brand-700 text-white py-3.5 rounded-xl font-bold text-sm transition duration-150 shadow-md shadow-brand-100">
                             Ver / Gestionar mi Ruta Activa
                         </button>
                     </div>
@@ -4359,8 +4362,9 @@ TIENDA
         }
 
         // Dibuja la tabla de preparación matutina
-        function renderTablaPlanificacion() {
+       function renderTablaPlanificacion() {
             const tbody = document.getElementById('tbody-tabla-planificacion');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             if (rutaPlanificada.length === 0) {
@@ -4372,14 +4376,17 @@ TIENDA
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 
-               let badgeDistintivoMatutino = '';
+                // Configuración quirúrgica de etiquetas visuales para la mañana
+                let badgeDistintivoMatutino = '';
                 if (item.esRollover) {
                     badgeDistintivoMatutino = `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[9px] font-bold bg-purple-100 text-purple-800 rounded">⏱️ Pendiente de Ayer</span>`;
                 } else if (item.esReprogramado) {
                     badgeDistintivoMatutino = `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[9px] font-bold bg-blue-100 text-blue-800 rounded">📅 Reprogramado</span>`;
+                } else if (item.esExtra) {
+                    badgeDistintivoMatutino = `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[9px] font-bold bg-amber-100 text-amber-700 rounded">✨ Extra</span>`;
                 }
                 
-                const accionHtml = item.esRollover
+                const accionHtml = (item.esRollover)
                     ? `<span class="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100">Obligatorio</span>`
                     : `<button type="button" onclick="eliminarClienteDePlanificacion(${index})" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition">
                             <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4390,7 +4397,7 @@ TIENDA
                 tr.innerHTML = `
                     <td class="p-3 font-bold text-slate-900 max-w-[180px] truncate">
                         ${item.nombre}
-                        ${badgeRollover}
+                        ${badgeDistintivoMatutino}
                     </td>
                     <td class="p-3 text-center text-[11px]">
                         <span class="text-emerald-600 font-bold block">V: ${item.estimadoVenta}</span>
@@ -5349,7 +5356,7 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
         }
 
        // Subfunción de apoyo para cargar la planificación en tiempo real desde Firestore multidispositivo
-        function cargarRutaMatutinaBase() {
+       function cargarRutaMatutinaBase() {
             if (!activeSeller) return;
 
             if (window.unsubPreRuta) {
@@ -5363,20 +5370,61 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
                     rutaPlanificada = doc.data().ruta || [];
                     finalizarCargaMatutina();
                 } else {
-                    const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
-                    if (rolloverGuardado) {
-                        rutaPlanificada = JSON.parse(rolloverGuardado);
+                    // Validar si existe una ruta guardada de antemano en la memoria del celular
+                    const backupGuardado = localStorage.getItem('fercosur_preruta_backup_' + activeSeller);
+                    if (backupGuardado) {
+                        rutaPlanificada = JSON.parse(backupGuardado);
                     } else {
-                        rutaPlanificada = [];
+                        const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+                        rutaPlanificada = rolloverGuardado ? JSON.parse(rolloverGuardado) : [];
                     }
                     finalizarCargaMatutina();
                 }
             }, (err) => {
-                console.error("Error en el escuchador en vivo de pre-ruta:", err);
-                const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
-                rutaPlanificada = rolloverGuardado ? JSON.parse(rolloverGuardado) : [];
+                console.error("Contingencia offline: Leyendo memorias locales...", err);
+                const backupGuardado = localStorage.getItem('fercosur_preruta_backup_' + activeSeller);
+                if (backupGuardado) {
+                    rutaPlanificada = JSON.parse(backupGuardado);
+                } else {
+                    const rolloverGuardado = localStorage.getItem('fercosur_rollover_' + activeSeller);
+                    rutaPlanificada = rolloverGuardado ? JSON.parse(rolloverGuardado) : [];
+                }
                 finalizarCargaMatutina();
             });
+        }
+
+		// MOTOR DE BLINDAJE Y GUARDADO PREVIO DE RUTA PERSISTENTE
+        function guardarRutaPrevia() {
+            if (!activeSeller) {
+                showToast('Error', 'No se ha detectado una sesión de asesor activa.', 'error');
+                return;
+            }
+            if (rutaPlanificada.length === 0) {
+                showToast('Ruta Vacía', 'Añada establecimientos a su agenda antes de guardar.', 'error');
+                return;
+            }
+
+            try {
+                // Respaldo Seguro 1: Guardado absoluto en la memoria interna del teléfono
+                localStorage.setItem('fercosur_preruta_backup_' + activeSeller, JSON.stringify(rutaPlanificada));
+
+                // Respaldo Seguro 2: Transmisión satelital a Firebase en tiempo real
+                if (navigator.onLine) {
+                    db.collection("pre_rutas").doc(activeSeller).set({ ruta: rutaPlanificada })
+                        .then(() => {
+                            showToast('Ruta Asegurada', 'Agenda guardada correctamente en el dispositivo y sincronizada en la nube.', 'success');
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            showToast('Guardado Local', 'Guardado en el teléfono. Se subirá a la nube al recuperar señal estable.', 'success');
+                        });
+                } else {
+                    showToast('Guardado Offline', 'Guardado en la memoria local del teléfono. Listo para cerrar la aplicación.', 'success');
+                }
+            } catch (e) {
+                console.error("Fallo crítico en almacenamiento local:", e);
+                showToast('Error', 'No se pudieron congelar los datos locales.', 'error');
+            }
         }
 
         function finalizarCargaMatutina() {
