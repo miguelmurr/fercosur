@@ -4608,26 +4608,35 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             }
 
            // 3. Borramos el estado activo local de este asesor
-            if (activeSeller) {
-                localStorage.removeItem('fercosur_jornada_' + activeSeller);
-            }
+           if (activeSeller) {
+                    localStorage.removeItem('fercosur_jornada_' + activeSeller);
+                    
+                    // ELIMINACIÓN DE RAÍZ: Destruir respaldos previos al finalizar el día de trabajo
+                    localStorage.removeItem('fercosur_preruta_backup_' + activeSeller);
+                    if (navigator.onLine) {
+                        db.collection("pre_rutas").doc(activeSeller).delete()
+                            .catch(e => console.error("Error al limpiar pre-ruta en la nube:", e));
+                    }
+                }
 
-            // 4. Cargamos de forma inmediata los no visitados en la matriz base para la siguiente jornada
-            rutaPlanificada = noVisitados;
-            jornadaActiva = false;
-            indiceClienteActivo = null;
-            currentRouteId = null;
+                // 4. Cargamos de forma inmediata los no visitados en la matriz base para la siguiente jornada
+                rutaPlanificada = noVisitados;
+                jornadaActiva = false;
+                indiceClienteActivo = null;
+                currentRouteId = null;
 
-            // Blindar el nombre del perfil activo para la nueva planificación
-            const nameInput = document.getElementById('gen-nombre');
-            if (nameInput && activeSeller) {
-                nameInput.value = activeSeller;
-                nameInput.setAttribute('readonly', 'readonly');
-                nameInput.classList.add('bg-slate-100', 'text-slate-400');
-            }
+                // Blindar el nombre del perfil activo para la nueva planificación
+                const nameInput = document.getElementById('gen-nombre');
+                if (nameInput && activeSeller) {
+                    nameInput.value = activeSeller;
+                    nameInput.setAttribute('readonly', 'readonly');
+                    nameInput.classList.add('bg-slate-100', 'text-slate-400');
+                }
 
-            document.getElementById('form-registro-campo').reset();
-            renderTablaPlanificacion();
+                document.getElementById('form-registro-campo').reset();
+                
+                // REESCANEO AUTOMÁTICO: Buscar reprogramaciones vigentes del mismo día inmediatamente
+                finalizarCargaMatutina();
 
             document.getElementById('wrapper-jornada-activa').classList.add('hidden');
             document.getElementById('formulario-visita-campo').classList.add('hidden');
@@ -5446,7 +5455,8 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
                             const data = doc.data();
                             // Prevenir duplicidad accidental si ya existía en la pre-ruta
                             if (!rutaPlanificada.some(c => c.nombre === data.cliente)) {
-                                rutaPlanificada.push({
+                                // Usamos unshift para inyectar al cliente en la primera posición de la agenda
+                                rutaPlanificada.unshift({
                                     nombre: data.cliente,
                                     estimadoVenta: '$0',
                                     estimadoCobro: '$0',
