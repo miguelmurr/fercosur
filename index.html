@@ -463,12 +463,24 @@
                             </div>
                         </div>
 
-                        <button type="button" onclick="agregarClienteALaPlanificacion()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 rounded-xl font-bold text-sm transition duration-150 flex items-center justify-center border border-slate-200">
+                       <button type="button" onclick="agregarClienteALaPlanificacion()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 rounded-xl font-bold text-sm transition duration-150 flex items-center justify-center border border-slate-200">
                             <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             Agregar a mi Ruta
                         </button>
+                    </div>
+
+                    <!-- NUEVO PANEL INFORMATIVO: RECORDATORIO DE REPROGRAMADOS (OCULTO POR DEFECTO) -->
+                    <div id="wrapper-recordatorio-reprogramados" class="hidden border-t border-slate-100 pt-5 space-y-3 animate-fade-in">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <span class="text-xl">📅</span>
+                            <h3 class="text-sm font-black text-blue-900 tracking-tight">Recordatorio: Agendados para Hoy</h3>
+                        </div>
+                        <p class="text-[11px] text-slate-500 font-bold leading-tight">Búsquelos arriba y agréguelos a su ruta. Cuando los añada, marque el botón para quitarlos de esta lista.</p>
+                        <div id="contenedor-tarjetas-reprogramados" class="grid grid-cols-1 gap-2">
+                            <!-- Inyección dinámica -->
+                        </div>
                     </div>
 
                     <div class="border-t border-slate-100 pt-5 space-y-2">
@@ -4422,7 +4434,7 @@ TIENDA
         }
 
        // Congela la ruta matutina y da paso a la interfaz de campo sin iniciar el reloj
-        function congelarEIniciarJornada() {
+       function congelarEIniciarJornada() {
             const vendedor = document.getElementById('gen-nombre').value.trim();
             if (!vendedor) {
                 showToast('Falta Asesor', 'Debe ingresar su nombre completo antes de iniciar.', 'error');
@@ -4432,14 +4444,6 @@ TIENDA
                 showToast('Ruta Vacía', 'Debe añadir al menos un cliente a su agenda.', 'error');
                 return;
             }
-
-            // Marcar reprogramaciones como procesadas en Firebase
-            rutaPlanificada.forEach(item => {
-                if (item.esReprogramado && item.idReprogramacion) {
-                    db.collection("reprogramaciones").doc(item.idReprogramacion).update({ usado: true })
-                        .catch(err => console.error("Error al actualizar estado:", err));
-                }
-            });
 
             // ARREGLO DE RAÍZ: Activar e Iniciar la Ruta en el sistema de inmediato
             jornadaActiva = true; 
@@ -5449,7 +5453,7 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             jornadaActiva = false;
             indiceClienteActivo = null;
 
-            // CARGA AUTOMÁTICA DE REPROGRAMACIONES DEL DÍA VIGENTE
+            // CARGA AUTOMÁTICA DE REPROGRAMACIONES DEL DÍA VIGENTE (MODO PANEL INFORMATIVO)
             if (navigator.onLine && activeSeller) {
                 const f = new Date();
                 const fechaHoyFormateada = f.getFullYear() + '-' + String(f.getMonth() + 1).padStart(2, '0') + '-' + String(f.getDate()).padStart(2, '0');
@@ -5460,22 +5464,37 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
                     .where("usado", "==", false)
                     .get()
                     .then((querySnapshot) => {
-                        querySnapshot.forEach((doc) => {
-                            const data = doc.data();
-                            // Prevenir duplicidad accidental si ya existía en la pre-ruta
-                            if (!rutaPlanificada.some(c => c.nombre === data.cliente)) {
-                                // Usamos unshift para inyectar al cliente en la primera posición de la agenda
-                                rutaPlanificada.unshift({
-                                    nombre: data.cliente,
-                                    estimadoVenta: '$0',
-                                    estimadoCobro: '$0',
-                                    visitado: false,
-                                    esReprogramado: true,
-                                    idReprogramacion: doc.id, // Guardamos la llave para desactivarla en el congelamiento
-                                    horaEntrada: '', gpsEntrada: '', horaSalida: '', gpsSalida: '', motivoReal: '', montoVentaReal: '', montoCobroReal: ''
+                        const wrapperReprogramados = document.getElementById('wrapper-recordatorio-reprogramados');
+                        const contenedorTarjetas = document.getElementById('contenedor-tarjetas-reprogramados');
+                        
+                        if (wrapperReprogramados && contenedorTarjetas) {
+                            if (querySnapshot.empty) {
+                                // Ocultar por completo si no hay nada para hoy, manteniendo la armonía visual
+                                wrapperReprogramados.classList.add('hidden');
+                                contenedorTarjetas.innerHTML = '';
+                            } else {
+                                // Mostrar panel e inyectar tarjetas informativas
+                                wrapperReprogramados.classList.remove('hidden');
+                                contenedorTarjetas.innerHTML = '';
+                                
+                                querySnapshot.forEach((doc) => {
+                                    const data = doc.data();
+                                    const div = document.createElement('div');
+                                    div.className = "flex items-center justify-between bg-blue-50 border border-blue-200 p-3 rounded-xl";
+                                    div.innerHTML = `
+                                        <div class="flex-1 min-w-0 pr-2">
+                                            <span class="block text-xs font-black text-slate-800 truncate uppercase">${data.cliente}</span>
+                                        </div>
+                                        <button type="button" onclick="marcarReprogramacionComoUsada('${doc.id}')" class="flex-shrink-0 bg-white hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-[11px] font-bold transition border border-blue-200 shadow-sm flex items-center space-x-1">
+                                            <span>✔️</span>
+                                            <span>Ya agregado</span>
+                                        </button>
+                                    `;
+                                    contenedorTarjetas.appendChild(div);
                                 });
                             }
-                        });
+                        }
+                        
                         renderTablaPlanificacion();
                     })
                     .catch((err) => {
@@ -5483,8 +5502,26 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
                         renderTablaPlanificacion();
                     });
             } else {
+                // En modo offline puro, ocultamos el panel visual
+                const wrapperReprogramados = document.getElementById('wrapper-recordatorio-reprogramados');
+                if (wrapperReprogramados) wrapperReprogramados.classList.add('hidden');
+                
                 renderTablaPlanificacion();
             }
+        }
+
+        // NUEVA FUNCIÓN: Permite al vendedor descartar el aviso manualmente
+        function marcarReprogramacionComoUsada(docId) {
+            if (!navigator.onLine) {
+                showToast('Sin Conexión', 'Necesita internet para descartar este recordatorio.', 'error');
+                return;
+            }
+            db.collection("reprogramaciones").doc(docId).update({ usado: true })
+                .then(() => {
+                    showToast('Recordatorio Quitado', 'Excelente. El cliente ya no aparecerá como pendiente.', 'success');
+                    finalizarCargaMatutina(); // Dispara la actualización visual invisible
+                })
+                .catch(err => console.error("Error al quitar reprogramación:", err));
         }
 
         function submitLoginVentas(e) {
