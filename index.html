@@ -4365,18 +4365,22 @@ TIENDA
        function renderTablaPlanificacion() {
             const tbody = document.getElementById('tbody-tabla-planificacion');
             if (!tbody) return;
+            
+            // Forzar limpieza absoluta
             tbody.innerHTML = '';
 
-            if (rutaPlanificada.length === 0) {
+            // Validar que exista información antes de intentar dibujar
+            if (!Array.isArray(rutaPlanificada) || rutaPlanificada.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-slate-400 italic font-medium bg-white">No ha agendado ningún establecimiento todavía</td></tr>`;
                 return;
             }
 
+            // Dibujar cada cliente de la memoria de forma segura
             rutaPlanificada.forEach((item, index) => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 
-                // Configuración quirúrgica de etiquetas visuales para la mañana
+                // Blindaje de insignias visuales
                 let badgeDistintivoMatutino = '';
                 if (item.esRollover) {
                     badgeDistintivoMatutino = `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[9px] font-bold bg-purple-100 text-purple-800 rounded">⏱️ Pendiente de Ayer</span>`;
@@ -4388,20 +4392,16 @@ TIENDA
                 
                 const accionHtml = (item.esRollover)
                     ? `<span class="text-[10px] font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100">Obligatorio</span>`
-                    : `<button type="button" onclick="eliminarClienteDePlanificacion(${index})" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition">
-                            <svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                       </button>`;
+                    : `<button type="button" onclick="eliminarClienteDePlanificacion(${index})" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition shadow-sm border border-red-100"><svg class="w-4 h-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`;
 
                 tr.innerHTML = `
                     <td class="p-3 font-bold text-slate-900 max-w-[180px] truncate">
-                        ${item.nombre}
+                        ${item.nombre || 'Desconocido'}
                         ${badgeDistintivoMatutino}
                     </td>
                     <td class="p-3 text-center text-[11px]">
-                        <span class="text-emerald-600 font-bold block">V: ${item.estimadoVenta}</span>
-                        <span class="text-blue-600 font-bold block">C: ${item.estimadoCobro}</span>
+                        <span class="text-emerald-600 font-bold block">V: ${item.estimadoVenta || '$0'}</span>
+                        <span class="text-blue-600 font-bold block">C: ${item.estimadoCobro || '$0'}</span>
                     </td>
                     <td class="p-3 text-center">
                         ${accionHtml}
@@ -4433,19 +4433,28 @@ TIENDA
                 return;
             }
 
-           // Marcar todas las reprogramaciones importadas como procesadas en Firebase para que no se dupliquen mañana
+            // Marcar reprogramaciones como procesadas en Firebase
             rutaPlanificada.forEach(item => {
                 if (item.esReprogramado && item.idReprogramacion) {
                     db.collection("reprogramaciones").doc(item.idReprogramacion).update({ usado: true })
-                        .catch(err => console.error("Error al actualizar estado de reprogramación:", err));
+                        .catch(err => console.error("Error al actualizar estado:", err));
                 }
             });
 
-            // Mantenemos el estado de tiempo en espera
-            jornadaActiva = false; 
-            currentRouteId = null; 
+            // ARREGLO DE RAÍZ: Activar e Iniciar la Ruta en el sistema de inmediato
+            jornadaActiva = true; 
+            currentRouteId = 'ruta-' + Date.now(); 
+
+            // Limpiar la pre-ruta de la base de datos temporal
+            if (activeSeller) {
+                db.collection("pre_rutas").doc(activeSeller).delete().catch(e => {});
+            }
+
+            // Transmitir al instante el inicio de la jornada a la nube (Para el Panel del Administrador)
+            guardarJornadaEnStorage();
 
             activarInterfazJornadaReal();
+            showToast('Jornada en Vivo', 'Su ruta ya está iniciada y reportándose al administrador.', 'success');
         }
 
         // Muta la interfaz visual del planificador al panel de ruta en campo
