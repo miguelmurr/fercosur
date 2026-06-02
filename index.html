@@ -4349,18 +4349,15 @@ TIENDA
 
 		// VARIABLES Y MOTOR DE RASTREO AUTOMÁTICO DE SEGURIDAD (CADA 20 MINUTOS)
         let trackingIntervalId = null;
+        let ultimaCapturaSatelital = 0; // NUEVO: Controla el tiempo real en caso de que el teléfono se duerma
 
         function iniciarRastreoAutomatico() {
-            // Si ya hay un rastreo corriendo por seguridad, lo limpiamos antes de iniciar uno nuevo
             if (trackingIntervalId) clearInterval(trackingIntervalId);
-
-            console.log("Radar: Iniciando rastreo automático cada 20 minutos.");
+            console.log("Radar: Iniciando rastreo automático.");
             
-            // Ejecutar una primera captura inmediata al iniciar la jornada
             ejecutarCapturaRastreo();
 
-            // Configurar el temporizador repetitivo para que se ejecute cada 20 minutos
-            // (20 minutos = 20 * 60 * 1000 milisegundos = 1200000 ms)
+            // Bucle normal de 20 minutos (1.200.000 ms)
             trackingIntervalId = setInterval(function() {
                 ejecutarCapturaRastreo();
             }, 1200000); 
@@ -4374,51 +4371,54 @@ TIENDA
             }
         }
 
+        // NUEVO: Recuperador de GPS. Si el teléfono durmió el navegador, dispara el GPS en cuanto el asesor mire la pantalla
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === 'visible' && jornadaActiva && activeSeller) {
+                const ahora = Date.now();
+                // Si pasaron 20 minutos (1.200.000 ms) o más desde la última captura exitosa, dispara enseguida
+                if (ahora - ultimaCapturaSatelital >= 1200000) {
+                    console.log("Radar: Pantalla reactivada. Disparando captura de GPS pendiente...");
+                    ejecutarCapturaRastreo();
+                }
+            }
+        });
+
        function ejecutarCapturaRastreo() {
             if (!jornadaActiva || !activeSeller || !navigator.onLine) return;
-
             const ahora = new Date();
-            const diaSemana = ahora.getDay(); // 0: Domingo, 1: Lunes, 2: Martes... 6: Sábado
+            const diaSemana = ahora.getDay();
             const horaActual = ahora.getHours();
             const minutosActuales = ahora.getMinutes();
             
-            // Convertir la hora actual a minutos transcurridos desde la medianoche para comparación exacta
             const minutosTotales = (horaActual * 60) + minutosActuales;
-
             let dentroDeHorarioLaboral = false;
 
             if (diaSemana >= 1 && diaSemana <= 5) {
-                // LUNES A VIERNES: 7:30 AM a 11:59 AM y 2:00 PM a 5:30 PM
-                // 7:30 AM = (7*60)+30 = 450 minutos  |  11:59 AM = (11*60)+59 = 719 minutos
-                // 2:00 PM = (14*60)+0  = 840 minutos  |  5:30 PM  = (17*60)+30 = 1050 minutos
                 const mañanaInicio = 450;
                 const mañanaFin = 719;
                 const tardeInicio = 840;
                 const tardeFin = 1050;
-
                 if ((minutosTotales >= mañanaInicio && minutosTotales <= mañanaFin) || 
                     (minutosTotales >= tardeInicio && minutosTotales <= tardeFin)) {
                     dentroDeHorarioLaboral = true;
                 }
             } else if (diaSemana === 6) {
-                // SÁBADOS: 8:00 AM a 11:59 AM
-                // 8:00 AM = (8*60)+0 = 480 minutos  |  11:59 AM = (11*60)+59 = 719 minutos
                 const sabadoInicio = 480;
                 const sabadoFin = 719;
-
                 if (minutosTotales >= sabadoInicio && minutosTotales <= sabadoFin) {
                     dentroDeHorarioLaboral = true;
                 }
             }
-            // Los domingos (diaSemana === 0) no entran en ninguna condición, por lo tanto dentroDeHorarioLaboral queda falso.
-
-            // Si el asesor está fuera del horario comercial configurado, cancelamos el reporte discretamente
+            
             if (!dentroDeHorarioLaboral) {
                 console.log("Radar: Omitiendo captura automática por encontrarse fuera del horario laboral establecido.");
                 return;
             }
 
-            // Si pasa los candados de día y hora, se procede a capturar las coordenadas GPS
+            // NUEVO: Sincronizamos la marca de tiempo para que el recuperador de pantalla sepa cuándo fue el último intento
+            ultimaCapturaSatelital = Date.now();
+
+            // Parámetros mejorados de GPS para exigir posición fresca y darle tiempo a la antena tras un despertar
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     const lat = position.coords.latitude;
@@ -4428,7 +4428,6 @@ TIENDA
                     const fechaFiltro = ahora.getFullYear() + '-' + String(ahora.getMonth() + 1).padStart(2, '0') + '-' + String(ahora.getDate()).padStart(2, '0');
                     const horaEnvio = String(horaActual).padStart(2, '0') + ':' + String(minutosActuales).padStart(2, '0');
 
-                    // CALCULAR EL CONSECUTIVO DIARIO EN FIREBASE
                     db.collection("rastreo_tiempo_real")
                         .where("vendedor", "==", activeSeller)
                         .where("fechaFiltro", "==", fechaFiltro)
@@ -4436,18 +4435,15 @@ TIENDA
                         .then((querySnapshot) => {
                             const numeroPunto = querySnapshot.size + 1;
                             const consecutivo = "Punto-" + String(numeroPunto).padStart(2, '0');
-
-                            // CALCULAR EXPIRACIÓN DE 10 DÍAS EXACTOS (Para el TTL automático de Firebase)
                             const fechaExpiracion = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
-
-                            // GUARDAR EN LA NUEVA COLECCIÓN DE LA NUBE
+                            
                             db.collection("rastreo_tiempo_real").add({
                                 vendedor: activeSeller,
                                 fechaFiltro: fechaFiltro,
                                 hora: horaEnvio,
                                 ubicacionUrl: mapLink,
                                 consecutivo: consecutivo,
-                                fechaExpiracion: fechaExpiracion, // Firebase lo borrará físicamente al cumplirse los 10 días
+                                fechaExpiracion: fechaExpiracion,
                                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
                             })
                             .then(() => console.log(`Radar: ${consecutivo} reportado con éxito para ${activeSeller}`))
@@ -4456,9 +4452,9 @@ TIENDA
                         .catch(err => console.error("Error al calcular consecutivo de radar:", err));
                 },
                 function(error) {
-                    console.warn("Radar: No se pudo obtener el GPS en este ciclo. Se reintentará en el próximo intervalo.", error);
+                    console.warn("Radar: No se pudo obtener el GPS fresco en este ciclo. El recuperador lo intentará al encender pantalla.", error);
                 },
-                { enableHighAccuracy: true, timeout: 10000 }
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 } // No usar caché de ubicaciones y dar 15 seg.
             );
         }
 
