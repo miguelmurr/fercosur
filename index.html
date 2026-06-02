@@ -8285,12 +8285,11 @@ guardarEnNube(linkMapa);
                     hoyLimpiado.setHours(0,0,0,0);
                     if (fechaRegistro >= hace7Dias && fechaRegistro <= hoyLimpiado) entraEnFiltro = true;
                } else if (periodo === 'mes') {
-                    // Calculamos el primer día del mes actual a las 00:00:00
-                    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-                    inicioMes.setHours(0, 0, 0, 0);
+                    // Filtro de texto puro: Creamos el texto del "AÑO-MES" actual (Ej: "2026-06")
+                    const prefijoMesActual = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0');
                     
-                    // Comparamos si el registro está dentro del rango desde el día 1 hasta hoy
-                    if (fechaRegistro >= inicioMes && fechaRegistro <= hoy) {
+                    // Si la fecha guardada comienza exactamente con ese año y mes, se suma al total
+                    if (data.fechaFiltro.startsWith(prefijoMesActual)) {
                         entraEnFiltro = true;
                     }
                 }
