@@ -8261,19 +8261,32 @@ guardarEnNube(linkMapa);
             document.getElementById('modal-resumen-gestion').classList.add('hidden');
         };
 
-	  // --- 17. LÓGICA DE TOTALES FINANCIEROS Y FILTROS (BLINDADA) ---
+	 // --- 17. LÓGICA DE TOTALES FINANCIEROS Y FILTROS (BLINDADA) ---
         function renderTotalesMensuales() {
             const ventasMesEl = document.getElementById('suma-ventas-mes');
             const cobrosMesEl = document.getElementById('suma-cobros-mes');
             const efectivoEl = document.getElementById('suma-cobros-efectivo');
             const consigEl = document.getElementById('suma-cobros-consig');
             const filtroEl = document.getElementById('filtro-periodo-financiero');
-            
+            const filtroMesEspecificoEl = document.getElementById('filtro-mes-especifico');
             if (!ventasMesEl || !cobrosMesEl) return;
 
             const periodo = filtroEl ? filtroEl.value : 'mes';
             const hoy = new Date();
-            
+
+            // Control visual del segundo selector (Aparece solo si elige "Mes Específico")
+            if (filtroMesEspecificoEl) {
+                if (periodo === 'especifico') {
+                    if (filtroMesEspecificoEl.classList.contains('hidden')) {
+                        // Sugiere automáticamente el mes actual al abrirse por primera vez
+                        filtroMesEspecificoEl.value = String(hoy.getMonth() + 1).padStart(2, '0');
+                    }
+                    filtroMesEspecificoEl.classList.remove('hidden');
+                } else {
+                    filtroMesEspecificoEl.classList.add('hidden');
+                }
+            }
+
             let totalVentas = 0;
             let totalCobros = 0;
             let totalEfectivo = 0;
@@ -8282,7 +8295,7 @@ guardarEnNube(linkMapa);
             dbGeneral.forEach(item => {
                 if (!item.timestamp) return; 
                 
-                // Extraer y procesar la fecha de forma nativa
+                // Extraer el texto limpio YYYY-MM-DD
                 const fechaString = String(item.timestamp).split(' ')[0];
                 const partes = fechaString.split('-');
                 if (partes.length !== 3) return;
@@ -8290,7 +8303,7 @@ guardarEnNube(linkMapa);
                 const fechaRegistro = new Date(partes[0], partes[1] - 1, partes[2]);
                 let entraEnFiltro = false;
 
-                // Evaluador de Rangos Dinámicos
+                // Evaluador de Rangos e Inmune a Zonas Horarias
                 if (periodo === 'hoy') {
                     if (fechaRegistro.toDateString() === hoy.toDateString()) entraEnFiltro = true;
                 } else if (periodo === 'semana') {
@@ -8301,14 +8314,15 @@ guardarEnNube(linkMapa);
                     const hoyLimpiado = new Date(hoy);
                     hoyLimpiado.setHours(0,0,0,0);
                     if (fechaRegistro >= hace7Dias && fechaRegistro <= hoyLimpiado) entraEnFiltro = true;
-               } else if (periodo === 'mes') {
-                    // Filtro de texto puro: Creamos el texto del "AÑO-MES" actual (Ej: "2026-06")
+                } else if (periodo === 'mes') {
+                    // Texto puro para Mes Actual
                     const prefijoMesActual = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0');
-                    
-                    // Si la fecha guardada comienza exactamente con ese año y mes, se suma al total
-                    if (data.fechaFiltro.startsWith(prefijoMesActual)) {
-                        entraEnFiltro = true;
-                    }
+                    if (fechaString.startsWith(prefijoMesActual)) entraEnFiltro = true;
+                } else if (periodo === 'especifico') {
+                    // Texto puro para cualquier Mes Elegido en el año actual
+                    const mesSeleccionado = filtroMesEspecificoEl ? filtroMesEspecificoEl.value : String(hoy.getMonth() + 1).padStart(2, '0');
+                    const prefijoMesEspecifico = hoy.getFullYear() + '-' + mesSeleccionado;
+                    if (fechaString.startsWith(prefijoMesEspecifico)) entraEnFiltro = true;
                 }
 
                 if (entraEnFiltro) {
@@ -8327,7 +8341,7 @@ guardarEnNube(linkMapa);
                 }
             });
 
-            // Dar formato a los números usando el punto separador oficial de Colombia
+            // Dar formato de dinero oficial de Colombia
             const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
             
             ventasMesEl.innerText = formatMoney(totalVentas);
