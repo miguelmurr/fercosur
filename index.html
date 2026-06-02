@@ -956,11 +956,18 @@
                         <span id="counter-despachos" class="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center border border-white shadow-sm">0</span>
                     </button>
                     
-                    <button onclick="switchAdminTab('rutas')" id="tab-rutas" class="w-12 h-12 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm" title="Rutas de Asesores">
+                   <button onclick="switchAdminTab('rutas')" id="tab-rutas" class="w-12 h-12 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm" title="Rutas de Asesores">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                         </svg>
                         <span id="counter-rutas" class="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center border border-white shadow-sm">0</span>
+                    </button>
+
+                    <button onclick="switchAdminTab('radar')" id="tab-radar" class="w-12 h-12 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm" title="Historial Satelital (Radar)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
                     </button>
                 </div>
 
@@ -1135,7 +1142,62 @@
                                     </div>
                                 </div>
                                 
-                                <div id="wrapper-historico-rutas" class="grid grid-cols-1 xl:grid-cols-2 gap-4 text-left pt-2"></div>
+<div id="wrapper-historico-rutas" class="grid grid-cols-1 xl:grid-cols-2 gap-4 text-left pt-2"></div>
+                            </div>
+                 </div>
+                    </div>
+
+                    <div id="table-radar-view" class="hidden p-6 space-y-6 bg-slate-50">
+                        <div class="bg-white p-5 border border-slate-200 rounded-3xl shadow-sm flex flex-col md:flex-row items-end gap-4 text-left">
+                            <div class="w-full md:w-1/2">
+                                <label for="radar-vendedor-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">1. Seleccionar Asesor Comercial</label>
+                                <select id="radar-vendedor-select" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-brand-500 shadow-sm">
+                                    <option value="" disabled selected>Elija el perfil a consultar...</option>
+                                    <option value="FS CAUCA FABIAN JIMENEZ">FS CAUCA FABIAN JIMENEZ</option>
+                                    <option value="FS IPIALES KATHERINE">FS IPIALES KATHERINE</option>
+                                    <option value="FS NOR OCCIDENTE ALEJANDRO MONROY">FS NOR OCCIDENTE ALEJANDRO MONROY</option>
+                                    <option value="FS NORTE 1 EIMER">FS NORTE 1 EIMER</option>
+                                    <option value="FS NORTE 2 DIEGO MARTINEZ">FS DIEGO MARTINEZ</option>
+                                    <option value="FS OCCIDENTE LILIANA ORDOÑEZ">FS OCCIDENTE LILIANA ORDOÑEZ</option>
+                                    <option value="FS PASTO 1 GLORIA VIVEROS">FS PASTO 1 GLORIA VIVEROS</option>
+                                    <option value="FS PASTO 2 ROLAND LOPEZ">FS ROLAND LOPEZ</option>
+                                    <option value="FS PUTUMAYO 1 LUIS MIGUEL">FS PUTUMAYO 1 LUIS MIGUEL</option>
+                                    <option value="FS PUTUMAYO 2 EDITH SANCHEZ">FS PUTUMAYO 2 EDITH SANCHEZ</option>
+                                    <option value="FS PUTUMAYO 3 EDINSON">FS PUTUMAYO 3 EDINSON</option>
+                                    <option value="FS SUR HAROLD MARTINEZ">FS SUR HAROLD MARTINEZ</option>
+                                    <option value="FS VIA TUMACO CRISTINA BENAVIDES">FS VIA TUMACO CRISTINA BENAVIDES</option>
+                                </select>
+                            </div>
+                            <div class="w-full md:w-1/3">
+                                <label for="radar-fecha-input" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">2. Seleccionar Fecha</label>
+                                <input type="date" id="radar-fecha-input" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-brand-500 shadow-sm">
+                            </div>
+                            <div class="w-full md:w-auto">
+                                <button type="button" onclick="consultarRadarSatelital()" class="w-full md:w-auto bg-slate-900 hover:bg-black text-white px-6 py-3 rounded-xl font-bold text-sm transition shadow-md flex items-center justify-center gap-2">
+                                    🔍 Abrir Cajón de Ruta
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hidden" id="wrapper-resultados-radar">
+                            <div class="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center text-left">
+                                <div>
+                                    <h4 class="text-sm font-black text-slate-900 uppercase tracking-tight">Recorrido Cronológico Registrado</h4>
+                                    <p class="text-[11px] text-slate-400 font-medium mt-0.5">Ubicaciones automáticas capturadas en intervalos de 20 minutos.</p>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-sm">
+                                    <thead class="bg-slate-50 border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Consecutivo</th>
+                                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Hora de Reporte</th>
+                                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Punto Satelital</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-radar-resultados" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                                        </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -4285,6 +4347,80 @@ TIENDA
         let jornadaActiva = false;
         let indiceClienteActivo = null;
 
+		// VARIABLES Y MOTOR DE RASTREO AUTOMÁTICO DE SEGURIDAD (CADA 20 MINUTOS)
+        let trackingIntervalId = null;
+
+        function iniciarRastreoAutomatico() {
+            // Si ya hay un rastreo corriendo por seguridad, lo limpiamos antes de iniciar uno nuevo
+            if (trackingIntervalId) clearInterval(trackingIntervalId);
+
+            console.log("Radar: Iniciando rastreo automático cada 20 minutos.");
+            
+            // Ejecutar una primera captura inmediata al iniciar la jornada
+            ejecutarCapturaRastreo();
+
+            // Configurar el temporizador repetitivo para que se ejecute cada 20 minutos
+            // (20 minutos = 20 * 60 * 1000 milisegundos = 1200000 ms)
+            trackingIntervalId = setInterval(function() {
+                ejecutarCapturaRastreo();
+            }, 1200000); 
+        }
+
+        function detenerRastreoAutomatico() {
+            if (trackingIntervalId) {
+                clearInterval(trackingIntervalId);
+                trackingIntervalId = null;
+                console.log("Radar: Rastreo automático detenido con éxito.");
+            }
+        }
+
+        function ejecutarCapturaRastreo() {
+            if (!jornadaActiva || !activeSeller || !navigator.onLine) return;
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+                    
+                    const ahora = new Date();
+                    const fechaFiltro = ahora.getFullYear() + '-' + String(ahora.getMonth() + 1).padStart(2, '0') + '-' + String(ahora.getDate()).padStart(2, '0');
+                    const horaEnvio = String(ahora.getHours()).padStart(2, '0') + ':' + String(ahora.getMinutes()).padStart(2, '0');
+
+                    // CALCULAR EL CONSECUTIVO DIARIO EN FIREBASE
+                    db.collection("rastreo_tiempo_real")
+                        .where("vendedor", "==", activeSeller)
+                        .where("fechaFiltro", "==", fechaFiltro)
+                        .get()
+                        .then((querySnapshot) => {
+                            const numeroPunto = querySnapshot.size + 1;
+                            const consecutivo = "Punto-" + String(numeroPunto).padStart(2, '0');
+
+                            // CALCULAR EXPIRACIÓN DE 10 DÍAS EXACTOS (Para el TTL automático de Firebase)
+                            const fechaExpiracion = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
+
+                            // GUARDAR EN LA NUEVA COLECCIÓN DE LA NUBE
+                            db.collection("rastreo_tiempo_real").add({
+                                vendedor: activeSeller,
+                                fechaFiltro: fechaFiltro,
+                                hora: horaEnvio,
+                                ubicacionUrl: mapLink,
+                                consecutivo: consecutivo,
+                                fechaExpiracion: fechaExpiracion, // Firebase lo borrará físicamente al cumplirse los 10 días
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                            })
+                            .then(() => console.log(`Radar: ${consecutivo} reportado con éxito para ${activeSeller}`))
+                            .catch(e => console.error("Error al transmitir ubicación de radar:", e));
+                        })
+                        .catch(err => console.error("Error al calcular consecutivo de radar:", err));
+                },
+                function(error) {
+                    console.warn("Radar: No se pudo obtener el GPS en este ciclo. Se reintentará en 20 minutos.", error);
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
        // Guarda el estado actual en el almacenamiento interno del dispositivo de forma individual
        function guardarJornadaEnStorage() {
             if (!activeSeller) return;
@@ -4469,6 +4605,9 @@ TIENDA
             document.getElementById('titulo-modulo-ventas').innerText = "Ruta de Trabajo Activa";
             document.getElementById('subtitulo-modulo-ventas').innerText = "Gestión secuencial en campo para el flujo diario.";
 
+            // MANDAR A ENCENDER EL RADAR AUTOMÁTICO EN SEGUNDO PLANO
+            iniciarRastreoAutomatico();
+
             renderListaJornada();
         }
 
@@ -4637,6 +4776,11 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
                 jornadaActiva = false;
                 indiceClienteActivo = null;
                 currentRouteId = null;
+
+                // APAGAR EL RADAR DE MANERA DEFINITIVA AL TERMINAR EL DÍA
+                detenerRastreoAutomatico();
+
+                // Blindar el nombre del perfil activo para la nueva planificación
 
                 // Blindar el nombre del perfil activo para la nueva planificación
                 const nameInput = document.getElementById('gen-nombre');
@@ -5546,9 +5690,12 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
             }
         }
 
-        function logoutVentas() {
+       function logoutVentas() {
             localStorage.removeItem('fercosur_seller_session');
             activeSeller = null;
+            
+            // APAGAR EL RADAR POR SEGURIDAD ABSOLUTA SI SE CIERRA SESIÓN
+            detenerRastreoAutomatico();
             
             // Limpieza preventiva de variables de estado de ruta en memoria para evitar residuos visuales
             rutaPlanificada = [];
@@ -6592,15 +6739,19 @@ guardarEnNube(linkMapa);
             const tabGen = document.getElementById('tab-general');
             const tabDespachos = document.getElementById('tab-despachos');
             const tabRutas = document.getElementById('tab-rutas');
+            const tabRadar = document.getElementById('tab-radar'); // Vinculación del nuevo botón
+            
             // Restablecer estilos de los micro-cuadros verticales a su estado inactivo
             const claseInactiva = "w-12 h-12 relative flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:border-slate-300 transition shadow-sm";
             if(tabGen) tabGen.className = claseInactiva;
             if(tabDespachos) tabDespachos.className = claseInactiva;
             if(tabRutas) tabRutas.className = claseInactiva;
+            if(tabRadar) tabRadar.className = claseInactiva;
 
             document.getElementById('table-general-view').classList.add('hidden');
             document.getElementById('table-despachos-view').classList.add('hidden');
             document.getElementById('table-rutas-view').classList.add('hidden');
+            document.getElementById('table-radar-view').classList.add('hidden'); // Ocultación preventiva
             
             // REGLA CORRECTIVA: Ocultar la barra masiva de visitas en las otras secciones
             const toolbarVisitas = document.getElementById('toolbar-visitas-bulk');
@@ -6613,7 +6764,7 @@ guardarEnNube(linkMapa);
                 if(tabGen) tabGen.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-brand-500 bg-brand-50 text-brand-600 transition shadow-sm";
                 document.getElementById('table-title').innerText = "Registros Visitas";
                 document.getElementById('table-general-view').classList.remove('hidden');
-                if (toolbarVisitas) toolbarVisitas.classList.remove('hidden'); // Se activa exclusivamente aquí
+                if (toolbarVisitas) toolbarVisitas.classList.remove('hidden'); 
                 if (widgetTotales) widgetTotales.classList.remove('hidden');
             } else if (tabType === 'despachos') {
                 if(tabDespachos) tabDespachos.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-amber-500 bg-amber-50 text-amber-600 transition shadow-sm";
@@ -6623,9 +6774,83 @@ guardarEnNube(linkMapa);
                 if(tabRutas) tabRutas.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600 transition shadow-sm";
                 document.getElementById('table-title').innerText = "Monitoreo de Rutas en Campo";
                 document.getElementById('table-rutas-view').classList.remove('hidden');
+            } else if (tabType === 'radar') {
+                if(tabRadar) tabRadar.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-slate-900 bg-slate-100 text-slate-900 transition shadow-sm";
+                document.getElementById('table-title').innerText = "Auditoría Satelital de Campo";
+                document.getElementById('table-radar-view').classList.remove('hidden');
+                
+                // Mantenemos la pantalla limpia y en blanco por defecto al entrar
+                document.getElementById('radar-vendedor-select').value = "";
+                document.getElementById('radar-fecha-input').value = "";
+                document.getElementById('wrapper-resultados-radar').classList.add('hidden');
             }
 
             renderTableData();
+        }
+
+		// MOTOR DE CONSULTA DEL CAJÓN INFORMATIVO DEL RADAR (CRONOLÓGICO Y CONSECUTIVO)
+        function consultarRadarSatelital() {
+            const vendedor = document.getElementById('radar-vendedor-select').value;
+            const fecha = document.getElementById('radar-fecha-input').value;
+            const wrapperResultados = document.getElementById('wrapper-resultados-radar');
+            const tbody = document.getElementById('tbody-radar-resultados');
+
+            if (!vendedor || !fecha) {
+                showToast('Faltan Filtros', 'Seleccione un asesor comercial y una fecha para abrir el cajón.', 'error');
+                return;
+            }
+
+            if (!navigator.onLine) {
+                showToast('Sin Red', 'Se requiere conexión a internet para consultar reportes satelitales.', 'error');
+                return;
+            }
+
+            // Efecto de carga estética inicial
+            tbody.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-slate-400 italic font-medium bg-white animate-pulse">Abriendo cajón y decodificando coordenadas...</td></tr>`;
+            wrapperResultados.classList.remove('hidden');
+
+            db.collection("rastreo_tiempo_real")
+                .where("vendedor", "==", vendedor)
+                .where("fechaFiltro", "==", fecha)
+                .get()
+                .then((querySnapshot) => {
+                    tbody.innerHTML = '';
+
+                    if (querySnapshot.empty) {
+                        tbody.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-slate-400 italic font-medium bg-white">No se registraron ubicaciones automáticas para este asesor en la fecha elegida.</td></tr>`;
+                        return;
+                    }
+
+                    // Pasar a estructura de matriz para ordenamiento estricto por hora
+                    let puntosCapturados = [];
+                    querySnapshot.forEach((doc) => {
+                        puntosCapturados.push(doc.data());
+                    });
+
+                    // Orden cronológico preciso (Garantiza el flujo natural del día)
+                    puntosCapturados.sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
+
+                    // Inyección elegante de las filas consecutivas ordenadas
+                    puntosCapturados.forEach((punto) => {
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-slate-50 transition-colors animate-fade-in";
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${punto.consecutivo || 'Punto-00'}</td>
+                            <td class="px-6 py-4 font-mono text-slate-500 text-xs">⏱️ ${punto.hora || '--:--'}</td>
+                            <td class="px-6 py-4 text-xs">
+                                <a href="${punto.ubicacionUrl}" target="_blank" class="inline-flex items-center justify-center bg-slate-850 hover:bg-black text-white px-3.5 py-1.5 rounded-xl font-sans font-bold shadow-sm transition">
+                                    🗺️ Ver Ubicación Real
+                                </a>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch((err) => {
+                    console.error("Fallo crítico al extraer datos de radar:", err);
+                    showToast('Fallo Servidor', 'No se pudieron leer las tablas de la nube.', 'error');
+                    tbody.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-red-600 font-bold bg-white">Error de respuesta en la base de datos remota.</td></tr>`;
+                });
         }
 
        function toggleHistoricoRutas() {
