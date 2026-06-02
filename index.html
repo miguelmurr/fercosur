@@ -8274,11 +8274,9 @@ guardarEnNube(linkMapa);
             const periodo = filtroEl ? filtroEl.value : 'mes';
             const hoy = new Date();
 
-            // Control visual del segundo selector (Aparece solo si elige "Mes Específico")
             if (filtroMesEspecificoEl) {
                 if (periodo === 'especifico') {
                     if (filtroMesEspecificoEl.classList.contains('hidden')) {
-                        // Sugiere automáticamente el mes actual al abrirse por primera vez
                         filtroMesEspecificoEl.value = String(hoy.getMonth() + 1).padStart(2, '0');
                     }
                     filtroMesEspecificoEl.classList.remove('hidden');
@@ -8295,7 +8293,6 @@ guardarEnNube(linkMapa);
             dbGeneral.forEach(item => {
                 if (!item.timestamp) return; 
                 
-                // Extraer el texto limpio YYYY-MM-DD
                 const fechaString = String(item.timestamp).split(' ')[0];
                 const partes = fechaString.split('-');
                 if (partes.length !== 3) return;
@@ -8303,7 +8300,6 @@ guardarEnNube(linkMapa);
                 const fechaRegistro = new Date(partes[0], partes[1] - 1, partes[2]);
                 let entraEnFiltro = false;
 
-                // Evaluador de Rangos e Inmune a Zonas Horarias
                 if (periodo === 'hoy') {
                     if (fechaRegistro.toDateString() === hoy.toDateString()) entraEnFiltro = true;
                 } else if (periodo === 'semana') {
@@ -8315,14 +8311,16 @@ guardarEnNube(linkMapa);
                     hoyLimpiado.setHours(0,0,0,0);
                     if (fechaRegistro >= hace7Dias && fechaRegistro <= hoyLimpiado) entraEnFiltro = true;
                 } else if (periodo === 'mes') {
-                    // Texto puro para Mes Actual
-                    const prefijoMesActual = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0');
-                    if (fechaString.startsWith(prefijoMesActual)) entraEnFiltro = true;
+                    if (fechaRegistro.getFullYear() === hoy.getFullYear() && fechaRegistro.getMonth() === hoy.getMonth()) {
+                        entraEnFiltro = true;
+                    }
                 } else if (periodo === 'especifico') {
-                    // Texto puro para cualquier Mes Elegido en el año actual
                     const mesSeleccionado = filtroMesEspecificoEl ? filtroMesEspecificoEl.value : String(hoy.getMonth() + 1).padStart(2, '0');
-                    const prefijoMesEspecifico = hoy.getFullYear() + '-' + mesSeleccionado;
-                    if (fechaString.startsWith(prefijoMesEspecifico)) entraEnFiltro = true;
+                    const mesIdx = parseInt(mesSeleccionado, 10) - 1;
+                    
+                    if (fechaRegistro.getFullYear() === hoy.getFullYear() && fechaRegistro.getMonth() === mesIdx) {
+                        entraEnFiltro = true;
+                    }
                 }
 
                 if (entraEnFiltro) {
@@ -8341,7 +8339,6 @@ guardarEnNube(linkMapa);
                 }
             });
 
-            // Dar formato de dinero oficial de Colombia
             const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
             
             ventasMesEl.innerText = formatMoney(totalVentas);
