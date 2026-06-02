@@ -988,7 +988,7 @@
                                             <option value="hoy">Hoy</option>
                                             <option value="semana">Últimos 7 Días</option>
                                             <option value="mes" selected>Mes Actual</option>
-                                            <option value="especifico">Mes Específico...</option>
+                                            <option value="especifico">Seleccionar Mes</option>
                                         </select>
                                         <select id="filtro-mes-especifico" onchange="renderTotalesMensuales()" class="hidden text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2 py-0.5 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
                                             <option value="01">Enero</option>
@@ -8293,11 +8293,16 @@ guardarEnNube(linkMapa);
             dbGeneral.forEach(item => {
                 if (!item.timestamp) return; 
                 
-                const fechaString = String(item.timestamp).split(' ')[0];
-                const partes = fechaString.split('-');
+                // EXTRAE ESTRICTAMENTE LA CADENA DE FECHA BASE DE FIRESTORE (Ej: "2026-06-02")
+                const fechaLimpia = String(item.timestamp).trim().split(' ')[0];
+                const partes = fechaLimpia.split('-');
                 if (partes.length !== 3) return;
                 
-                const fechaRegistro = new Date(partes[0], partes[1] - 1, partes[2]);
+                const textoAnio = partes[0]; // Ej: "2026"
+                const textoMes = partes[1].padStart(2, '0'); // Ej: "06" o "05" de forma estricta
+                
+                // Creamos un objeto de fecha nativo ÚNICAMENTE para los filtros de corto alcance (Hoy y Semana)
+                const fechaRegistro = new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
                 let entraEnFiltro = false;
 
                 if (periodo === 'hoy') {
@@ -8311,14 +8316,17 @@ guardarEnNube(linkMapa);
                     hoyLimpiado.setHours(0,0,0,0);
                     if (fechaRegistro >= hace7Dias && fechaRegistro <= hoyLimpiado) entraEnFiltro = true;
                 } else if (periodo === 'mes') {
-                    if (fechaRegistro.getFullYear() === hoy.getFullYear() && fechaRegistro.getMonth() === hoy.getMonth()) {
+                    // FILTRADO QUIRÚRGICO DE MES ACTUAL: Compara que el texto del año y el mes coincidan exactamente
+                    const anioActualStr = String(hoy.getFullYear());
+                    const mesActualStr = String(hoy.getMonth() + 1).padStart(2, '0');
+                    if (textoAnio === anioActualStr && textoMes === mesActualStr) {
                         entraEnFiltro = true;
                     }
                 } else if (periodo === 'especifico') {
-                    const mesSeleccionado = filtroMesEspecificoEl ? filtroMesEspecificoEl.value : String(hoy.getMonth() + 1).padStart(2, '0');
-                    const mesIdx = parseInt(mesSeleccionado, 10) - 1;
-                    
-                    if (fechaRegistro.getFullYear() === hoy.getFullYear() && fechaRegistro.getMonth() === mesIdx) {
+                    // FILTRADO QUIRÚRGICO DE MES SELECCIONADO: Compara el año actual con la opción del desplegable
+                    const anioActualStr = String(hoy.getFullYear());
+                    const mesSeleccionadoStr = filtroMesEspecificoEl ? filtroMesEspecificoEl.value : String(hoy.getMonth() + 1).padStart(2, '0');
+                    if (textoAnio === anioActualStr && textoMes === mesSeleccionadoStr) {
                         entraEnFiltro = true;
                     }
                 }
