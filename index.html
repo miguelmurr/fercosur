@@ -8291,8 +8291,15 @@ guardarEnNube(linkMapa);
                     const hoyLimpiado = new Date(hoy);
                     hoyLimpiado.setHours(0,0,0,0);
                     if (fechaRegistro >= hace7Dias && fechaRegistro <= hoyLimpiado) entraEnFiltro = true;
-                } else if (periodo === 'mes') {
-                    if (fechaRegistro.getMonth() === hoy.getMonth() && fechaRegistro.getFullYear() === hoy.getFullYear()) entraEnFiltro = true;
+               } else if (periodo === 'mes') {
+                    // Calculamos el primer día del mes actual a las 00:00:00
+                    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                    inicioMes.setHours(0, 0, 0, 0);
+                    
+                    // Comparamos si el registro está dentro del rango desde el día 1 hasta hoy
+                    if (fechaRegistro >= inicioMes && fechaRegistro <= hoy) {
+                        entraEnFiltro = true;
+                    }
                 }
 
                 if (entraEnFiltro) {
