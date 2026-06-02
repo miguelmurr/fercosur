@@ -1151,8 +1151,9 @@
                         <div class="bg-white p-5 border border-slate-200 rounded-3xl shadow-sm flex flex-col md:flex-row items-end gap-4 text-left">
                             <div class="w-full md:w-1/2">
                                 <label for="radar-vendedor-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">1. Seleccionar Asesor Comercial</label>
-                                <select id="radar-vendedor-select" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-brand-500 shadow-sm">
+                               <select id="radar-vendedor-select" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-brand-500 shadow-sm">
                                     <option value="" disabled selected>Elija el perfil a consultar...</option>
+                                    <option value="TODOS">🌍 VER TODOS LOS ASESORES EN CONJUNTO 🌍</option>
                                     <option value="FS CAUCA FABIAN JIMENEZ">FS CAUCA FABIAN JIMENEZ</option>
                                     <option value="FS IPIALES KATHERINE">FS IPIALES KATHERINE</option>
                                     <option value="FS NOR OCCIDENTE ALEJANDRO MONROY">FS NOR OCCIDENTE ALEJANDRO MONROY</option>
@@ -6789,6 +6790,7 @@ guardarEnNube(linkMapa);
         }
 
 		// MOTOR DE CONSULTA DEL CAJÓN INFORMATIVO DEL RADAR (CRONOLÓGICO Y CONSECUTIVO)
+        // MOTOR DE CONSULTA EVOLUCIONADO: SOPORTA FILTRO INDIVIDUAL Y VISTA GLOBAL ("TODOS")
         function consultarRadarSatelital() {
             const vendedor = document.getElementById('radar-vendedor-select').value;
             const fecha = document.getElementById('radar-fecha-input').value;
@@ -6796,7 +6798,7 @@ guardarEnNube(linkMapa);
             const tbody = document.getElementById('tbody-radar-resultados');
 
             if (!vendedor || !fecha) {
-                showToast('Faltan Filtros', 'Seleccione un asesor comercial y una fecha para abrir el cajón.', 'error');
+                showToast('Faltan Filtros', 'Seleccione un asesor comercial (o la opción TODOS) y una fecha.', 'error');
                 return;
             }
 
@@ -6806,50 +6808,88 @@ guardarEnNube(linkMapa);
             }
 
             // Efecto de carga estética inicial
-            tbody.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-slate-400 italic font-medium bg-white animate-pulse">Abriendo cajón y decodificando coordenadas...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="p-5 text-center text-slate-400 italic font-medium bg-white animate-pulse">Abriendo cajón y decodificando coordenadas...</td></tr>`;
             wrapperResultados.classList.remove('hidden');
 
-            db.collection("rastreo_tiempo_real")
-                .where("vendedor", "==", vendedor)
-                .where("fechaFiltro", "==", fecha)
-                .get()
+            // CONFIGURACIÓN DINÁMICA DE LA CONSULTA FIRESTORE
+            let consultaBase = db.collection("rastreo_tiempo_real").where("fechaFiltro", "==", fecha);
+            
+            // Si el admin quiere un asesor específico, aplicamos el segundo filtro. Si quiere TODOS, lo dejamos libre.
+            if (vendedor !== "TODOS") {
+                consultaBase = consultaBase.where("vendedor", "==", vendedor);
+            }
+
+            consultaBase.get()
                 .then((querySnapshot) => {
                     tbody.innerHTML = '';
 
                     if (querySnapshot.empty) {
-                        tbody.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-slate-400 italic font-medium bg-white">No se registraron ubicaciones automáticas para este asesor en la fecha elegida.</td></tr>`;
+                        tbody.innerHTML = `<tr><td colspan="4" class="p-5 text-center text-slate-400 italic font-medium bg-white">No se registraron ubicaciones para la fecha elegida.</td></tr>`;
                         return;
                     }
 
-                    // Pasar a estructura de matriz para ordenamiento estricto por hora
+                    // Adaptar dinámicamente los encabezados de la tabla para que tengan sentido
+                    const tablaCabecera = document.getElementById('wrapper-resultados-radar').querySelector('thead tr');
+                    if (vendedor === "TODOS") {
+                        tablaCabecera.innerHTML = `
+                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Asesor Comercial</th>
+                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Consecutivo</th>
+                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Hora Reporte</th>
+                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Punto Satelital</th>
+                        `;
+                    } else {
+                        tablaCabecera.innerHTML = `
+                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Consecutivo</th>
+                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Hora de Reporte</th>
+                            <th class="px-6 py-3.5 text-xs font-bold uppercase text-slate-500 tracking-wider">Punto Satelital</th>
+                        `;
+                    }
+
+                    // Pasar a estructura de matriz para ordenamiento estricto
                     let puntosCapturados = [];
                     querySnapshot.forEach((doc) => {
                         puntosCapturados.push(doc.data());
                     });
 
-                    // Orden cronológico preciso (Garantiza el flujo natural del día)
+                    // Ordenar cronológicamente por hora para ver el recorrido real del día
                     puntosCapturados.sort((a, b) => (a.hora || '').localeCompare(b.hora || ''));
 
                     // Inyección elegante de las filas consecutivas ordenadas
                     puntosCapturados.forEach((punto) => {
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-slate-50 transition-colors animate-fade-in";
-                        tr.innerHTML = `
-                            <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${punto.consecutivo || 'Punto-00'}</td>
-                            <td class="px-6 py-4 font-mono text-slate-500 text-xs">⏱️ ${punto.hora || '--:--'}</td>
-                            <td class="px-6 py-4 text-xs">
-                                <a href="${punto.ubicacionUrl}" target="_blank" class="inline-flex items-center justify-center bg-slate-850 hover:bg-black text-white px-3.5 py-1.5 rounded-xl font-sans font-bold shadow-sm transition">
-                                    🗺️ Ver Ubicación Real
-                                </a>
-                            </td>
-                        `;
+                        
+                        if (vendedor === "TODOS") {
+                            // Renderizado con la columna del nombre del Asesor
+                            tr.innerHTML = `
+                                <td class="px-6 py-4 text-xs font-black text-slate-800 uppercase tracking-tight truncate max-w-[180px]">${punto.vendedor || 'Desconocido'}</td>
+                                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-600">${punto.consecutivo || 'Punto-00'}</td>
+                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">⏱️ ${punto.hora || '--:--'}</td>
+                                <td class="px-6 py-4 text-xs">
+                                    <a href="${punto.ubicacionUrl}" target="_blank" class="inline-flex items-center justify-center bg-slate-850 hover:bg-black text-white px-3.5 py-1.5 rounded-xl font-sans font-bold shadow-sm transition">
+                                        🗺️ Ver Mapa
+                                    </a>
+                                </td>
+                            `;
+                        } else {
+                            // Renderizado clásico individual sin saturar la pantalla
+                            tr.innerHTML = `
+                                <td class="px-6 py-4 font-mono text-xs font-bold text-slate-700">${punto.consecutivo || 'Punto-00'}</td>
+                                <td class="px-6 py-4 font-mono text-slate-500 text-xs">⏱️ ${punto.hora || '--:--'}</td>
+                                <td class="px-6 py-4 text-xs">
+                                    <a href="${punto.ubicacionUrl}" target="_blank" class="inline-flex items-center justify-center bg-slate-850 hover:bg-black text-white px-3.5 py-1.5 rounded-xl font-sans font-bold shadow-sm transition">
+                                        🗺️ Ver Ubicación Real
+                                    </a>
+                                </td>
+                            `;
+                        }
                         tbody.appendChild(tr);
                     });
                 })
                 .catch((err) => {
                     console.error("Fallo crítico al extraer datos de radar:", err);
                     showToast('Fallo Servidor', 'No se pudieron leer las tablas de la nube.', 'error');
-                    tbody.innerHTML = `<tr><td colspan="3" class="p-5 text-center text-red-600 font-bold bg-white">Error de respuesta en la base de datos remota.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-5 text-center text-red-600 font-bold bg-white">Error de respuesta en la base de datos remota.</td></tr>`;
                 });
         }
 
