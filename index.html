@@ -1223,7 +1223,7 @@
         <p>&copy; 2026 FERCOSUR S.A.S. - Portal Oficial de Trabajo. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- MODAL DE ACCESO PIN ADMIN -->
+   <!-- MODAL DE ACCESO PIN ADMIN -->
     <div id="pin-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <!-- Backdrop -->
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -1233,32 +1233,31 @@
 
             <!-- Contenido Modal -->
             <div class="inline-block align-middle bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-200">
-                <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
-                    <div class="text-center">
-                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-2xl bg-brand-50 text-brand-600 mb-4">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-extrabold text-slate-950" id="modal-title">Control de Seguridad</h3>
-                        <p class="text-sm text-slate-500 mt-1 max-w-xs mx-auto">Solo personal autorizado. Ingrese el PIN de seguridad de 4 dígitos para continuar.</p>
-                        
-                        <!-- Inputs PIN -->
-                        <div class="flex justify-center gap-3 mt-6">
-                            <input type="password" id="pin-1" maxlength="1" onkeyup="handlePinInput(this, 'pin-2')" class="w-12 h-14 text-center text-2xl font-black bg-slate-50 border border-slate-300 rounded-xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none">
-                            <input type="password" id="pin-2" maxlength="1" onkeyup="handlePinInput(this, 'pin-3', 'pin-1')" class="w-12 h-14 text-center text-2xl font-black bg-slate-50 border border-slate-300 rounded-xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none">
-                            <input type="password" id="pin-3" maxlength="1" onkeyup="handlePinInput(this, 'pin-4', 'pin-2')" class="w-12 h-14 text-center text-2xl font-black bg-slate-50 border border-slate-300 rounded-xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none">
-                            <input type="password" id="pin-4" maxlength="1" onkeyup="handlePinInput(this, null, 'pin-3')" class="w-12 h-14 text-center text-2xl font-black bg-slate-50 border border-slate-300 rounded-xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none">
-                        </div>
+                <form onsubmit="event.preventDefault(); submitPin();">
+                    <div class="bg-white px-6 pt-6 pb-4 sm:p-6">
+                        <div class="text-center">
+                            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-2xl bg-brand-50 text-brand-600 mb-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-extrabold text-slate-950" id="modal-title">Control de Seguridad</h3>
+                            <p class="text-sm text-slate-500 mt-1 max-w-xs mx-auto">Solo personal autorizado. Ingrese la contraseña de seguridad para continuar.</p>
+                            
+                            <!-- Input Único Contraseña Flexible -->
+                            <div class="mt-6 max-w-[240px] mx-auto">
+                                <input type="password" id="admin-pin-input" class="w-full text-center text-2xl font-black tracking-widest bg-slate-50 border border-slate-300 rounded-xl py-3 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none placeholder-slate-300" placeholder="••••">
+                            </div>
 
-                        <!-- Feedback de error -->
-                        <p id="pin-error-msg" class="hidden text-xs text-red-600 font-bold mt-4">PIN incorrecto. Inténtelo nuevamente.</p>
+                            <!-- Feedback de error -->
+                            <p id="pin-error-msg" class="hidden text-xs text-red-600 font-bold mt-4">Contraseña incorrecta. Inténtelo nuevamente.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3">
-                    <button type="button" onclick="submitPin()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2.5 bg-brand-600 text-sm font-bold text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition">Desbloquear Panel</button>
-                    <button type="button" onclick="closePinModal()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-4 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition">Cancelar</button>
-                </div>
+                    <div class="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3">
+                        <button type="submit" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2.5 bg-brand-600 text-sm font-bold text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition">Desbloquear Panel</button>
+                        <button type="button" onclick="closePinModal()" class="w-full sm:w-auto inline-flex justify-center rounded-xl border border-slate-200 px-4 py-2.5 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition">Cancelar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -6697,7 +6696,7 @@ guardarEnNube(linkMapa);
             }
         }
 
-        // --- 13. CONTROL SEGURIDAD POR PIN (MODAL ADMIN) ---
+       // --- 13. CONTROL SEGURIDAD POR PIN (MODAL ADMIN) ---
         function openPinModal() {
             if (isAdminLoggedIn) {
                 showView('admin');
@@ -6705,7 +6704,10 @@ guardarEnNube(linkMapa);
             }
             document.getElementById('pin-modal').classList.remove('hidden');
             document.getElementById('pin-error-msg').classList.add('hidden');
-            document.getElementById('pin-1').focus();
+            setTimeout(() => {
+                const adminInput = document.getElementById('admin-pin-input');
+                if (adminInput) adminInput.focus();
+            }, 100);
         }
 
         function closePinModal() {
@@ -6714,35 +6716,15 @@ guardarEnNube(linkMapa);
         }
 
         function clearPinFields() {
-            document.getElementById('pin-1').value = '';
-            document.getElementById('pin-2').value = '';
-            document.getElementById('pin-3').value = '';
-            document.getElementById('pin-4').value = '';
-        }
-
-        function handlePinInput(current, nextFieldId, prevFieldId) {
-            // Si el usuario presiona la tecla Enter y estamos en la última casilla, enviamos el PIN
-            if (event.key === 'Enter' && !nextFieldId) {
-                submitPin();
-                return;
-            }
-            
-            if (current.value.length >= 1 && nextFieldId) {
-                document.getElementById(nextFieldId).focus();
-            }
-            if (current.value.length === 0 && prevFieldId) {
-                document.getElementById(prevFieldId).focus();
-            }
+            const adminInput = document.getElementById('admin-pin-input');
+            if (adminInput) adminInput.value = '';
         }
 
         function submitPin() {
-            const p1 = document.getElementById('pin-1').value;
-            const p2 = document.getElementById('pin-2').value;
-            const p3 = document.getElementById('pin-3').value;
-            const p4 = document.getElementById('pin-4').value;
-            const enteredPin = p1 + p2 + p3 + p4;
+            const adminInput = document.getElementById('admin-pin-input');
+            const enteredPin = adminInput ? adminInput.value.trim() : '';
 
-            if (enteredPin === '1234') {
+            if (enteredPin === '0920*') {
                 isAdminLoggedIn = true;
                 closePinModal();
                 showToast('Acceso Permitido', 'Sincronizando panel con Firestore...', 'success');
@@ -6751,7 +6733,7 @@ guardarEnNube(linkMapa);
             } else {
                 document.getElementById('pin-error-msg').classList.remove('hidden');
                 clearPinFields();
-                document.getElementById('pin-1').focus();
+                if (adminInput) adminInput.focus();
             }
         }
 
