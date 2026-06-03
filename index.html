@@ -6855,19 +6855,19 @@ guardarEnNube(linkMapa);
                 if(tabRutas) tabRutas.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600 transition shadow-sm";
                 document.getElementById('table-rutas-view').classList.remove('hidden');
 
-                // MUTACIÓN AVANZADA DE RUTAS: ROMPER EL CONTENEDOR Y EXPANDIR AL 100%
+                // MUTACIÓN AVANZADA DE RUTAS: ROMPER EL CONTENEDOR Y EXPANDIR AL 100% PARA MÁXIMA VISUALIZACIÓN SIMULTÁNEA
                 if (mainHeader) mainHeader.classList.add('hidden');
                 if (tableHeaderText) tableHeaderText.classList.add('hidden');
                 if (exportWrapper) exportWrapper.classList.add('hidden');
                 if (rutasExcelContainer) rutasExcelContainer.classList.remove('hidden');
 
-                // Rompe el candado de altura máxima para permitir crecimiento vertical libre
+                // Remueve de forma absoluta el límite de altura max-h-[560px] permitiendo un despliegue libre hacia abajo
                 if (scrollWrapper) {
                     scrollWrapper.classList.remove('max-h-[560px]');
                     scrollWrapper.classList.add('max-h-none');
                 }
 
-                // Elimina bordes, paddings y fondos rígidos del marco exterior para estirar las rutas de lado a lado
+                // Desvincula las restricciones de la tarjeta contenedora para expandir la cuadrícula a pantalla completa
                 if (adminTableCard) {
                     adminTableCard.className = "p-0 flex flex-col w-full transition-all duration-200";
                     const parentCard = adminTableCard.parentElement;
