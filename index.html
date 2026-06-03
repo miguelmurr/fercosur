@@ -978,25 +978,18 @@
                             <h3 class="text-xl font-black text-slate-900 tracking-tight" id="table-title">Registros Visitas</h3>
                             <p class="text-sm text-slate-500 mt-0.5">Mostrando registros guardados en tiempo real por orden de ingreso.</p>
                              
-                       <div id="widget-totales-visitas" class="mt-4 flex flex-col gap-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 w-fit shadow-sm animate-fade-in">
+                        <div id="widget-totales-visitas" class="mt-4 flex flex-col gap-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 w-fit shadow-sm animate-fade-in">
                           
-                               <div class="flex flex-col sm:flex-row sm:items-center gap-3 border-b border-slate-200 pb-2.5">
-                                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider whitespace-nowrap">Controles de Búsqueda Cruzada:</span>
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <!-- Selector de período principal -->
-                                        <select id="filtro-periodo-financiero" onchange="renderTotalesMensuales()" class="text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2.5 py-1 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
+                               <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mr-8">Filtro Financiero:</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <select id="filtro-periodo-financiero" onchange="renderTotalesMensuales()" class="text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2 py-0.5 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
                                             <option value="hoy">Hoy</option>
-                                            <option value="dia-especifico">Seleccionar Día 📅</option>
                                             <option value="semana">Últimos 7 Días</option>
                                             <option value="mes" selected>Mes Actual</option>
                                             <option value="especifico">Seleccionar Mes</option>
                                         </select>
-                                        
-                                        <!-- NUEVO INPUT: Calendario para días específicos -->
-                                        <input type="date" id="filtro-dia-calendario" onchange="renderTotalesMensuales()" class="hidden text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2.5 py-1 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
-
-                                        <!-- Selector de meses tradicionales -->
-                                        <select id="filtro-mes-especifico" onchange="renderTotalesMensuales()" class="hidden text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2.5 py-1 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
+                                        <select id="filtro-mes-especifico" onchange="renderTotalesMensuales()" class="hidden text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2 py-0.5 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer">
                                             <option value="01">Enero</option>
                                             <option value="02">Febrero</option>
                                             <option value="03">Marzo</option>
@@ -1009,24 +1002,6 @@
                                             <option value="10">Octubre</option>
                                             <option value="11">Noviembre</option>
                                             <option value="12">Diciembre</option>
-                                        </select>
-
-                                        <!-- NUEVO SELECTOR: Filtro de Asesor Comercial de FERCOSUR -->
-                                        <select id="filtro-vendedor-visitas" onchange="renderTotalesMensuales()" class="text-xs font-bold bg-white border border-slate-300 text-slate-800 rounded-lg px-2.5 py-1 focus:outline-none focus:border-brand-500 shadow-sm cursor-pointer uppercase">
-                                            <option value="TODOS">👥 Todos los Asesores</option>
-                                            <option value="FS CAUCA FABIAN JIMENEZ">FS CAUCA FABIAN JIMENEZ</option>
-                                            <option value="FS IPIALES KATHERINE">FS IPIALES KATHERINE</option>
-                                            <option value="FS NOR OCCIDENTE ALEJANDRO MONROY">FS NOR OCCIDENTE ALEJANDRO MONROY</option>
-                                            <option value="FS NORTE 1 EIMER">FS NORTE 1 EIMER</option>
-                                            <option value="FS NORTE 2 DIEGO MARTINEZ">FS DIEGO MARTINEZ</option>
-                                            <option value="FS OCCIDENTE LILIANA ORDOÑEZ">FS OCCIDENTE LILIANA ORDOÑEZ</option>
-                                            <option value="FS PASTO 1 GLORIA VIVEROS">FS PASTO 1 GLORIA VIVEROS</option>
-                                            <option value="FS PASTO 2 ROLAND LOPEZ">FS PASTO 2 ROLAND LOPEZ</option>
-                                            <option value="FS PUTUMAYO 1 LUIS MIGUEL">FS PUTUMAYO 1 LUIS MIGUEL</option>
-                                            <option value="FS PUTUMAYO 2 EDITH SANCHEZ">FS PUTUMAYO 2 EDITH SANCHEZ</option>
-                                            <option value="FS PUTUMAYO 3 EDINSON">FS PUTUMAYO 3 EDINSON</option>
-                                            <option value="FS SUR HAROLD MARTINEZ">FS SUR HAROLD MARTINEZ</option>
-                                            <option value="FS VIA TUMACO CRISTINA BENAVIDES">FS VIA TUMACO CRISTINA BENAVIDES</option>
                                         </select>
                                     </div>
                                 </div>
@@ -7244,9 +7219,11 @@ guardarEnNube(linkMapa);
             if(!emptyState) return;
             
             if (currentActiveAdminTab === 'general') {
-                // Redirección al motor de búsquedas cruzadas automáticas unificadas
-                renderTableDataFiltrada();
-            } else if (currentActiveAdminTab === 'despachos') {
+                const tbodyGen = document.getElementById('tbody-general');
+                if(!tbodyGen) return;
+                tbodyGen.innerHTML = '';
+                
+                if (dbGeneral.length === 0) {
                     emptyState.classList.remove('hidden');
                     emptyState.classList.add('flex');
                     document.getElementById('table-general-view').classList.add('hidden');
@@ -8406,45 +8383,27 @@ guardarEnNube(linkMapa);
             document.getElementById('modal-resumen-gestion').classList.add('hidden');
         };
 
-	// --- 17. LÓGICA DE TOTALES FINANCIEROS Y FILTROS (BLINDADA) ---
+	 // --- 17. LÓGICA DE TOTALES FINANCIEROS Y FILTROS (BLINDADA) ---
         function renderTotalesMensuales() {
             const ventasMesEl = document.getElementById('suma-ventas-mes');
             const cobrosMesEl = document.getElementById('suma-cobros-mes');
             const efectivoEl = document.getElementById('suma-cobros-efectivo');
             const consigEl = document.getElementById('suma-cobros-consig');
-            
-            const filtroPeriodo = document.getElementById('filtro-periodo-financiero');
-            const filtroDiaCalendario = document.getElementById('filtro-dia-calendario');
-            const filtroMesEspecifico = document.getElementById('filtro-mes-especifico');
-            const filtroVendedor = document.getElementById('filtro-vendedor-visitas');
-
+            const filtroEl = document.getElementById('filtro-periodo-financiero');
+            const filtroMesEspecificoEl = document.getElementById('filtro-mes-especifico');
             if (!ventasMesEl || !cobrosMesEl) return;
 
-            const periodo = filtroPeriodo ? filtroPeriodo.value : 'mes';
-            const vendedorSeleccionado = filtroVendedor ? filtroVendedor.value : 'TODOS';
+            const periodo = filtroEl ? filtroEl.value : 'mes';
             const hoy = new Date();
 
-            // Gestión visual interactiva de los controles secundarios
-            if (filtroDiaCalendario) {
-                if (periodo === 'dia-especifico') {
-                    if (filtroDiaCalendario.classList.contains('hidden')) {
-                        // Colocamos por defecto la fecha de hoy en formato clásico YYYY-MM-DD
-                        filtroDiaCalendario.value = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0') + '-' + String(hoy.getDate()).padStart(2, '0');
-                    }
-                    filtroDiaCalendario.classList.remove('hidden');
-                } else {
-                    filtroDiaCalendario.classList.add('hidden');
-                }
-            }
-
-            if (filtroMesEspecifico) {
+            if (filtroMesEspecificoEl) {
                 if (periodo === 'especifico') {
-                    if (filtroMesEspecifico.classList.contains('hidden')) {
-                        filtroMesEspecifico.value = String(hoy.getMonth() + 1).padStart(2, '0');
+                    if (filtroMesEspecificoEl.classList.contains('hidden')) {
+                        filtroMesEspecificoEl.value = String(hoy.getMonth() + 1).padStart(2, '0');
                     }
-                    filtroMesEspecifico.classList.remove('hidden');
+                    filtroMesEspecificoEl.classList.remove('hidden');
                 } else {
-                    filtroMesEspecifico.classList.add('hidden');
+                    filtroMesEspecificoEl.classList.add('hidden');
                 }
             }
 
@@ -8453,39 +8412,23 @@ guardarEnNube(linkMapa);
             let totalEfectivo = 0;
             let totalConsig = 0;
 
-            // Arreglo en memoria para guardar las visitas filtradas que enviaremos a la tabla
-            window.visitasFiltradasAdmin = [];
-
             dbGeneral.forEach(item => {
                 if (!item.timestamp) return; 
                 
-                // 1. FILTRO DE ASESOR VENDEDOR (CRUZADO)
-                if (vendedorSeleccionado !== 'TODOS') {
-                    if (String(item.nombre).trim().toUpperCase() !== vendedorSeleccionado.trim().toUpperCase()) {
-                        return; // Si no coincide el vendedor, saltamos al siguiente registro
-                    }
-                }
-
-                // Extraemos la cadena de texto base de la fecha (Ej: "2026-06-02")
+                // EXTRAE ESTRICTAMENTE LA CADENA DE FECHA BASE DE FIRESTORE (Ej: "2026-06-02")
                 const fechaLimpia = String(item.timestamp).trim().split(' ')[0];
                 const partes = fechaLimpia.split('-');
                 if (partes.length !== 3) return;
                 
-                const textoAnio = partes[0];
-                const textoMes = partes[1].padStart(2, '0');
-                const textoDia = partes[2].padStart(2, '0');
+                const textoAnio = partes[0]; // Ej: "2026"
+                const textoMes = partes[1].padStart(2, '0'); // Ej: "06" o "05" de forma estricta
                 
+                // Creamos un objeto de fecha nativo ÚNICAMENTE para los filtros de corto alcance (Hoy y Semana)
                 const fechaRegistro = new Date(parseInt(partes[0], 10), parseInt(partes[1], 10) - 1, parseInt(partes[2], 10));
                 let entraEnFiltro = false;
 
-                // 2. FILTRO TEMPORAL (CRUZADO)
                 if (periodo === 'hoy') {
                     if (fechaRegistro.toDateString() === hoy.toDateString()) entraEnFiltro = true;
-                } else if (periodo === 'dia-especifico') {
-                    const fechaCalendarioVal = filtroDiaCalendario ? filtroDiaCalendario.value : ''; // Formato: YYYY-MM-DD
-                    if (fechaCalendarioVal === `${textoAnio}-${textoMes}-${textoDia}`) {
-                        entraEnFiltro = true;
-                    }
                 } else if (periodo === 'semana') {
                     const hace7Dias = new Date(hoy);
                     hace7Dias.setDate(hoy.getDate() - 7);
@@ -8495,19 +8438,22 @@ guardarEnNube(linkMapa);
                     hoyLimpiado.setHours(0,0,0,0);
                     if (fechaRegistro >= hace7Dias && fechaRegistro <= hoyLimpiado) entraEnFiltro = true;
                 } else if (periodo === 'mes') {
+                    // FILTRADO QUIRÚRGICO DE MES ACTUAL: Compara que el texto del año y el mes coincidan exactamente
                     const anioActualStr = String(hoy.getFullYear());
                     const mesActualStr = String(hoy.getMonth() + 1).padStart(2, '0');
-                    if (textoAnio === anioActualStr && textoMes === mesActualStr) entraEnFiltro = true;
+                    if (textoAnio === anioActualStr && textoMes === mesActualStr) {
+                        entraEnFiltro = true;
+                    }
                 } else if (periodo === 'especifico') {
+                    // FILTRADO QUIRÚRGICO DE MES SELECCIONADO: Compara el año actual con la opción del desplegable
                     const anioActualStr = String(hoy.getFullYear());
-                    const mesSeleccionadoStr = filtroMesEspecifico ? filtroMesEspecifico.value : String(hoy.getMonth() + 1).padStart(2, '0');
-                    if (textoAnio === anioActualStr && textoMes === mesSeleccionadoStr) entraEnFiltro = true;
+                    const mesSeleccionadoStr = filtroMesEspecificoEl ? filtroMesEspecificoEl.value : String(hoy.getMonth() + 1).padStart(2, '0');
+                    if (textoAnio === anioActualStr && textoMes === mesSeleccionadoStr) {
+                        entraEnFiltro = true;
+                    }
                 }
 
-                // Si superó con éxito ambos filtros cruzados, sumamos valores y guardamos en el pool filtrado
                 if (entraEnFiltro) {
-                    window.visitasFiltradasAdmin.push(item);
-
                     const ventaNum = parseInt(String(item.montoVenta || '0').replace(/\D/g, ''), 10) || 0;
                     const cobroNum = parseInt(String(item.montoCobro || '0').replace(/\D/g, ''), 10) || 0;
                     const esEfectivo = item.metodoCobro === 'Efectivo';
@@ -8523,71 +8469,15 @@ guardarEnNube(linkMapa);
                 }
             });
 
-            // Actualizamos los textos de las tarjetas en el diseño superior
             const formatMoney = (val) => '$' + new Intl.NumberFormat('es-CO').format(val);
+            
             ventasMesEl.innerText = formatMoney(totalVentas);
             cobrosMesEl.innerText = formatMoney(totalCobros);
             if (efectivoEl) efectivoEl.innerText = formatMoney(totalEfectivo);
             if (consigEl) consigEl.innerText = formatMoney(totalConsig);
-
-            // EJECUCIÓN DIRECTA: Si estamos parados en la pestaña 'general', forzamos el redibujado de la tabla de abajo
-            if (currentActiveAdminTab === 'general') {
-                renderTableDataFiltrada();
-            }
         }
 
-        // Subfunción optimizada encargada de pintar los registros exactos que superaron la búsqueda cruzada
-        function renderTableDataFiltrada() {
-            const emptyState = document.getElementById('table-empty-state');
-            const tbodyGen = document.getElementById('tbody-general');
-            if (!tbodyGen || !emptyState) return;
-            
-            tbodyGen.innerHTML = '';
-            const poolVisitas = window.visitasFiltradasAdmin || [];
-
-            if (poolVisitas.length === 0) {
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-                document.getElementById('table-general-view').classList.add('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
-                document.getElementById('table-general-view').classList.remove('hidden');
-
-                poolVisitas.forEach(item => {
-                    const badgeCobro = item.montoCobro && item.montoCobro !== '$0' ? 
-                        (item.metodoCobro === 'Consignacion' 
-                            ? `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-700 rounded border border-blue-200 uppercase">🏦 Consig.</span>` 
-                            : `<br><span class="inline-block mt-1 px-1.5 py-0.5 text-[10px] font-bold bg-emerald-50 text-emerald-700 rounded border border-emerald-200 uppercase">💵 Efectivo</span>`)
-                        : '';
-
-                    const tr = `
-                        <tr class="hover:bg-slate-50 transition-colors animate-fade-in">
-                            <td class="px-4 py-4 text-center">
-                                <input type="checkbox" class="visita-checkbox h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer" data-id="${item.id}" onchange="updateVisitasSelection()">
-                            </td>
-                            <td class="px-6 py-4 font-mono text-slate-500 text-xs">${item.timestamp}</td>
-                            <td class="px-6 py-4 font-semibold text-slate-900 uppercase">${item.nombre}</td>
-                            <td class="px-6 py-4 text-slate-700 font-medium uppercase">${item.cliente || 'N/A'}</td>
-                            <td class="px-6 py-4 text-slate-600 font-semibold">${item.motivo || 'N/A'}</td>
-                            <td class="px-6 py-4 text-emerald-600 font-bold">${item.montoVenta || '$0'}</td>
-                            <td class="px-6 py-4 text-blue-600 font-bold leading-tight">
-                                <span>${item.montoCobro || '$0'}</span>
-                                ${badgeCobro}
-                            </td>
-                            <td class="px-6 py-4 text-xs">
-                                ${item.ubicacion && item.ubicacion.startsWith('http') 
-                                    ? `<a href="${item.ubicacion}" target="_blank" class="text-brand-600 hover:text-brand-800 underline font-semibold">Ver Registro</a>` 
-                                    : `<span class="text-slate-400 italic">${item.ubicacion || 'N/A'}</span>`}
-                            </td>
-                        </tr>
-                    `;
-                    tbodyGen.insertAdjacentHTML('beforeend', tr);
-                });
-            }
-        }
-
-        // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA EN CAMPO ---
+          // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA EN CAMPO ---
         window.onload = function() {
             showView('portal');
             // Disparar la sincronización automática de datos pendientes al abrir la app
@@ -8601,5 +8491,3 @@ guardarEnNube(linkMapa);
             }
         }
     </script>
-</body>
-</html>
