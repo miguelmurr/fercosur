@@ -4084,12 +4084,12 @@ TIENDA
 27087496        	HIDALGO BUCHELI MARIA FERNANDA                                                                                                                                  		Pasto	3147977237            	FS PASTO 1 GLORIA VIVEROS                                                                                                                                       																											
 `;
 
-        const clients = rawCSVData.split('\n')
+       const clients = rawCSVData.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0 && !line.toUpperCase().startsWith('NIT'))
             .map(line => {
-                // El sistema separa de forma inteligente por tabulaciones (Excel), punto y coma o comas
-                let parts = line.split(/[\t;]/);
+                // El sistema colapsa de forma estricta múltiples tabuladores o puntos y comas consecutivos
+                let parts = line.split(/[\t;]+/);
                 
                 if (parts.length < 2) {
                     parts = line.split(',');
