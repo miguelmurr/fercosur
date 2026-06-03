@@ -6800,12 +6800,19 @@ guardarEnNube(linkMapa);
             const exportWrapper = document.getElementById('admin-export-btn-wrapper');
             const rutasExcelContainer = document.getElementById('rutas-excel-container');
             const adminTableCard = document.getElementById('admin-table-header-card');
+            const scrollWrapper = document.getElementById('admin-tables-scroll-wrapper');
 
-            // RESTAURACIÓN DE INTERFAZ POR DEFECTO (Limpia el contenedor al volver a General, Despachos o Radar)
+            // RESTAURACIÓN DE INTERFAZ POR DEFECTO
             if (mainHeader) mainHeader.classList.remove('hidden');
             if (tableHeaderText) tableHeaderText.classList.remove('hidden');
             if (exportWrapper) exportWrapper.classList.remove('hidden');
             if (rutasExcelContainer) rutasExcelContainer.classList.add('hidden');
+            
+            // Regresa la altura del contenedor al límite estándar de 560px
+            if (scrollWrapper) {
+                scrollWrapper.classList.remove('max-h-none');
+                scrollWrapper.classList.add('max-h-[560px]');
+            }
             
             // Regresa la tarjeta contenedora general a su diseño original blanco estructurado
             if (adminTableCard) {
@@ -6848,11 +6855,17 @@ guardarEnNube(linkMapa);
                 if(tabRutas) tabRutas.className = "w-12 h-12 relative flex items-center justify-center rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600 transition shadow-sm";
                 document.getElementById('table-rutas-view').classList.remove('hidden');
 
-                // 🚀 MUTACIÓN AVANZADA DE RUTAS: ROMPER EL CONTENEDOR Y EXPANDIR AL 100%
+                // MUTACIÓN AVANZADA DE RUTAS: ROMPER EL CONTENEDOR Y EXPANDIR AL 100%
                 if (mainHeader) mainHeader.classList.add('hidden');
                 if (tableHeaderText) tableHeaderText.classList.add('hidden');
-                if (exportWrapper) exportWrapper.classList.add('hidden'); // Oculta el botón general desfasado
-                if (rutasExcelContainer) rutasExcelContainer.classList.remove('hidden'); // Activa el icono en la barra limpia
+                if (exportWrapper) exportWrapper.classList.add('hidden');
+                if (rutasExcelContainer) rutasExcelContainer.classList.remove('hidden');
+
+                // Rompe el candado de altura máxima para permitir crecimiento vertical libre
+                if (scrollWrapper) {
+                    scrollWrapper.classList.remove('max-h-[560px]');
+                    scrollWrapper.classList.add('max-h-none');
+                }
 
                 // Elimina bordes, paddings y fondos rígidos del marco exterior para estirar las rutas de lado a lado
                 if (adminTableCard) {
