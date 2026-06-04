@@ -1622,6 +1622,29 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // --- MOTOR DE ACTUALIZACIÓN IN-APP ---
+        const VERSION_ACTUAL_APP = "1.0.0";
+
+        function verificarActualizacionesFercosur() {
+            db.collection("control_versiones").doc("config").onSnapshot((doc) => {
+                if (doc.exists) {
+                    const datos = doc.data();
+                    // Si la versión de Firebase es diferente a la del teléfono, se activa el bloqueo
+                    if (datos.versionMasReciente !== VERSION_ACTUAL_APP) {
+                        const modalActualizacion = document.getElementById("update-modal");
+                        const botonDescarga = document.getElementById("btn-descargar-update");
+                        if (modalActualizacion && botonDescarga) {
+                            botonDescarga.href = datos.urlDescarga;
+                            modalActualizacion.classList.remove("hidden");
+                        }
+                    }
+                }
+            });
+        }
+
+        // Ejecutar el chequeo de versión automáticamente al abrir la aplicación
+        verificarActualizacionesFercosur();
+
        // --- 1. BASE DE DATOS ESTATICAS DE AUTOCOMPLETADO ---
         const sellers = [
             { nombre: "FS CAUCA FABIAN JIMENEZ" },
