@@ -8543,6 +8543,11 @@ guardarEnNube(linkMapa);
             showView('portal');
             // Disparar la sincronización automática de datos pendientes al abrir la app
             sincronizarColaOffline();
+            
+            // Forzar la verificación de la versión en Firestore al abrir la app
+            if (typeof verificarActualizacionesFercosur === 'function') {
+                verificarActualizacionesFercosur();
+            }
 
             // REGISTRO DEL SERVICE WORKER (MOTOR OFFLINE PWA)
             if ('serviceWorker' in navigator) {
