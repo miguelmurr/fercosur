@@ -69,9 +69,24 @@
             filter: blur(80px);
             animation: pulseWave 10s ease-in-out infinite alternate;
         }
-        @keyframes pulseWave {
+       @keyframes pulseWave {
             0% { transform: scale(1) translate(0px, 0px) rotate(0deg); opacity: 0.2; }
             100% { transform: scale(1.1) translate(15px, -15px) rotate(3deg); opacity: 0.4; }
+        }
+
+        /* Contenedor deslizable para los filtros financieros en móvil */
+        .filtros-deslizables {
+            overflow-x: auto;
+            display: flex;
+            gap: 12px;
+            padding-bottom: 8px;
+            width: 100%;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .filtros-deslizables > * {
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -1006,7 +1021,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="flex flex-row items-center gap-4 py-0.5">
+                                <div class="filtros-deslizables py-0.5">
                                     <div class="w-[175px] flex-shrink-0">
                                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Ventas</span>
                                         <span class="text-xl font-black text-emerald-600 block mt-0.5 tracking-tight truncate" id="suma-ventas-mes">$0</span>
@@ -1019,6 +1034,8 @@
                                         <span class="text-xl font-black text-blue-600 block mt-0.5 tracking-tight truncate" id="suma-cobros-mes">$0</span>
                                     </div>
                                     
+                                    <div class="w-px h-8 bg-slate-200 flex-shrink-0"></div>
+
                                     <div class="flex flex-col gap-0.5 text-[11px] font-bold bg-white px-2.5 py-1 rounded-xl border border-slate-200/70 w-[225px] flex-shrink-0">
                                         <div class="text-slate-600 flex justify-between gap-4"><span>💵 Efectivo</span> <span id="suma-cobros-efectivo" class="text-emerald-600 font-extrabold">$0</span></div>
                                         <div class="text-slate-600 flex justify-between gap-4"><span>🏦 Consig</span> <span id="suma-cobros-consig" class="text-blue-600 font-extrabold">$0</span></div>
