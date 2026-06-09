@@ -7623,10 +7623,10 @@ guardarEnNube(linkMapa);
                     }
                 }
 
-                // PASO 4 CONTINUACIÓN: Inyectar dinámicamente la sumatoria de las metas al lado del título principal
+               // PASO 4 CORRECCIÓN: Inyectar la insignia con un tamaño de texto y contenedor más grande y visible
                 const tituloRutasSpan = document.querySelector('#table-rutas-view span');
                 if (tituloRutasSpan) {
-                    tituloRutasSpan.innerHTML = `🟢 Rutas en Ejecución <span class="ml-2 bg-brand-50 text-brand-700 text-[11px] px-2.5 py-1 rounded-xl border border-brand-200 font-mono font-black shadow-sm">Meta Total Global: V: $${new Intl.NumberFormat('es-CO').format(globalEstimadoVentas)} | C: $${new Intl.NumberFormat('es-CO').format(globalEstimadoCobros)}</span>`;
+                    tituloRutasSpan.innerHTML = `🟢 Rutas en Ejecución <span class="ml-3 bg-brand-50 text-brand-700 text-sm sm:text-base px-4 py-1.5 rounded-2xl border border-brand-200 font-mono font-black shadow-sm inline-block mt-2 sm:mt-0 sm:inline align-middle">Meta Total Global: V: $${new Intl.NumberFormat('es-CO').format(globalEstimadoVentas)} | C: $${new Intl.NumberFormat('es-CO').format(globalEstimadoCobros)}</span>`;
                 }
             }
         }
