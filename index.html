@@ -4870,10 +4870,12 @@ distanciaVendedor.toFixed(2) + ' km' : '0.00 km'}`;
         }
 
      // Función Maestra encargada de romper el candado local y procesar la cola de no visitados
-        function terminarJornadaCompleta() {
+        function terminarJornadaCompleta(esCierreForzado = false) {
             // MENSAJE DE CONFIRMACIÓN PARA EVITAR ACCIDENTES EN CAMPO
-            const confirmarCierreJornada = confirm("¿Está seguro de que desea finalizar su jornada de hoy? Al aceptar, se cerrará su ruta activa y los establecimientos pendientes quedarán agendados para su próximo día de trabajo.");
-            if (!confirmarCierreJornada) return;
+            if (!esCierreForzado) {
+                const confirmarCierreJornada = confirm("¿Está seguro de que desea finalizar su jornada de hoy? Al aceptar, se cerrará su ruta activa y los establecimientos pendientes quedarán agendados para su próximo día de trabajo.");
+                if (!confirmarCierreJornada) return;
+            }
 
             // 1. Extraemos de forma quirúrgica los clientes que NO fueron visitados
             const noVisitados = rutaPlanificada.filter(c => !c.visitado).map(c => ({
@@ -8537,6 +8539,44 @@ guardarEnNube(linkMapa);
             if (efectivoEl) efectivoEl.innerText = formatMoney(totalEfectivo);
             if (consigEl) consigEl.innerText = formatMoney(totalConsig);
         }
+			// ==========================================
+        // RELOJ CENTINELA: CIERRE FORZADO (8:00 PM o Días Anteriores)
+        // ==========================================
+        function centinelaCierreHorario() {
+            if (typeof jornadaActiva === 'undefined' || !jornadaActiva || !currentRouteId) return;
+            
+            const ahora = new Date();
+            // Límite de las 8:00 PM (20 horas) hasta las 3:59 AM del día siguiente
+            const esFueraDeHorario = ahora.getHours() >= 20 || ahora.getHours() < 4; 
+            
+            // Extraer la fecha de la ruta desde su ID (ruta-168... -> milisegundos)
+            const partesId = currentRouteId.split('-');
+            let esDeAyer = false;
+            if (partesId.length > 1) {
+                const fechaCreacion = new Date(parseInt(partesId[1]));
+                // Si el día, mes o año de creación no coinciden con los de hoy, es una ruta atrasada
+                if (fechaCreacion.getDate() !== ahora.getDate() || fechaCreacion.getMonth() !== ahora.getMonth() || fechaCreacion.getFullYear() !== ahora.getFullYear()) {
+                    esDeAyer = true;
+                }
+            }
+
+            if (esFueraDeHorario || esDeAyer) {
+                console.log("CENTINELA: Expulsando asesor. Fuera de horario:", esFueraDeHorario, "| Ruta vieja:", esDeAyer);
+                terminarJornadaCompleta(true); // El 'true' obliga el cierre sin preguntar nada
+                
+                if (typeof showToast === 'function') {
+                    showToast('Cierre Automático', 'Su ruta se cerró por límite de horario (8:00 PM) o fecha caducada.', 'error');
+                }
+            }
+        }
+        
+        // El centinela revisará en silencio cada 60 segundos
+        setInterval(centinelaCierreHorario, 60000);
+        
+        // También vigilará cuando el vendedor bloquee y vuelva a prender la pantalla
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === 'visible') centinelaCierreHorario();
+        });
 
           // --- 16. EJECUCIÓN AL CARGAR LA PÁGINA EN CAMPO ---
         window.onload = function() {
